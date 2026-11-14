@@ -22,7 +22,9 @@ import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.Lette
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeSummaryItem
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.use_case.GetLetterPracticeQueueItemDataUseCase
 
-typealias LetterPracticeQueue = PracticeQueue<LetterPracticeQueueState, LetterPracticeQueueItemDescriptor>
+interface LetterPracticeQueue : PracticeQueue<LetterPracticeQueueState, LetterPracticeQueueItemDescriptor> {
+    suspend fun undoLastReview(): Boolean
+}
 typealias BaseLetterPracticeQueue = BasePracticeQueue<LetterPracticeQueueState, LetterPracticeQueueItemDescriptor, LetterPracticeQueueItem, LetterPracticeSummaryItem>
 
 class DefaultLetterPracticeQueue(
@@ -39,8 +41,11 @@ class DefaultLetterPracticeQueue(
     srsScheduler = srsScheduler,
     srsCardRepository = srsCardRepository,
     reviewHistoryRepository = reviewHistoryRepository,
-    analyticsManager = analyticsManager
+    analyticsManager = analyticsManager,
+    enableReviewUndo = true
 ), LetterPracticeQueue {
+
+    override suspend fun undoLastReview(): Boolean = undoAnswer()
 
     override suspend fun LetterPracticeQueueItemDescriptor.toQueueItem(): LetterPracticeQueueItem {
         val srsCardKey = practiceType.toSrsKey(character)
@@ -101,7 +106,9 @@ class DefaultLetterPracticeQueue(
             data = item.data.await(),
             currentItemRepeat = item.repeats,
             progress = getProgress(),
-            answers = answers
+            answers = answers,
+            canUndo = canUndo,
+            undoCount = undoCount
         )
     }
 
@@ -109,7 +116,8 @@ class DefaultLetterPracticeQueue(
         val instant = timeUtils.now()
         return LetterPracticeQueueState.Summary(
             duration = instant - practiceStartInstant,
-            items = summaryItems.values.toList()
+            items = summaryItems.values.toList(),
+            canUndo = canUndo
         )
     }
 

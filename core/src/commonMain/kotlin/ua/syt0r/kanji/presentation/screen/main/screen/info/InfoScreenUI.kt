@@ -328,7 +328,7 @@ fun LazyListScope.infoScreenExpandableVocabSection(
 ) {
 
     infoScreenExpandableSection(
-        headerText = "Vocab",
+        headerText = "Vocabulary",
         headerCount = paginateable.total,
         expanded = expanded,
         expandedContent = {

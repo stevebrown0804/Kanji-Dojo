@@ -23,14 +23,10 @@ import ua.syt0r.kanji.core.analytics.AnalyticsManager
 import ua.syt0r.kanji.core.user_data.database.DatabaseMigrationState
 import ua.syt0r.kanji.presentation.dialog.VersionChangeDialog
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
-import ua.syt0r.kanji.presentation.screen.main.features.DeepLinkHandler
 import ua.syt0r.kanji.presentation.screen.main.features.MigrationDialog
-import ua.syt0r.kanji.presentation.screen.main.features.SyncDialog
 
 @Composable
-fun MainScreen(
-    deepLinkHandler: DeepLinkHandler
-) {
+fun MainScreen() {
 
     val viewModel = getMultiplatformViewModel<MainContract.ViewModel>()
     val navigationState = rememberMainNavigationState()
@@ -48,7 +44,6 @@ fun MainScreen(
         MainNavigation(navigationState)
     }
 
-    deepLinkHandler.HandleDeepLinksLaunchedEffect(navigationState)
 
     HandleScreenReportsLaunchedEffect(
         navigationState = navigationState
@@ -71,16 +66,6 @@ fun MainScreen(
         notifications = viewModel.notifications,
         snackbarHostState = snackbarHostState,
         navigationState = navigationState
-    )
-
-    SyncDialog(
-        state = viewModel.syncDialogState.collectAsState(),
-        cancelSync = viewModel::cancelSync,
-        resolveConflict = viewModel::resolveSyncConflict,
-        navigateToAccount = {
-            viewModel.cancelSync()
-            navigationState.navigate(MainDestination.Account())
-        }
     )
 
 }

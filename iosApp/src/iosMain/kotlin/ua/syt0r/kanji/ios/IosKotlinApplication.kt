@@ -12,7 +12,6 @@ import ua.syt0r.kanji.core.logger.NativeLogger
 import ua.syt0r.kanji.core.tts.KanaTtsManager
 import ua.syt0r.kanji.core.tts.KanaVoiceData
 import ua.syt0r.kanji.di.appModules
-import ua.syt0r.kanji.presentation.screen.main.features.DeepLinkHandler
 import ua.syt0r.kanji.presentation.screen.main.screen.credits.GetCreditLibrariesUseCase
 import kotlin.experimental.ExperimentalNativeApi
 
@@ -28,7 +27,6 @@ class IosKotlinApplication(
     backupArchiveHandlerProvider: () -> BaseIosBackupArchiveHandler
 ) : KoinComponent {
 
-    private val deepLinkHandler: DeepLinkHandler by inject()
 
     init {
 
@@ -55,8 +53,6 @@ class IosKotlinApplication(
 
     }
 
-    fun notifyDeepLink(url: String) {
-        deepLinkHandler.notifyDeepLink(url)
-    }
+
 
 }

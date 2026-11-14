@@ -6,6 +6,8 @@ import kotlinx.datetime.LocalDate
 import ua.syt0r.kanji.core.file.PlatformFile
 import ua.syt0r.kanji.core.srs.LetterPracticeType
 import ua.syt0r.kanji.core.user_data.db.UserDataDatabase
+import ua.syt0r.kanji.core.userdata.db.Fsrs_card
+import ua.syt0r.kanji.core.userdata.db.Review_history
 import kotlin.time.Duration
 
 
@@ -78,6 +80,13 @@ data class ReviewHistoryItem(
     val deckId: Long,
 )
 
+class ReviewUndoToken internal constructor(
+    internal val previousSchedule: Fsrs_card?,
+    internal val updatedSchedule: Fsrs_card,
+    internal val recordedReview: Review_history,
+    val totalReviews: Int
+)
+
 data class ReviewHistoryStatItem(
     val key: String,
     val practiceTypeToDataMap: Map<Long, PracticeTypeData>
@@ -89,11 +98,4 @@ class StreakData(
     val start: LocalDate,
     val end: LocalDate,
     val length: Int
-)
-
-data class TextAnalysisData(
-    val text: String,
-    val timestamp: Instant,
-    val translation: String,
-    val annotatedTextJson: String
 )

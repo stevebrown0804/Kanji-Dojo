@@ -2,6 +2,7 @@ package ua.syt0r.kanji.presentation.screen.main.screen.practice_letter
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import kotlinx.coroutines.flow.Flow
 import ua.syt0r.kanji.core.japanese.KanaReading
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeAnswer
@@ -33,15 +34,20 @@ interface LetterPracticeScreenContract {
     interface ViewModel {
 
         val state: State<ScreenState>
+        val reviewOperationInProgress: State<Boolean>
+        val reviewErrors: Flow<ReviewError>
 
         fun initialize(configuration: LetterPracticeScreenConfiguration)
         fun configure()
 
         fun submitAnswer(answer: PracticeAnswer)
+        fun undoLastReview()
         fun speakKana(reading: KanaReading)
         fun finishPractice()
 
     }
+
+    enum class ReviewError { SaveFailed, UndoFailed }
 
     sealed interface ScreenState {
 
@@ -53,13 +59,16 @@ interface LetterPracticeScreenContract {
 
         data class Review(
             val practiceProgress: PracticeQueueProgress,
-            val reviewState: LetterPracticeReviewState
+            val reviewState: LetterPracticeReviewState,
+            val canUndo: Boolean = false,
+            val undoCount: Int = 0
         ) : ScreenState
 
         data class Summary(
             val duration: Duration,
             val accuracy: Float?,
             val items: List<LetterPracticeSummaryItem>,
+            val canUndo: Boolean = false
         ) : ScreenState
 
     }

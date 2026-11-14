@@ -1,22 +1,17 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard
 
 import kotlinx.datetime.LocalDate
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import ua.syt0r.kanji.Res
 import ua.syt0r.kanji.core.srs.LetterPracticeType
 import ua.syt0r.kanji.core.srs.PracticeType
 import ua.syt0r.kanji.core.srs.VocabPracticeType
-import ua.syt0r.kanji.discord
 import ua.syt0r.kanji.practice_type_flashcard
 import ua.syt0r.kanji.practice_type_reading_picker
 import ua.syt0r.kanji.practice_type_writing
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeConfigurationCard
-import ua.syt0r.kanji.social_discord
-import ua.syt0r.kanji.social_youtube
 import ua.syt0r.kanji.study_category_letter
 import ua.syt0r.kanji.study_category_vocab
-import ua.syt0r.kanji.youtube
 
 
 sealed interface StudyTargetProgress {
@@ -86,20 +81,3 @@ data class GeneralDashboardStats(
     val longestStreak: Int,
     val reviewsToday: Int
 )
-
-enum class SocialButton(
-    val url: String,
-    val title: StringResource,
-    val icon: DrawableResource
-) {
-    Discord(
-        url = "https://discord.gg/2Ny6h6pXTY",
-        title = Res.string.social_discord,
-        icon = Res.drawable.discord
-    ),
-    YouTube(
-        url = "https://youtube.com/@kanji-dojo",
-        title = Res.string.social_youtube,
-        icon = Res.drawable.youtube
-    )
-}

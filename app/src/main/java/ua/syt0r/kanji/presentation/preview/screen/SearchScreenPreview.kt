@@ -24,7 +24,6 @@ private fun GenericPreview(
             onCharacterClick = {},
             onWordClick = {},
             onScrolledToEnd = {},
-            onWordFeedback = {}
         )
     }
 }

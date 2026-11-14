@@ -77,7 +77,6 @@ fun VocabPracticeWritingUI(
     answers: PracticeAnswers,
     answerSelected: (PracticeAnswer) -> Unit,
     onInfoClick: () -> Unit,
-    onFeedbackClick: (JapaneseWord) -> Unit
 ) {
 
     AutoSwitchSelectedItemLaunchedEffect(reviewState)

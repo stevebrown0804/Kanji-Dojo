@@ -36,7 +36,15 @@ open class ObservableUserDataRepository(
         databaseManager.readTransaction(block)
 
     override suspend fun <T> writeTransaction(block: UserDataQueries.() -> T): T =
-        databaseManager.writeTransaction(block).also { _changesFlow.emit(Unit) }
+        writeTransaction(onCommitted = {}, block = block)
+
+    internal suspend fun <T> writeTransaction(
+        onCommitted: (T) -> Unit,
+        block: UserDataQueries.() -> T
+    ): T = databaseManager.writeTransaction(block).also {
+        onCommitted(it)
+        _changesFlow.emit(Unit)
+    }
 
 }
 

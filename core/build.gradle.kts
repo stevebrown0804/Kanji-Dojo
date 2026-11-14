@@ -49,9 +49,8 @@ kotlin {
                 implementation(libs.datastore.preferences.core)
                 implementation(libs.wanakana.core)
 
-                api(libs.ktor.client.core)
-                implementation(libs.ktor.client.cio)
-                implementation(libs.ktor.client.auth)
+                api(libs.ktor.io)
+                api(libs.ktor.http)
 
                 api(libs.aboutlibraries.core)
 
@@ -89,13 +88,11 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.sqldelight.jvm.sqlite.driver)
-                implementation(libs.ktor.server.netty)
             }
         }
         iosMain {
             dependencies {
                 implementation(libs.sqldelight.native.sqlite.driver)
-                implementation(libs.ktor.client.darwin)
             }
         }
     }

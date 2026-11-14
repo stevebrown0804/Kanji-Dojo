@@ -2,7 +2,6 @@ import SwiftUI
 import ComposeApp
 import WanaKana
 import AVFoundation
-import Firebase
 
 @main
 struct KanjiDojoApp: App {
@@ -10,7 +9,6 @@ struct KanjiDojoApp: App {
     let kotlinApplication: IosKotlinApplication
     
     init() {
-        FirebaseApp.configure()
         kotlinApplication = IosKotlinApplication(
             logger: SwiftNativeLogger(),
             japaneseUtils: SwiftWanakanaJapaneseUtils(),
@@ -22,9 +20,7 @@ struct KanjiDojoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .onOpenURL { url in
-                    kotlinApplication.notifyDeepLink(url: url.absoluteString)
-                }
+
         }
     }
     
@@ -38,11 +34,7 @@ class SwiftNativeLogger : CoreNativeLogger {
     
     func logError(message: String) {
         NSLog(message)
-        let userInfo = ["message": message]
-        let error = NSError(domain: "error",
-                            code: 1,
-                            userInfo: userInfo)
-        Crashlytics.crashlytics().record(error: error)
+
     }
     
 }

@@ -54,6 +54,8 @@ interface FsrsCardRepository : ObservableRepository {
     suspend fun get(key: SrsCardKey): FsrsCard?
     suspend fun getAll(): Map<SrsCardKey, FsrsCard>
     suspend fun update(key: SrsCardKey, card: FsrsCard)
+    suspend fun recordReview(key: SrsCardKey, card: FsrsCard, item: ReviewHistoryItem): ReviewUndoToken
+    suspend fun undoReview(token: ReviewUndoToken): Boolean
 }
 
 interface ReviewHistoryRepository {
@@ -69,10 +71,4 @@ interface ReviewHistoryRepository {
     suspend fun getReviewHistoryStatsForKeys(
         keys: List<String>
     ): Map<String, ReviewHistoryStatItem>
-}
-
-interface TextAnalysisRepository : ObservableRepository {
-    suspend fun add(data: TextAnalysisData)
-    suspend fun getCount(): Long
-    suspend fun get(offset: Long, limit: Long): List<TextAnalysisData>
 }

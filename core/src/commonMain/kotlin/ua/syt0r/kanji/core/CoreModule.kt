@@ -13,14 +13,9 @@ import ua.syt0r.kanji.core.backup.BackupRestoreCompletionNotifier
 import ua.syt0r.kanji.core.backup.BackupRestoreEventsProvider
 import ua.syt0r.kanji.core.backup.BackupRestoreObservable
 import ua.syt0r.kanji.core.backup.DefaultBackupManager
-import ua.syt0r.kanji.core.feedback.DefaultFeedbackManager
-import ua.syt0r.kanji.core.feedback.DefaultFeedbackUserDataProvider
-import ua.syt0r.kanji.core.feedback.FeedbackManager
-import ua.syt0r.kanji.core.feedback.FeedbackUserDataProvider
 import ua.syt0r.kanji.core.japanese.CharacterClassifier
 import ua.syt0r.kanji.core.japanese.DefaultCharacterClassifier
 import ua.syt0r.kanji.core.srs.applySrsDefinitions
-import ua.syt0r.kanji.core.sync.addSyncDefinitions
 import ua.syt0r.kanji.core.theme_manager.ThemeManager
 import ua.syt0r.kanji.core.time.DefaultTimeUtils
 import ua.syt0r.kanji.core.time.TimeUtils
@@ -37,9 +32,6 @@ import ua.syt0r.kanji.core.user_data.preferences.UserPreferencesMigrationManager
 val coreModule = module {
 
     applySrsDefinitions()
-    addNetworkClientsDefinitions()
-    addSyncDefinitions()
-    addAccountDefinitions()
     addUserDataDatabaseDefinitions()
 
     single<AnalyticsManager> { PrintAnalyticsManager() }
@@ -101,24 +93,6 @@ val coreModule = module {
     single<CharacterClassifier> { DefaultCharacterClassifier(appDataRepository = get()) }
 
     single<Json> { Json.Default }
-
-    single<NetworkApi> {
-        DefaultNetworkApi(
-            networkClients = get(),
-            json = Json { ignoreUnknownKeys = true }
-        )
-    }
-
-    factory<FeedbackManager> {
-        DefaultFeedbackManager(
-            networkApi = get(),
-            userDataProvider = get()
-        )
-    }
-
-    factory<FeedbackUserDataProvider> {
-        DefaultFeedbackUserDataProvider()
-    }
 
     single {
         VocabCardResolver(

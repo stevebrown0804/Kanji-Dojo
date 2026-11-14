@@ -22,12 +22,15 @@ sealed interface LetterPracticeQueueState {
         val data: LetterPracticeItemData,
         val currentItemRepeat: Int,
         val progress: PracticeQueueProgress,
-        val answers: PracticeAnswers
+        val answers: PracticeAnswers,
+        val canUndo: Boolean,
+        val undoCount: Int
     ) : LetterPracticeQueueState
 
     data class Summary(
         val duration: Duration,
-        val items: List<LetterPracticeSummaryItem>
+        val items: List<LetterPracticeSummaryItem>,
+        val canUndo: Boolean
     ) : LetterPracticeQueueState
 
 }

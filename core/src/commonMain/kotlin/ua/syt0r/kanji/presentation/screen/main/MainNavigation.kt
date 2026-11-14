@@ -8,7 +8,6 @@ import org.koin.compose.koinInject
 import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.screen.about.AboutScreen
-import ua.syt0r.kanji.presentation.screen.main.screen.account.AccountScreenContract
 import ua.syt0r.kanji.presentation.screen.main.screen.backup.BackupScreenContract
 import ua.syt0r.kanji.presentation.screen.main.screen.credits.CreditsScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.daily_limit.DailyLimitScreen
@@ -18,8 +17,6 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.DeckPickerScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.DeckPickerScreenConfiguration
-import ua.syt0r.kanji.presentation.screen.main.screen.feedback.FeedbackScreen
-import ua.syt0r.kanji.presentation.screen.main.screen.feedback.FeedbackTopic
 import ua.syt0r.kanji.presentation.screen.main.screen.home.HomeScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenData
@@ -27,9 +24,6 @@ import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.LetterPrac
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.VocabPracticeScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.data.VocabPracticeScreenConfiguration
-import ua.syt0r.kanji.presentation.screen.main.screen.sponsor.SponsorScreenContract
-import ua.syt0r.kanji.presentation.screen.main.screen.sync.SyncScreen
-import ua.syt0r.kanji.presentation.screen.main.screen.text_analysis.TextAnalysisScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.SuggestedVocabCardData
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardScreenMode
@@ -215,36 +209,6 @@ interface MainDestination {
     }
 
     @Serializable
-    data class Feedback(
-        val topic: FeedbackTopic
-    ) : MainDestination {
-
-        override val analyticsName: String = "feedback"
-
-        @Composable
-        override fun Content(state: MainNavigationState) {
-            FeedbackScreen(
-                feedbackTopic = topic,
-                mainNavigationState = state
-            )
-        }
-
-    }
-
-    @Serializable
-    object Sponsor : MainDestination {
-
-        override val analyticsName: String = "sponsor"
-
-        @Composable
-        override fun Content(state: MainNavigationState) {
-            val content = koinInject<SponsorScreenContract.Content>()
-            content(state)
-        }
-
-    }
-
-    @Serializable
     object DailyLimit : MainDestination {
 
         override val analyticsName: String = "daily_limit"
@@ -252,49 +216,6 @@ interface MainDestination {
         @Composable
         override fun Content(state: MainNavigationState) {
             DailyLimitScreen(state)
-        }
-
-    }
-
-    @Serializable
-    data class Account(
-        val screenData: AccountScreenContract.ScreenData? = null
-    ) : MainDestination {
-
-        override val analyticsName: String = "account"
-
-        @Composable
-        override fun Content(state: MainNavigationState) {
-            val content = koinInject<AccountScreenContract.Content>()
-            content(state, screenData)
-        }
-
-    }
-
-    @Serializable
-    object Sync : MainDestination {
-
-        override val analyticsName: String = "sync"
-
-        @Composable
-        override fun Content(state: MainNavigationState) {
-            SyncScreen(
-                mainNavigationState = state
-            )
-        }
-
-    }
-
-    @Serializable
-    object TextAnalysis : MainDestination {
-
-        override val analyticsName: String = "text_analysis"
-
-        @Composable
-        override fun Content(state: MainNavigationState) {
-            TextAnalysisScreen(
-                navigationState = state
-            )
         }
 
     }
@@ -368,17 +289,12 @@ val defaultMainDestinations: List<MainDestinationConfiguration<*>> = listOf(
     MainDestination.Backup.configuration(),
     MainDestination.About.configuration(),
     MainDestination.Credits.configuration(),
-    MainDestination.Sponsor.configuration(),
     MainDestination.DailyLimit.configuration(),
-    MainDestination.Sync.configuration(),
-    MainDestination.TextAnalysis.configuration(),
     MainDestination.VocabCard::class.configuration(),
     MainDestination.DeckPicker::class.configuration(),
     MainDestination.DeckDetails::class.configuration(),
     MainDestination.DeckEdit::class.configuration(),
-    MainDestination.Feedback::class.configuration(),
     MainDestination.Info::class.configuration(),
     MainDestination.LetterPractice::class.configuration(),
     MainDestination.VocabPractice::class.configuration(),
-    MainDestination.Account::class.configuration(),
 )

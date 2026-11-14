@@ -1,7 +1,7 @@
 <resources>
 
     <string name="study_category_letter">Letter</string>
-    <string name="study_category_vocab">Vocab</string>
+    <string name="study_category_vocab">Vocabulary</string>
     <string name="practice_type_writing">Writing</string>
     <string name="practice_type_flashcard">Flashcards</string>
     <string name="practice_type_reading_picker">Reading Picker</string>
@@ -30,48 +30,10 @@
     <string name="general_dashboard_study_target_no_decks">No decks. Click to create</string>
     <string name="general_dashboard_study_target_nothing_left">Nothing left to study today</string>
 
-    <string name="general_dashboard_text_analysis">Text Analysis (Preview)</string>
-    <string name="general_dashboard_social">Social</string>
-    <string name="general_dashboard_downloads">Downloads</string>
     <string name="general_dashboard_tutorial">Tutorial</string>
 
-    <string name="social_discord">Discord</string>
-    <string name="social_youtube">YouTube</string>
 
     <string name="setting_daily_reset_time_item">Daily Reset Time</string>
-
-    <string name="text_analysis_title">Text Analysis</string>
-    <string name="text_analysis_history_title">History</string>
-    <string name="text_analysis_history_empty">No history</string>
-
-    <string name="text_analysis_offer_title">Analyze your own text, save letters and words</string>
-    <string name="text_analysis_offer_subtitle">Requires account. Free during preview until further notice, follow announcements on our Discord server for updates</string>
-    <string name="text_analysis_input_placeholder">Enter text here</string>
-    <string name="text_analysis_translation_placeholder">Translation</string>
-
-    <string name="text_analysis_configuration_title">Configuration</string>
-    <string name="text_analysis_configuration_analysis_provider">Analysis Provider</string>
-    <string name="text_analysis_ichiran_description">Slow, up to 100 characters</string>
-    <string name="text_analysis_configuration_translation_provider">Translation Provider</string>
-
-    <string name="text_analysis_action_furigana">Furigana</string>
-    <string name="text_analysis_action_highlight">Highlight Part of Speech</string>
-    <string name="text_analysis_action_save_letters">Save Letters</string>
-
-    <string name="text_analysis_save_words_counter">Selected words: %1$s</string>
-    <string name="text_analysis_save_words_cancel">Cancel</string>
-    <string name="text_analysis_save_words_apply">Add To Deck</string>
-
-    <string name="text_analysis_save_letters_counter">Selected letters: %1$s</string>
-    <string name="text_analysis_save_letters_select_kanji">Select All Kanji</string>
-    <string name="text_analysis_save_letters_cancel">Cancel</string>
-    <string name="text_analysis_save_letters_apply">Add To Deck</string>
-
-    <string name="text_analysis_alternative_words">Alternative words: </string>
-    <string name="text_analysis_word_parse_error">Error</string>
-
-    <string name="text_analysis_preview_text">富士山は日本の象徴で、登山シーズンになると多くの登山者が頂上を目指します。その絶景は一生の思い出になります。</string>
-    <string name="text_analysis_preview_translation">Mount Fuji is a symbol of Japan, and during the climbing season, many climbers aim for the summit. The magnificent view is an unforgettable memory.</string>
 
     <string name="common_dashboard_deck_details">Details</string>
     <string name="common_dashboard_deck_edit">Edit</string>
@@ -82,6 +44,9 @@
     <string name="practice_new_cards_config_last">Last</string>
     <string name="practice_new_cards_config_mixed">Mixed</string>
 
+    <string name="practice_undo_review">Undo last review</string>
+    <string name="practice_save_review_failed">Could not save the review.</string>
+    <string name="practice_undo_review_failed">Could not undo the review.</string>
     <string name="practice_summary_header_time">Time Spent</string>
     <string name="practice_summary_header_reviews">Cards Reviewed</string>
     <string name="practice_summary_header_accuracy">Accuracy</string>
@@ -91,7 +56,7 @@
 
     <string name="save_letters_dialog_title">Add letters to deck</string>
     <string name="save_letters_dialog_contains">Already contains: %1$s</string>
-    <string name="save_word_dialog_title">Add %1$s to vocab deck</string>
+    <string name="save_word_dialog_title">Add %1$s to vocabulary deck</string>
     <string name="save_word_dialog_contains_hint">Already contains</string>
     <string name="save_word_dialog_create_deck_button">Create New Deck</string>
     <string name="save_word_dialog_create_deck_title_hint">Enter deck title here...</string>
@@ -102,10 +67,10 @@
 
     <string name="migration_dialog_title">Finalizing Update</string>
     <string name="migration_dialog_loading_data">Loading data...</string>
-    <string name="migration_dialog_migrating_vocab_cards">Updating vocab cards...</string>
+    <string name="migration_dialog_migrating_vocab_cards">Updating vocabulary cards...</string>
     <string name="migration_dialog_saving_changes">Applying changes...</string>
 
-    <string name="vocab_card_title">Vocab Card</string>
+    <string name="vocab_card_title">Vocabulary Card</string>
     <string name="vocab_card_kanji">Kanji Reading</string>
     <string name="vocab_card_kana">Kana reading</string>
     <string name="vocab_card_meaning">Meaning</string>
@@ -117,50 +82,8 @@
     <string name="vocab_card_invalid_kana">Kana reading is empty</string>
     <string name="vocab_card_invalid_meaning">Meaning is empty</string>
 
-    <plurals name="account_subscription_duration_years">
-        <item quantity="one">%1$d Year</item>
-        <item quantity="other">%1$d Years</item>
-    </plurals>
-
-    <plurals name="account_subscription_duration_months">
-        <item quantity="one">%1$d Month</item>
-        <item quantity="other">%1$d Months</item>
-    </plurals>
-
-    <plurals name="account_subscription_duration_days">
-        <item quantity="one">%1$d Day</item>
-        <item quantity="other">%1$d Days</item>
-    </plurals>
-
-    <string name="account_visit_website">View on Web</string>
-    <string name="account_delete">Delete Account</string>
-
-    <string name="account_subscription_duration_unknown">Unknown duration format: %1$s</string>
-
-    <string name="snackbar_sub_expired_message">Your subscription has expired</string>
-    <string name="snackbar_sub_expired_action">Account</string>
-
-    <string name="sponsor_recent_donations_title">Recent Donations</string>
-    <string name="sponsor_recent_donations_error">Error: %1$s</string>
-
-    <string-array name="sponsor_recent_donations_messages">
-        <item>A generous soul donated %1$s¥! Much appreciated!</item>
-        <item>A kind user donated %1$s¥! May your kanji mastery flourish.</item>
-        <item>Someone just donated %1$s¥! More kanji knowledge for everyone!</item>
-        <item>Someone just dropped %1$s¥ into the donation box! ありがとう!</item>
-        <item>Someone contributed %1$s¥! It will help spreading kanji knowledge even more!</item>
-        <item>A generous supporter donated %1$s¥! Keeping the dojo open for all.</item>
-        <item>Thanks to a %1$s¥ donation, Kanji Dojo continues to grow!</item>
-        <item>A generous donation of %1$s¥! More kanji, fewer paywalls!</item>
-        <item>Even kanji radicals appreciate radical generosity—thanks for %1$s¥!</item>
-        <item>Heroes like you keep this dojo free—thank you for %1$s¥!</item>
-        <item>Kanji Dojo bows in gratitude for your %1$s¥ contribution!</item>
-        <item>Someone’s generosity added %1$s¥ to the fund!</item>
-        <item>A diligent learner contributed %1$s¥! May your reviews always be correct.</item>
-    </string-array>
-
     <string name="info_no_data_letter">No data found for letter %1$s</string>
-    <string name="info_no_data_vocab">No data found for vocab %1$s</string>
+    <string name="info_no_data_vocab">No data found for vocabulary entry %1$s</string>
     <string name="info_no_data_copy">Copy</string>
     <string name="info_no_data_jisho">Search on Jisho</string>
 

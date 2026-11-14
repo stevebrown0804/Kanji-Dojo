@@ -6,8 +6,6 @@ import androidx.compose.runtime.collectAsState
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.MainDestination
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
-import ua.syt0r.kanji.presentation.screen.main.screen.feedback.FeedbackScreen
-import ua.syt0r.kanji.presentation.screen.main.screen.feedback.FeedbackTopic
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.data.VocabPracticeScreenConfiguration
 
 @Composable
@@ -29,13 +27,6 @@ fun VocabPracticeScreen(
         onNext = { viewModel.next(it) },
         onInfoClick = { mainNavigationState.navigate(MainDestination.Info(it.vocabReference)) },
         onSummaryItemClick = {mainNavigationState.navigate(MainDestination.Info(it.vocabReference))},
-        onFeedback = {
-            mainNavigationState.navigate(
-                MainDestination.Feedback(
-                    FeedbackTopic.Expression(it.id, FeedbackScreen.VocabPractice)
-                )
-            )
-        },
         navigateBack = { mainNavigationState.navigateBack() },
         finishPractice = { viewModel.finishPractice() }
     )

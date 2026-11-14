@@ -83,17 +83,3 @@ enum class HomeScreenTab(
     }
 
 }
-
-data class SyncIconState(
-    val loading: Boolean = false,
-    val indicator: SyncIconIndicator = SyncIconIndicator.Disabled
-)
-
-enum class SyncIconIndicator {
-    Disabled,
-    PendingUpload,
-    UpToDate,
-    Canceled,
-    Error,
-    Conflict
-}

@@ -20,20 +20,6 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>CFBundleURLName</key>
-			<string>ua.syt0r.kanji</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>kanji-dojo</string>
-			</array>
-		</dict>
-		<dict/>
-	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key><false/>

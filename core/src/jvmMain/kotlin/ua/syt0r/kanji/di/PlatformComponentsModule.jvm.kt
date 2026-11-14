@@ -13,8 +13,6 @@ import ua.syt0r.kanji.core.file.JvmPlatformFileHandler
 import ua.syt0r.kanji.core.file.PlatformFileHandler
 import ua.syt0r.kanji.core.getUserPreferencesFile
 import ua.syt0r.kanji.core.logger.LoggerConfiguration
-import ua.syt0r.kanji.core.sync.JvmSyncBackupFileProvider
-import ua.syt0r.kanji.core.sync.SyncBackupFileProvider
 import ua.syt0r.kanji.core.tts.JavaKanaTtsManager
 import ua.syt0r.kanji.core.tts.KanaTtsManager
 import ua.syt0r.kanji.core.tts.Neural2BKanaVoiceData
@@ -23,12 +21,6 @@ import ua.syt0r.kanji.core.user_data.database.UserDataDatabaseContract
 import ua.syt0r.kanji.core.user_data.preferences.DefaultUserPreferencesMigrationManager
 import ua.syt0r.kanji.presentation.backupScreenComponents
 import ua.syt0r.kanji.presentation.multiplatformViewModel
-import ua.syt0r.kanji.presentation.screen.main.screen.account.AccountScreenContract
-import ua.syt0r.kanji.presentation.screen.main.screen.account.JvmAccountScreenContent
-import ua.syt0r.kanji.presentation.screen.main.screen.account.JvmAccountScreenContract
-import ua.syt0r.kanji.presentation.screen.main.screen.account.JvmAccountScreenViewModel
-import ua.syt0r.kanji.presentation.screen.main.screen.sponsor.JvmSponsorScreenContent
-import ua.syt0r.kanji.presentation.screen.main.screen.sponsor.SponsorScreenContract
 
 
 actual val platformComponentsModule: Module = module {
@@ -45,10 +37,6 @@ actual val platformComponentsModule: Module = module {
 
     single<AppDataDatabaseProvider> {
         JvmAppDataDatabaseProvider()
-    }
-
-    single<SyncBackupFileProvider> {
-        JvmSyncBackupFileProvider()
     }
 
     single<DataStore<*>> {
@@ -71,13 +59,6 @@ actual val platformComponentsModule: Module = module {
     factory<BackupArchiveHandler> { JvmBackupArchiveHandler() }
 
     backupScreenComponents()
-    single<SponsorScreenContract.Content> { JvmSponsorScreenContent }
-    single<AccountScreenContract.Content> { JvmAccountScreenContent }
-    multiplatformViewModel<JvmAccountScreenContract.ViewModel> {
-        JvmAccountScreenViewModel(
-            coroutineScope = it.component1(),
-            accountManager = get()
-        )
-    }
+
 
 }

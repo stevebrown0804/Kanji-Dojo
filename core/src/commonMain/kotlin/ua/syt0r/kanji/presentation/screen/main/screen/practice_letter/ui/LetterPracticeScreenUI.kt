@@ -30,11 +30,15 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,14 +53,19 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import ua.syt0r.kanji.Res
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
 import ua.syt0r.kanji.core.japanese.CharacterClassification
 import ua.syt0r.kanji.core.japanese.KanaReading
 import ua.syt0r.kanji.core.toRadians
+import ua.syt0r.kanji.practice_save_review_failed
 import ua.syt0r.kanji.practice_summary_header_accuracy
+import ua.syt0r.kanji.practice_undo_review_failed
 import ua.syt0r.kanji.presentation.common.MultiplatformBackHandler
 import ua.syt0r.kanji.presentation.common.resolveString
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
@@ -74,6 +83,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeSu
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeSummaryItem
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeToolbar
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeToolbarState
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.LetterPracticeScreenContract.ReviewError
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.LetterPracticeScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeReviewState
@@ -86,16 +96,29 @@ import kotlin.math.cos
 @Composable
 fun LetterPracticeScreenUI(
     state: State<ScreenState>,
+    reviewOperationInProgress: State<Boolean>,
+    reviewErrors: Flow<ReviewError>,
     navigateBack: () -> Unit,
-    navigateToWordFeedback: (JapaneseWord) -> Unit,
     onConfigured: () -> Unit,
     speakKana: (KanaReading) -> Unit,
     onNextClick: (PracticeAnswer) -> Unit,
+    onUndoClick: () -> Unit,
     onWordClick: (JapaneseWord) -> Unit,
     onSummaryItemCLick: (LetterPracticeSummaryItem) -> Unit,
     finishPractice: () -> Unit,
     onPracticeCompleted: () -> Unit
 ) {
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(reviewErrors) {
+        reviewErrors.collectLatest { error ->
+            val message = when (error) {
+                ReviewError.SaveFailed -> Res.string.practice_save_review_failed
+                ReviewError.UndoFailed -> Res.string.practice_undo_review_failed
+            }
+            snackbarHostState.showSnackbar(getString(message))
+        }
+    }
 
     var showEarlyFinishDialog by rememberSaveable { mutableStateOf(false) }
     if (showEarlyFinishDialog) {
@@ -103,7 +126,7 @@ fun LetterPracticeScreenUI(
             onDismissRequest = { showEarlyFinishDialog = false },
             onConfirmClick = {
                 showEarlyFinishDialog = false
-                finishPractice()
+                if (!reviewOperationInProgress.value) finishPractice()
             }
         )
     }
@@ -114,22 +137,33 @@ fun LetterPracticeScreenUI(
         }
     }
 
-    if (shouldShowLeaveConfirmationOnBackClick.value) {
-        MultiplatformBackHandler { showEarlyFinishDialog = true }
+    if (shouldShowLeaveConfirmationOnBackClick.value || reviewOperationInProgress.value) {
+        MultiplatformBackHandler {
+            if (!reviewOperationInProgress.value && shouldShowLeaveConfirmationOnBackClick.value) {
+                showEarlyFinishDialog = true
+            }
+        }
     }
 
     ScreenLayout(
         state = state,
+        snackbarHostState = snackbarHostState,
         toolbar = {
             PracticeToolbar(
                 state = state.toToolbarState(),
                 onUpButtonClick = {
-                    if (shouldShowLeaveConfirmationOnBackClick.value) {
-                        showEarlyFinishDialog = true
-                    } else {
-                        navigateBack()
+                    if (!reviewOperationInProgress.value) {
+                        if (shouldShowLeaveConfirmationOnBackClick.value) {
+                            showEarlyFinishDialog = true
+                        } else {
+                            navigateBack()
+                        }
                     }
-                }
+                },
+                onUndoClick = {
+                    if (!reviewOperationInProgress.value) onUndoClick()
+                },
+                actionsEnabled = !reviewOperationInProgress.value
             )
         },
         configuration = {
@@ -138,19 +172,34 @@ fun LetterPracticeScreenUI(
                 onConfigurationCompleted = onConfigured
             )
         },
-        review = {
-            ReviewState(
-                reviewState = it.reviewState,
-                onNextClick = onNextClick,
-                speakKana = speakKana,
-                onWordClick = onWordClick
-            )
+        review = { screenState ->
+            key(screenState.undoCount) {
+                ReviewState(
+                    reviewState = screenState.reviewState,
+                    onNextClick = { answer ->
+                        if (!reviewOperationInProgress.value && state.value === screenState) {
+                            onNextClick(answer)
+                        }
+                    },
+                    speakKana = speakKana,
+                    onWordClick = onWordClick
+                )
+            }
         },
-        summary = {
+        summary = { screenState ->
             SummaryState(
-                screenState = it,
-                onItemClick = onSummaryItemCLick,
-                onFinishClick = onPracticeCompleted
+                screenState = screenState,
+                finishEnabled = !reviewOperationInProgress.value && state.value === screenState,
+                onItemClick = {
+                    if (!reviewOperationInProgress.value && state.value === screenState) {
+                        onSummaryItemCLick(it)
+                    }
+                },
+                onFinishClick = {
+                    if (!reviewOperationInProgress.value && state.value === screenState) {
+                        onPracticeCompleted()
+                    }
+                }
             )
         }
     )
@@ -160,6 +209,7 @@ fun LetterPracticeScreenUI(
 @Composable
 private fun ScreenLayout(
     state: State<ScreenState>,
+    snackbarHostState: SnackbarHostState,
     toolbar: @Composable () -> Unit,
     configuration: @Composable (ScreenState.Configuring) -> Unit,
     review: @Composable (ScreenState.Review) -> Unit,
@@ -167,7 +217,8 @@ private fun ScreenLayout(
 ) {
 
     Scaffold(
-        topBar = { toolbar() }
+        topBar = { toolbar() },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
 
         val transition = updateTransition(targetState = state.value, label = "AnimatedContent")
@@ -199,13 +250,18 @@ private fun State<ScreenState>.toToolbarState(): State<PracticeToolbarState> {
     val state = remember {
         derivedStateOf {
             when (val currentState = value) {
-                ScreenState.Loading,
-                is ScreenState.Summary -> PracticeToolbarState.Idle
+                ScreenState.Loading -> PracticeToolbarState.Idle
+
+                is ScreenState.Summary -> {
+                    if (currentState.canUndo) PracticeToolbarState.SummaryWithUndo
+                    else PracticeToolbarState.Idle
+                }
 
                 is ScreenState.Configuring -> PracticeToolbarState.Configuration
 
                 is ScreenState.Review -> PracticeToolbarState.Review(
-                    practiceQueueProgress = currentState.practiceProgress
+                    practiceQueueProgress = currentState.practiceProgress,
+                    canUndo = currentState.canUndo
                 )
 
             }
@@ -348,6 +404,7 @@ private fun ReviewState(
 @Composable
 private fun SummaryState(
     screenState: ScreenState.Summary,
+    finishEnabled: Boolean,
     onItemClick: (LetterPracticeSummaryItem) -> Unit,
     onFinishClick: () -> Unit
 ) {
@@ -356,6 +413,7 @@ private fun SummaryState(
         practiceDuration = screenState.duration,
         summaryItemsCount = screenState.items.size,
         onFinishClick = onFinishClick,
+        finishEnabled = finishEnabled,
         extraHeaderContent = {
             if (screenState.accuracy != null) {
                 PracticeSummaryInfoLabel(

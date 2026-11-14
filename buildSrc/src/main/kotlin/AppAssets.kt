@@ -27,10 +27,6 @@ object AppAssets {
             Asset(
                 fileName = AppDataAssetFileName,
                 url = "https://github.com/syt0r/Kanji-Dojo-Data/releases/download/v15.0/kanji-dojo-data-base-v15.sql"
-            ),
-            Asset(
-                fileName = "text_analysis_preview.json",
-                url = null
             )
         )
     )

@@ -7,6 +7,14 @@
 
 </div>
 
+This is an independent, personal-use fork of Kanji Dojo. Accounts, cloud sync,
+Text Analysis (including its demo and history), payments, online feedback,
+donation features, remote analytics, and remote crash reporting have been removed.
+Local practice, dictionary data, pronunciation audio, study records, and local
+backup/restore remain. Optional reference links open in an external browser.
+Building still uses Gradle dependencies and downloads the bundled dictionary
+and audio assets when they are not already available locally.
+
 ## Table of Contents
 - [About this app](#about-this-app)
 - [Screenshots](#screenshots)
@@ -70,7 +78,7 @@ Repository with dictionary data and parsers here: [Kanji-Dojo-Data](https://gith
 ## Version comparison
 | Google Play                                                                         | F-Droid | Desktop |
 |-------------------------------------------------------------------------------------|---------|---------|
-| Firebase Analytics </br>Play services for in app review </br> Billing for donations | -       | -       |
+| No online service integrations | No online service integrations | No online service integrations |
 
 ## Contributions
 - Pull-Requests are welcome!

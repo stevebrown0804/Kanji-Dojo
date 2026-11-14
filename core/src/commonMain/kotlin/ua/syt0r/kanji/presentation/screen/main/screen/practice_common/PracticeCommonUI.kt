@@ -29,6 +29,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -87,6 +88,7 @@ import ua.syt0r.kanji.practice_summary_empty
 import ua.syt0r.kanji.practice_summary_header_reviews
 import ua.syt0r.kanji.practice_summary_header_time
 import ua.syt0r.kanji.practice_summary_item_insights
+import ua.syt0r.kanji.practice_undo_review
 import ua.syt0r.kanji.presentation.common.AppDropdownMenu
 import ua.syt0r.kanji.presentation.common.AppDropdownMenuItem
 import ua.syt0r.kanji.presentation.common.AppListItem
@@ -110,8 +112,11 @@ sealed interface PracticeToolbarState {
 
     object Configuration : PracticeToolbarState
 
+    object SummaryWithUndo : PracticeToolbarState
+
     data class Review(
-        val practiceQueueProgress: PracticeQueueProgress
+        val practiceQueueProgress: PracticeQueueProgress,
+        val canUndo: Boolean = false
     ) : PracticeToolbarState
 
 }
@@ -121,11 +126,13 @@ sealed interface PracticeToolbarState {
 @Composable
 fun PracticeToolbar(
     state: State<PracticeToolbarState>,
-    onUpButtonClick: () -> Unit
+    onUpButtonClick: () -> Unit,
+    onUndoClick: (() -> Unit)? = null,
+    actionsEnabled: Boolean = true
 ) {
     TopAppBar(
         navigationIcon = {
-            IconButton(onClick = onUpButtonClick) {
+            IconButton(onClick = onUpButtonClick, enabled = actionsEnabled) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
             }
         },
@@ -149,7 +156,7 @@ fun PracticeToolbar(
             AnimatedContent(
                 targetState = state.value,
                 transitionSpec = snapToBiggerContainerCrossfadeTransitionSpec(),
-                contentKey = { it is PracticeToolbarState.Review }
+                contentKey = { it::class }
             ) {
                 when (it) {
                     is PracticeToolbarState.Review -> {
@@ -157,8 +164,21 @@ fun PracticeToolbar(
                         PracticeProgressCounter(
                             pending = progress.pending,
                             repeat = progress.repeats,
-                            completed = progress.completed
+                            completed = progress.completed,
+                            canUndo = it.canUndo && actionsEnabled &&
+                                state.value is PracticeToolbarState.Review,
+                            onUndoClick = onUndoClick
                         )
+                    }
+
+                    PracticeToolbarState.SummaryWithUndo -> {
+                        if (onUndoClick != null) {
+                            PracticeUndoButton(
+                                enabled = actionsEnabled &&
+                                    state.value == PracticeToolbarState.SummaryWithUndo,
+                                onClick = onUndoClick
+                            )
+                        }
                     }
 
                     else -> {}
@@ -169,13 +189,23 @@ fun PracticeToolbar(
 }
 
 @Composable
-fun PracticeProgressCounter(pending: Int, repeat: Int, completed: Int) {
+fun PracticeProgressCounter(
+    pending: Int,
+    repeat: Int,
+    completed: Int,
+    canUndo: Boolean,
+    onUndoClick: (() -> Unit)?
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentSize(align = Alignment.CenterEnd),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        if (onUndoClick != null) {
+            PracticeUndoButton(enabled = canUndo, onClick = onUndoClick)
+        }
+
         ToolbarCountItem(
             count = pending,
             color = MaterialTheme.extraColorScheme.pending
@@ -189,6 +219,20 @@ fun PracticeProgressCounter(pending: Int, repeat: Int, completed: Int) {
         ToolbarCountItem(
             count = completed,
             color = MaterialTheme.extraColorScheme.success
+        )
+    }
+}
+
+@Composable
+private fun PracticeUndoButton(enabled: Boolean, onClick: () -> Unit) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.size(48.dp),
+        enabled = enabled
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.Undo,
+            contentDescription = stringResource(Res.string.practice_undo_review)
         )
     }
 }
@@ -571,6 +615,7 @@ fun PracticeSummaryContainer(
     practiceDuration: Duration,
     summaryItemsCount: Int,
     onFinishClick: () -> Unit,
+    finishEnabled: Boolean = true,
     extraHeaderContent: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -626,6 +671,7 @@ fun PracticeSummaryContainer(
 
         Button(
             onClick = onFinishClick,
+            enabled = finishEnabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(AppListItemDefaults.ExtraPaddings),

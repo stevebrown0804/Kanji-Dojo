@@ -89,7 +89,6 @@ fun SearchScreenUI(
     onCharacterClick: (String) -> Unit,
     onWordClick: (JapaneseWord) -> Unit,
     onScrolledToEnd: () -> Unit,
-    onWordFeedback: (JapaneseWord) -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()

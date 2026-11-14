@@ -48,7 +48,6 @@ fun VocabPracticeScreenUI(
     onNext: (PracticeAnswer) -> Unit,
     onInfoClick: (VocabReviewState) -> Unit,
     onSummaryItemClick: (VocabSummaryItem) -> Unit,
-    onFeedback: (JapaneseWord) -> Unit,
     navigateBack: () -> Unit,
     finishPractice: () -> Unit
 ) {
@@ -110,7 +109,6 @@ fun VocabPracticeScreenUI(
                         onAnswerSelected = onReadingPickerAnswerSelected,
                         onNextClick = onNext,
                         onInfoClick = onInfoClick,
-                        onFeedbackClick = onFeedback
                     )
                 }
 
@@ -207,7 +205,6 @@ private fun ScreenReview(
     onAnswerSelected: (String) -> Unit,
     onNextClick: (PracticeAnswer) -> Unit,
     onInfoClick: (VocabReviewState) -> Unit,
-    onFeedbackClick: (JapaneseWord) -> Unit
 ) {
 
     Box(
@@ -232,7 +229,6 @@ private fun ScreenReview(
                     onAnswerSelected = onAnswerSelected,
                     onNextClick = onNextClick,
                     onInfoClick = { onInfoClick(currentState) },
-                    onFeedbackClick = onFeedbackClick
                 )
             }
 
@@ -242,7 +238,6 @@ private fun ScreenReview(
                     answers = reviewState.answers,
                     answerSelected = onNextClick,
                     onInfoClick = { onInfoClick(currentState) },
-                    onFeedbackClick = onFeedbackClick
                 )
             }
         }

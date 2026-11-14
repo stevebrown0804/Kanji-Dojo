@@ -49,7 +49,6 @@ fun VocabPracticeReadingPickerUI(
     onInfoClick: () -> Unit,
     onAnswerSelected: (String) -> Unit,
     onNextClick: (PracticeAnswer) -> Unit,
-    onFeedbackClick: (JapaneseWord) -> Unit
 ) {
 
     Column(

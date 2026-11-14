@@ -18,34 +18,6 @@ class AppPreferences(
 ) : PreferencesContract.AppPreferences,
     SuspendedPropertyCreatorScope by creatorScope {
 
-    override val refreshToken: SuspendedProperty<String?> = createNullableProperty(
-        type = StringSuspendedPropertyType,
-        key = "refresh_token",
-        initialValue = { null },
-        enableBackup = false
-    )
-
-    override val idToken: SuspendedProperty<String?> = createNullableProperty(
-        type = StringSuspendedPropertyType,
-        key = "id_token",
-        initialValue = { null },
-        enableBackup = false
-    )
-
-    override val userInfo: SuspendedProperty<PreferencesUserInfo?> = createNullableProperty(
-        type = jsonPojoSuspendedPropertyType(),
-        key = "user_info",
-        enableBackup = false,
-        initialValue = { null }
-    )
-
-    override val subscriptionAlert: SuspendedProperty<String?> = createNullableProperty(
-        type = StringSuspendedPropertyType,
-        key = "subscription_alert",
-        enableBackup = false,
-        initialValue = { null }
-    )
-
     @OptIn(ExperimentalUuidApi::class)
     override val localDataId: SuspendedProperty<String> = createProperty(
         type = StringSuspendedPropertyType,
@@ -58,21 +30,6 @@ class AppPreferences(
         type = InstantSuspendedPropertyType,
         key = "local_data_timestamp",
         initialValue = { null }
-    )
-
-    override val lastSyncedDataInfo: SuspendedProperty<PreferencesSyncDataInfo?> =
-        createNullableProperty(
-            type = jsonPojoSuspendedPropertyType(),
-            key = "last_synced_data_info_json",
-            initialValue = { null },
-            enableBackup = false
-        )
-
-    override val analyticsEnabled: SuspendedProperty<Boolean> = createProperty(
-        type = BooleanSuspendedPropertyType,
-        key = "analytics_enabled",
-        initialValue = { true },
-        enableBackup = false
     )
 
     override val practiceType: SuspendedProperty<PreferencesLetterPracticeType> = createProperty(

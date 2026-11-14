@@ -21,17 +21,7 @@ class SqlDelightReviewHistoryRepository(
     override suspend fun addReview(
         item: ReviewHistoryItem
     ) = userDataDatabaseManager.writeTransaction {
-        item.run {
-            upsertReview(
-                key = key,
-                practice_type = practiceType,
-                timestamp = timestamp.toEpochMilliseconds(),
-                duration = duration.inWholeMilliseconds,
-                grade = grade.toLong(),
-                mistakes = mistakes.toLong(),
-                deck_id = deckId
-            )
-        }
+        upsertReview(item.toRow())
     }
 
     override suspend fun getReviews(
@@ -142,3 +132,13 @@ class SqlDelightReviewHistoryRepository(
     )
 
 }
+
+internal fun ReviewHistoryItem.toRow(): Review_history = Review_history(
+    key = key,
+    practice_type = practiceType,
+    timestamp = timestamp.toEpochMilliseconds(),
+    duration = duration.inWholeMilliseconds,
+    grade = grade.toLong(),
+    mistakes = mistakes.toLong(),
+    deck_id = deckId
+)

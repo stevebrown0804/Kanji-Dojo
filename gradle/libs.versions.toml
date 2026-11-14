@@ -23,9 +23,6 @@ datastore-preferences-core = "1.1.1"
 datastore-preferences = "1.1.1"
 media3-exoplayer = "1.4.1"
 
-firebase = "33.7.0"
-billing = "7.1.1"
-review-ktx = "2.0.1"
 
 build-config = "5.4.0"
 
@@ -51,11 +48,8 @@ koin-compose-viewmodel = {module = "io.insert-koin:koin-compose-viewmodel", vers
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 # Ktor
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
-ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-io = { module = "io.ktor:ktor-io", version.ref = "ktor" }
+ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
 
 # SQLDelight
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
@@ -95,15 +89,9 @@ wanakana-core = { module = "dev.esnault.wanakana:wanakana-core", version.ref = "
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
-firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
-review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "review-ktx" }
 compose-reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 javacv-platform = { module = "org.bytedeco:javacv-platform", version.ref = "javacv-platform" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [bundles]
-firebase-bom = ["firebase-analytics-ktx", "firebase-crashlytics-ktx"]

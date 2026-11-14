@@ -30,9 +30,6 @@
     <string name="general_dashboard_study_target_no_decks">デッキなし。作成へ</string>
     <string name="general_dashboard_study_target_nothing_left">今日はもう学習することがなし</string>
 
-    <string name="general_dashboard_text_analysis">テキスト分析</string>
-    <string name="general_dashboard_social">ソーシャル</string>
-    <string name="general_dashboard_downloads">ダウンロード</string>
     <string name="general_dashboard_tutorial">チュートリアル</string>
 
     <string name="common_dashboard_deck_details">詳細</string>
@@ -56,6 +53,9 @@
     <string name="vocab_card_invalid_kana">かなの読みが空です</string>
     <string name="vocab_card_invalid_meaning">意味が空です</string>
 
+    <string name="practice_undo_review">直前の復習を取り消す</string>
+    <string name="practice_save_review_failed">復習結果を保存できませんでした。</string>
+    <string name="practice_undo_review_failed">復習結果を取り消せませんでした。</string>
     <string name="practice_summary_header_time">時間</string>
     <string name="practice_summary_header_reviews">練習したカードの数</string>
     <string name="practice_summary_header_accuracy">正解率</string>
