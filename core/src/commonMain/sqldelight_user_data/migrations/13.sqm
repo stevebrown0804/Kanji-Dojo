@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS letter_deck_settings (
+    id INTEGER PRIMARY KEY NOT NULL CHECK (id = 1),
+    only_allow_single_deck_per_kanji INTEGER NOT NULL DEFAULT 0
+        CHECK (only_allow_single_deck_per_kanji IN (0, 1))
+);
+
+PRAGMA user_version = 14;
