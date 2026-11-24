@@ -102,6 +102,8 @@ fun SaveLettersDialog(
         }
     )
 
+    LetterDeckConflictDialog(dialogState.letterDeckConflictPrompt)
+
 }
 
 @Composable
@@ -250,6 +252,7 @@ private class SaveLettersDialogState(
 
     private val _state = mutableStateOf<DialogState>(DialogState.Loading)
     val state: State<DialogState> = _state
+    val letterDeckConflictPrompt = LetterDeckConflictPrompt()
 
     init {
         coroutineScope.launch {
@@ -280,21 +283,28 @@ private class SaveLettersDialogState(
             when (currentState) {
                 is DialogState.CreateNewDeck -> {
                     _state.value = DialogState.Saving
-                    repository.createDeck(
-                        title = currentState.title.value,
-                        characters = letters
-                    )
+                    val title = currentState.title.value
+                    letterDeckConflictPrompt.save {
+                        repository.createDeck(
+                            title = title,
+                            characters = letters,
+                            conflictResolutions = it
+                        )
+                    }
                 }
 
                 is DialogState.SelectingDeck -> {
                     val deck = currentState.selectedDeck.value ?: return@launch
                     _state.value = DialogState.Saving
-                    repository.updateDeck(
-                        id = deck.id,
-                        title = deck.title,
-                        charactersToAdd = letters,
-                        charactersToRemove = emptyList()
-                    )
+                    letterDeckConflictPrompt.save {
+                        repository.updateDeck(
+                            id = deck.id,
+                            title = deck.title,
+                            charactersToAdd = letters,
+                            charactersToRemove = emptyList(),
+                            conflictResolutions = it
+                        )
+                    }
                 }
 
                 else -> return@launch

@@ -3,6 +3,7 @@ package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.StateFlow
+import ua.syt0r.kanji.presentation.dialog.LetterDeckConflictPrompt
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.AddCharactersResult
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardEditResult
 
@@ -10,6 +11,7 @@ interface DeckEditScreenContract {
 
     interface ViewModel {
         val state: StateFlow<ScreenState>
+        val letterDeckConflictPrompt: LetterDeckConflictPrompt
         fun initialize(configuration: DeckEditScreenConfiguration)
         fun notifyVocabCardResult(editResult: VocabCardEditResult)
         fun addCharacters(input: String)

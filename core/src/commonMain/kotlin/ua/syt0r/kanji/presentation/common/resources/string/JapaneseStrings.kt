@@ -242,6 +242,7 @@ object JapaneseSettingsStrings : SettingsStrings {
     override val reminderEnabled: String = "有効"
     override val reminderDisabled: String = "無効"
     override val defaultTab: String = "デフォルトのタブ"
+    override val onlyAllowSingleDeckPerKanji: String = "漢字ごとに1つのデッキに制限"
     override val backupTitle: String = "バックアップと復元"
     override val aboutTitle: String = "このアプリについて"
     override val pickerDialogCancel: String = "キャンセル"

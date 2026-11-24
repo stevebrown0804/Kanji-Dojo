@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -36,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import ua.syt0r.kanji.presentation.common.MultiplatformDialog
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
@@ -66,9 +68,8 @@ fun SettingsScreenUI(
             is ScreenState.Loaded -> {
                 SettingsContent {
 
-                    loadedContent(screenState)
-
                     SettingsBackupButton(onBackupButtonClick)
+                    loadedContent(screenState)
                     SettingsAboutButton(onAboutButtonClick)
 
                 }
@@ -107,18 +108,20 @@ fun SettingsContent(
 @Composable
 fun SettingsSwitchRow(
     title: String,
-    message: String,
-    isEnabled: Boolean,
-    onToggled: () -> Unit
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
 ) {
 
     ListItem(
         headlineContent = { Text(text = title) },
-        supportingContent = { Text(message) },
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .fillMaxWidth()
+            .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
         trailingContent = {
             Switch(
-                checked = isEnabled,
-                onCheckedChange = { onToggled() },
+                checked = checked,
+                onCheckedChange = null,
                 colors = SwitchDefaults.colors(
                     uncheckedTrackColor = MaterialTheme.colorScheme.background
                 )

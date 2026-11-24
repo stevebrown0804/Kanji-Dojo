@@ -56,6 +56,7 @@ val deckEditScreenModule = module {
             loadDeckEditLetterDataUseCase = get(),
             loadDeckEditVocabDataUseCase = get(),
             validateDeckCharactersUseCase = get(),
+            letterPracticeRepository = get(),
             saveDeckUseCase = get(),
             deleteDeckUseCase = get(),
             analyticsManager = get()

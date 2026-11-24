@@ -19,6 +19,7 @@ import ua.syt0r.kanji.core.user_data.preferences.PreferencesContract
 import ua.syt0r.kanji.presentation.LifecycleAwareViewModel
 import ua.syt0r.kanji.presentation.LifecycleState
 import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.dialog.LetterDeckConflictPrompt
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.DeckDashboardListMode
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.DeckDashboardListState
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.DecksMergeRequestData
@@ -44,6 +45,7 @@ class LettersDashboardViewModel(
     private val sortRequestsChannel = Channel<DecksSortRequestData>()
 
     override val state = mutableStateOf<ScreenState>(ScreenState.Loading)
+    override val letterDeckConflictPrompt = LetterDeckConflictPrompt()
 
     init {
         loadDataUseCase.load(lifecycleState)
@@ -106,9 +108,14 @@ class LettersDashboardViewModel(
     }
 
     override fun mergeDecks(data: DecksMergeRequestData) {
+        if (state.value == ScreenState.Loading) return
         Logger.d("data[$data]")
         state.value = ScreenState.Loading
-        viewModelScope.launch { mergeDecksUseCase(data) }
+        viewModelScope.launch {
+            letterDeckConflictPrompt.save {
+                mergeDecksUseCase(data, it)
+            }
+        }
     }
 
     override fun sortDecks(data: DecksSortRequestData) {

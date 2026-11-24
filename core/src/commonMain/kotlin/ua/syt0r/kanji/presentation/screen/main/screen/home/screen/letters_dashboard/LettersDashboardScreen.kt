@@ -1,6 +1,7 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.home.screen.letters_dashboard
 
 import androidx.compose.runtime.Composable
+import ua.syt0r.kanji.presentation.dialog.LetterDeckConflictDialog
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.MainDestination
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
@@ -41,5 +42,7 @@ fun LettersDashboardScreen(
             mainNavigationState.navigate(destination)
         }
     )
+
+    LetterDeckConflictDialog(viewModel.letterDeckConflictPrompt)
 
 }

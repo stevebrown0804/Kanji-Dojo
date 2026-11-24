@@ -10,10 +10,11 @@ class OfflineDatabaseMigrationTest {
 
     @Test
     fun freshDatabaseHasNoTextAnalysisTable() {
-        withDatabase { driver, _ ->
+        withDatabase { driver, database ->
             assertFalse("text_analysis" in tableNames(driver))
             assertTrue(tableNames(driver).containsAll(studyTables))
-            assertEquals(13L, databaseVersion(driver))
+            assertEquals(UserDataDatabase.Schema.version, databaseVersion(driver))
+            assertEquals(null, database.userDataQueries.getOnlyAllowSingleDeckPerKanji().executeAsOneOrNull())
         }
     }
 
@@ -36,6 +37,7 @@ class OfflineDatabaseMigrationTest {
             driver.execute(null, "INSERT INTO vocab_deck_entry VALUES (1, 1, 'X', 'reading', 'meaning', 123)", 0)
             driver.execute(null, "INSERT INTO fsrs_card VALUES ('X', 0, 1, 2.5, 3.5, 1, 4, 100, 5)", 0)
             driver.execute(null, "INSERT INTO review_history VALUES ('X', 0, 100, 900, 3, 0, 1)", 0)
+            driver.execute(null, "DROP TABLE letter_deck_settings", 0)
             driver.execute(null, "PRAGMA user_version = 12", 0)
 
             val before = studyRecords(database)
@@ -43,7 +45,13 @@ class OfflineDatabaseMigrationTest {
 
             assertFalse("text_analysis" in tableNames(driver))
             assertEquals(before, studyRecords(database))
-            assertEquals(13L, databaseVersion(driver))
+            assertEquals(UserDataDatabase.Schema.version, databaseVersion(driver))
+            val queries = database.userDataQueries
+            assertEquals(null, queries.getOnlyAllowSingleDeckPerKanji().executeAsOneOrNull())
+            queries.setOnlyAllowSingleDeckPerKanji(1L)
+            assertEquals(1L, UserDataDatabase(driver).userDataQueries.getOnlyAllowSingleDeckPerKanji().executeAsOne())
+            queries.setOnlyAllowSingleDeckPerKanji(0L)
+            assertEquals(0L, queries.getOnlyAllowSingleDeckPerKanji().executeAsOne())
         }
     }
 

@@ -202,6 +202,7 @@ interface SettingsStrings {
     val reminderEnabled: String
     val reminderDisabled: String
     val defaultTab: String
+    val onlyAllowSingleDeckPerKanji: String
     val backupTitle: String
     val aboutTitle: String
 

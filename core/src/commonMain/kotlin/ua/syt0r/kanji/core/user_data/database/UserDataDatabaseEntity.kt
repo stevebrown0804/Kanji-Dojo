@@ -41,6 +41,16 @@ data class LetterDeck(
     val position: Int,
 )
 
+data class LetterDeckConflict(
+    val character: String,
+    val decks: List<LetterDeck>,
+)
+
+sealed interface LetterDeckConflictResolution {
+    data object Leave : LetterDeckConflictResolution
+    data class Move(val sourceDeckIds: Set<Long>) : LetterDeckConflictResolution
+}
+
 data class CharacterStudyProgress(
     val character: String,
     val practiceType: LetterPracticeType,

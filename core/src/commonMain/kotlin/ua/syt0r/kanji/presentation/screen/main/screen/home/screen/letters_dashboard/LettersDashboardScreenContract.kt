@@ -5,7 +5,10 @@ import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import ua.syt0r.kanji.core.RefreshableData
+import ua.syt0r.kanji.core.user_data.database.LetterDeckConflict
+import ua.syt0r.kanji.core.user_data.database.LetterDeckConflictResolution
 import ua.syt0r.kanji.presentation.LifecycleState
+import ua.syt0r.kanji.presentation.dialog.LetterDeckConflictPrompt
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.DeckDashboardListState
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.DecksMergeRequestData
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.DecksSortRequestData
@@ -16,6 +19,7 @@ interface LettersDashboardScreenContract {
     interface ViewModel {
 
         val state: State<ScreenState>
+        val letterDeckConflictPrompt: LetterDeckConflictPrompt
 
         fun mergeDecks(data: DecksMergeRequestData)
         fun sortDecks(data: DecksSortRequestData)
@@ -41,7 +45,10 @@ interface LettersDashboardScreenContract {
     }
 
     interface MergeDecksUseCase {
-        suspend operator fun invoke(data: DecksMergeRequestData)
+        suspend operator fun invoke(
+            data: DecksMergeRequestData,
+            conflictResolutions: Map<String, LetterDeckConflictResolution>,
+        ): List<LetterDeckConflict>
     }
 
     interface UpdateSortUseCase {

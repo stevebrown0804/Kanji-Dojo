@@ -12,8 +12,18 @@ interface ObservableRepository {
 }
 
 interface LetterPracticeRepository : ObservableRepository {
-    suspend fun createDeck(title: String, characters: List<String>)
-    suspend fun createDeckAndMerge(title: String, deckIdToMerge: List<Long>)
+    suspend fun createDeck(
+        title: String,
+        characters: List<String>,
+        conflictResolutions: Map<String, LetterDeckConflictResolution> = emptyMap(),
+    ): List<LetterDeckConflict>
+
+    suspend fun createDeckAndMerge(
+        title: String,
+        deckIdToMerge: List<Long>,
+        conflictResolutions: Map<String, LetterDeckConflictResolution> = emptyMap(),
+    ): List<LetterDeckConflict>
+
     suspend fun updateDeckPositions(deckIdToPositionMap: Map<Long, Int>)
     suspend fun deleteDeck(id: Long)
     suspend fun updateDeck(
@@ -21,11 +31,16 @@ interface LetterPracticeRepository : ObservableRepository {
         title: String,
         charactersToAdd: List<String>,
         charactersToRemove: List<String>,
-    )
+        conflictResolutions: Map<String, LetterDeckConflictResolution> = emptyMap(),
+    ): List<LetterDeckConflict>
 
     suspend fun getDecks(): List<LetterDeck>
     suspend fun getDeck(id: Long): LetterDeck
     suspend fun getDeckCharacters(id: Long): List<String>
+    suspend fun getDeckConflicts(
+        characters: List<String>,
+        targetDeckId: Long?,
+    ): List<LetterDeckConflict>
 }
 
 interface VocabPracticeRepository : ObservableRepository {

@@ -1,6 +1,8 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case
 
 import ua.syt0r.kanji.core.logger.Logger
+import ua.syt0r.kanji.core.user_data.database.LetterDeckConflict
+import ua.syt0r.kanji.core.user_data.database.LetterDeckConflictResolution
 import ua.syt0r.kanji.core.user_data.database.LetterPracticeRepository
 import ua.syt0r.kanji.core.user_data.database.VocabPracticeRepository
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditItemAction
@@ -13,8 +15,9 @@ interface SaveDeckUseCase {
     suspend operator fun invoke(
         configuration: DeckEditScreenConfiguration,
         title: String,
-        list: List<DeckEditListItem>
-    )
+        list: List<DeckEditListItem>,
+        conflictResolutions: Map<String, LetterDeckConflictResolution>
+    ): List<LetterDeckConflict>
 }
 
 class DefaultSaveDeckUseCase(
@@ -25,27 +28,30 @@ class DefaultSaveDeckUseCase(
     override suspend fun invoke(
         configuration: DeckEditScreenConfiguration,
         title: String,
-        list: List<DeckEditListItem>
-    ) {
+        list: List<DeckEditListItem>,
+        conflictResolutions: Map<String, LetterDeckConflictResolution>
+    ): List<LetterDeckConflict> {
         Logger.logMethod()
         when (configuration) {
             is DeckEditScreenConfiguration.LetterDeck.CreateNew,
             is DeckEditScreenConfiguration.LetterDeck.CreateDerived -> {
-                letterPracticeRepository.createDeck(
+                return letterPracticeRepository.createDeck(
                     title = title,
                     characters = list.filter<LetterDeckEditListItem>(DeckEditItemAction.Add)
                         .map { it.character },
+                    conflictResolutions = conflictResolutions
                 )
             }
 
             is DeckEditScreenConfiguration.LetterDeck.Edit -> {
-                letterPracticeRepository.updateDeck(
+                return letterPracticeRepository.updateDeck(
                     id = configuration.letterDeckId,
                     title = title,
                     charactersToAdd = list.filter<LetterDeckEditListItem>(DeckEditItemAction.Add)
                         .map { it.character },
                     charactersToRemove = list.filter<LetterDeckEditListItem>(DeckEditItemAction.Remove)
-                        .map { it.character }
+                        .map { it.character },
+                    conflictResolutions = conflictResolutions
                 )
             }
 
@@ -75,6 +81,7 @@ class DefaultSaveDeckUseCase(
                 )
             }
         }
+        return emptyList()
     }
 
     @Suppress("UNCHECKED_CAST")

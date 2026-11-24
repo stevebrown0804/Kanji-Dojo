@@ -8,6 +8,7 @@ import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightReviewHistory
 import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightVocabPracticeRepository
 import ua.syt0r.kanji.core.user_data.database.use_case.DefaultUpdateLocalDataTimestampUseCase
 import ua.syt0r.kanji.core.user_data.database.use_case.UpdateLocalDataTimestampUseCase
+import ua.syt0r.kanji.core.user_data.preferences.SingleDeckPerKanjiPreference
 
 fun Module.addUserDataDatabaseDefinitions() {
 
@@ -29,6 +30,8 @@ fun Module.addUserDataDatabaseDefinitions() {
     single<UserDataDatabaseContract.MigrationObservable> {
         DefaultMigrationObservable()
     }
+
+    single { SingleDeckPerKanjiPreference(databaseManager = get()) }
 
     single<LetterPracticeRepository> {
         SqlDelightLetterPracticeRepository(

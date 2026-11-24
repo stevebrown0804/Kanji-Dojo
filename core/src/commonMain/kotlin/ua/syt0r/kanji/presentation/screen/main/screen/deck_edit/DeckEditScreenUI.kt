@@ -285,7 +285,10 @@ private fun LoadedState(
     if (showTitleInputDialog) {
         SaveDeckDialog(
             title = screenState.title,
-            onConfirm = onSaveConfirmed,
+            onConfirm = {
+                showTitleInputDialog = false
+                onSaveConfirmed()
+            },
             onDismissRequest = { showTitleInputDialog = false }
         )
     }

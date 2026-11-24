@@ -18,7 +18,7 @@ class SettingsScreenViewModel(
     init {
         coroutineScope.launch {
 
-            val combinedItems = customSettingItems.plus(defaultSettingItems)
+            val combinedItems = defaultSettingItems + customSettingItems
 
             combinedItems.filterIsInstance<SettingsScreenContract.ConfigurableListItem>()
                 .forEach { it.prepare(coroutineScope) }

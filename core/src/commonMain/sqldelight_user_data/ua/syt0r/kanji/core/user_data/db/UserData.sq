@@ -1,4 +1,4 @@
-PRAGMA user_version = 13;
+PRAGMA user_version = 14;
 
 getLastInsertRowId:
 SELECT last_insert_rowid();
@@ -57,6 +57,16 @@ WHERE deck_id IN :deckIdToMigrate;
 
 getEntriesForLetterDeck:
 SELECT * FROM letter_deck_entry WHERE deck_id=?;
+
+getCharactersForLetterDecks:
+SELECT DISTINCT character FROM letter_deck_entry WHERE deck_id IN :deckIds;
+
+getLetterDecksForCharacters:
+SELECT entry.character, deck.id, deck.name, deck.position
+FROM letter_deck_entry AS entry
+JOIN letter_deck AS deck ON deck.id = entry.deck_id
+WHERE entry.character IN :characters
+ORDER BY deck.position DESC, deck.id;
 
 ------- VOCAB DECKS -------
 
@@ -257,3 +267,18 @@ WITH
 SELECT ReviewKeys.key, ReviewData
 FROM ReviewKeys
 LEFT JOIN FormattedReviews ON ReviewKeys.key = FormattedReviews.key;
+
+CREATE TABLE IF NOT EXISTS letter_deck_settings (
+    id INTEGER PRIMARY KEY NOT NULL CHECK (id = 1),
+    only_allow_single_deck_per_kanji INTEGER NOT NULL DEFAULT 0
+        CHECK (only_allow_single_deck_per_kanji IN (0, 1))
+);
+
+getOnlyAllowSingleDeckPerKanji:
+SELECT only_allow_single_deck_per_kanji
+FROM letter_deck_settings
+WHERE id = 1;
+
+setOnlyAllowSingleDeckPerKanji:
+INSERT OR REPLACE INTO letter_deck_settings (id, only_allow_single_deck_per_kanji)
+VALUES (1, :enabled);
