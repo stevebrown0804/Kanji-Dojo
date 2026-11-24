@@ -5,6 +5,7 @@ private lateinit var instance: JapaneseUtils
 interface JapaneseUtils {
 
     fun String.kanaToRomaji(): String
+    fun String.readingInputToHiragana(): String
     fun Char.isKanji(): Boolean
     fun Char.isHiragana(): Boolean
     fun Char.isKatakana(): Boolean
@@ -21,6 +22,7 @@ interface JapaneseUtils {
 }
 
 actual fun String.kanaToRomaji(): String = with(instance) { kanaToRomaji() }
+actual fun String.readingInputToHiragana(): String = with(instance) { readingInputToHiragana() }
 actual fun Char.isKanji(): Boolean = with(instance) { isKanji() }
 actual fun Char.isHiragana(): Boolean = with(instance) { isHiragana() }
 actual fun Char.isKatakana(): Boolean = with(instance) { isKatakana() }

@@ -21,6 +21,11 @@ class SwiftWanakanaJapaneseUtils: CoreJapaneseUtils {
     func kanaToRomaji(_ receiver: String) -> String {
         return WanaKana.toRomaji(receiver)!
     }
+
+    func readingInputToHiragana(_ receiver: String) -> String {
+        let normalized = receiver.precomposedStringWithCompatibilityMapping
+        return normalized.applyingTransform(.latinToHiragana, reverse: false) ?? normalized
+    }
     
     func charToString(_ value: unichar) -> String {
         String.init(format: "%C", value)

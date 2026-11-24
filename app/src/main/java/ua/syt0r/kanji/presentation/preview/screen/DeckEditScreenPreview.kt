@@ -25,8 +25,8 @@ private fun BasePreview(
             configuration = configuration,
             state = rememberUpdatedState(state),
             navigateBack = {},
-            submitSearch = {},
-            dismissSearchResult = {},
+            submitAdd = {},
+            dismissAddResult = {},
             onItemClick = {},
             toggleRemoval = {},
             editItem = {},
@@ -61,7 +61,7 @@ private fun randomLetterEditState() = remember {
     MutableLetterDeckEditingState(
         title = mutableStateOf(""),
         confirmExit = mutableStateOf(false),
-        searching = mutableStateOf(false),
+        adding = mutableStateOf(false),
         listState = mutableStateOf(
             value = (1..80).map {
                 LetterDeckEditListItem(
@@ -71,6 +71,6 @@ private fun randomLetterEditState() = remember {
                 )
             }
         ),
-        lastSearchResult = mutableStateOf(value = null)
+        lastAddResult = mutableStateOf(value = null)
     )
 }

@@ -391,9 +391,12 @@ object EnglishDeckPickerStrings : DeckPickerStrings {
 object EnglishDeckEditStrings : DeckEditStrings {
     override val createTitle: String = "Create Deck"
     override val ediTitle: String = "Edit Deck"
-    override val searchHint: String = "Enter kana or kanji"
+    override val addCharactersHint: String = "Enter kana or kanji"
+    override val searchCharactersHint: String = "Search by kanji or reading"
+    override val clearCharactersInput: String = "Clear input"
+    override val editingModeAddTitle: String = "Add"
+    override val editingModeRemoveTitle: String = "Remove"
     override val editingModeSearchTitle: String = "Search"
-    override val editingModeRemovalTitle: String = "Removal"
     override val editingModeDetailsTitle: String = "Details"
     override val vocabDetailsEmptyMessage: (inlineIconId: String) -> AnnotatedString = {
         buildAnnotatedString {

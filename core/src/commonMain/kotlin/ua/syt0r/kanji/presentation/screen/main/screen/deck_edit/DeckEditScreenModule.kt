@@ -6,12 +6,12 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.Default
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultLoadDeckEditLetterDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultLoadDeckEditVocabDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultSaveDeckUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultSearchValidCharactersUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultValidateDeckCharactersUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DeleteDeckUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditLetterDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditVocabDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SaveDeckUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SearchValidCharactersUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.ValidateDeckCharactersUseCase
 
 val deckEditScreenModule = module {
 
@@ -30,8 +30,8 @@ val deckEditScreenModule = module {
         )
     }
 
-    factory<SearchValidCharactersUseCase> {
-        DefaultSearchValidCharactersUseCase(
+    factory<ValidateDeckCharactersUseCase> {
+        DefaultValidateDeckCharactersUseCase(
             appDataRepository = get()
         )
     }
@@ -55,7 +55,7 @@ val deckEditScreenModule = module {
             viewModelScope = it.component1(),
             loadDeckEditLetterDataUseCase = get(),
             loadDeckEditVocabDataUseCase = get(),
-            searchValidCharactersUseCase = get(),
+            validateDeckCharactersUseCase = get(),
             saveDeckUseCase = get(),
             deleteDeckUseCase = get(),
             analyticsManager = get()

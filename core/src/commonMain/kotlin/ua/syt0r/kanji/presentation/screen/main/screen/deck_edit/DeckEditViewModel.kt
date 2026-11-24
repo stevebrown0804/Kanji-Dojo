@@ -8,19 +8,19 @@ import kotlinx.coroutines.launch
 import ua.syt0r.kanji.core.analytics.AnalyticsManager
 import ua.syt0r.kanji.core.runUnit
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenContract.ScreenState
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.AddCharactersResult
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DeleteDeckUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditLetterDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditVocabDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SaveDeckUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SearchResult
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SearchValidCharactersUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.ValidateDeckCharactersUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardEditResult
 
 class DeckEditViewModel(
     private val viewModelScope: CoroutineScope,
     private val loadDeckEditLetterDataUseCase: LoadDeckEditLetterDataUseCase,
     private val loadDeckEditVocabDataUseCase: LoadDeckEditVocabDataUseCase,
-    private val searchValidCharactersUseCase: SearchValidCharactersUseCase,
+    private val validateDeckCharactersUseCase: ValidateDeckCharactersUseCase,
     private val saveDeckUseCase: SaveDeckUseCase,
     private val deleteDeckUseCase: DeleteDeckUseCase,
     private val analyticsManager: AnalyticsManager
@@ -51,26 +51,26 @@ class DeckEditViewModel(
             when (configuration) {
                 is DeckEditScreenConfiguration.LetterDeck -> {
                     val letterData = loadDeckEditLetterDataUseCase(configuration)
-                    val searchResult = searchValidCharactersUseCase(letterData.characters)
+                    val addResult = validateDeckCharactersUseCase(letterData.characters)
 
                     deckTitle.value = letterData.title ?: ""
 
                     letterEditingState = MutableLetterDeckEditingState(
                         title = deckTitle,
                         confirmExit = wasDeckEdited,
-                        searching = mutableStateOf(false),
+                        adding = mutableStateOf(false),
                         listState = mutableStateOf(emptyList()),
-                        lastSearchResult = mutableStateOf(searchResult),
+                        lastAddResult = mutableStateOf(addResult),
                     )
 
-                    addSearchLetters(
-                        searchResult = searchResult,
+                    addLettersToEditList(
+                        addResult = addResult,
                         defaultAction = defaultListItemAction
                     )
 
                     _state.value = letterEditingState
 
-                    reportInvalidImportCharacter(searchResult.unknownCharacters)
+                    reportInvalidImportCharacter(addResult.unknownCharacters)
                 }
 
                 is DeckEditScreenConfiguration.VocabDeck -> {
@@ -116,34 +116,38 @@ class DeckEditViewModel(
 
     }
 
-    override fun searchCharacters(input: String) = letterEditingState.runUnit {
-        searching.value = true
+    override fun addCharacters(input: String) = letterEditingState.runUnit {
+        adding.value = true
         viewModelScope.launch {
-            val searchResult = searchValidCharactersUseCase(input)
-            addSearchLetters(searchResult, DeckEditItemAction.Add)
-            lastSearchResult.value = searchResult
+            val addResult = validateDeckCharactersUseCase(input)
+            addLettersToEditList(addResult, DeckEditItemAction.Add)
+            lastAddResult.value = addResult
             wasDeckEdited.value = true
-            searching.value = false
+            adding.value = false
         }
     }
 
-    override fun dismissSearchResult() {
-        letterEditingState.lastSearchResult.value = null
+    override fun dismissAddResult() {
+        letterEditingState.lastAddResult.value = null
     }
 
-    private fun addSearchLetters(
-        searchResult: SearchResult,
+    private fun addLettersToEditList(
+        addResult: AddCharactersResult,
         defaultAction: DeckEditItemAction
     ) {
         val currentCharactersSet = letterEditingState.getCurrentList()
             .map { it.character }
             .toSet()
 
-        val newListItems = searchResult.detectedCharacter
+        val newListItems = addResult.detectedCharacter
             .filter { !currentCharactersSet.contains(it) }
-            .map {
-                val mutableAction = mutableStateOf(defaultAction)
-                LetterDeckEditListItem(it, defaultAction, mutableAction)
+            .map { character ->
+                LetterDeckEditListItem(
+                    character = character,
+                    initialAction = defaultAction,
+                    action = mutableStateOf(defaultAction),
+                    readings = addResult.readingsByCharacter[character].orEmpty()
+                )
             }
         letterEditingState.listState.value = letterEditingState.listState.value.plus(newListItems)
     }

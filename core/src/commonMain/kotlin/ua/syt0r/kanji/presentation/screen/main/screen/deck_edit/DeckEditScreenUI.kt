@@ -79,8 +79,8 @@ fun DeckEditScreenUI(
     configuration: DeckEditScreenConfiguration,
     state: State<ScreenState>,
     navigateBack: () -> Unit,
-    submitSearch: (String) -> Unit,
-    dismissSearchResult: () -> Unit,
+    submitAdd: (String) -> Unit,
+    dismissAddResult: () -> Unit,
     onItemClick: (DeckEditListItem) -> Unit,
     toggleRemoval: (DeckEditListItem) -> Unit,
     editItem: (VocabDeckEditListItem) -> Unit,
@@ -163,8 +163,8 @@ fun DeckEditScreenUI(
                     LoadedState(
                         screenState = screenState,
                         extraListSpacerState = extraListSpacerState,
-                        onInputSubmit = submitSearch,
-                        dismissSearchResult = dismissSearchResult,
+                        submitAdd = submitAdd,
+                        dismissAddResult = dismissAddResult,
                         onItemClick = onItemClick,
                         toggleRemoval = toggleRemoval,
                         editItem = editItem,
@@ -273,8 +273,8 @@ private fun Toolbar(
 private fun LoadedState(
     screenState: ScreenState.Loaded,
     extraListSpacerState: ExtraListSpacerState,
-    onInputSubmit: (String) -> Unit,
-    dismissSearchResult: () -> Unit,
+    submitAdd: (String) -> Unit,
+    dismissAddResult: () -> Unit,
     onItemClick: (DeckEditListItem) -> Unit,
     toggleRemoval: (DeckEditListItem) -> Unit,
     editItem: (VocabDeckEditListItem) -> Unit,
@@ -299,17 +299,17 @@ private fun LoadedState(
                 LetterDeckEditingUI(
                     screenState = screenState,
                     extraListSpacerState = extraListSpacerState,
-                    submitSearch = onInputSubmit,
+                    submitAdd = submitAdd,
                     onItemClick = onItemClick,
                     toggleRemoval = toggleRemoval
                 )
 
-                screenState.lastSearchResult.value
+                screenState.lastAddResult.value
                     ?.takeIf { it.unknownCharacters.isNotEmpty() }
                     ?.let {
                         DeckEditUnknownCharactersDialog(
                             characters = it.unknownCharacters,
-                            onDismissRequest = dismissSearchResult
+                            onDismissRequest = dismissAddResult
                         )
                     }
             }
@@ -328,7 +328,7 @@ private fun LoadedState(
         val shouldShow = remember {
             derivedStateOf {
                 val letterEditingState = screenState as? ScreenState.LetterDeckEditing
-                letterEditingState?.searching?.value?.not() ?: true
+                letterEditingState?.adding?.value?.not() ?: true
             }
         }
 

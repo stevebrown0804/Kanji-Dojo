@@ -303,10 +303,13 @@ interface DeckEditStrings {
     val createTitle: String
     val ediTitle: String
 
-    val searchHint: String
+    val addCharactersHint: String
+    val searchCharactersHint: String
+    val clearCharactersInput: String
 
+    val editingModeAddTitle: String
+    val editingModeRemoveTitle: String
     val editingModeSearchTitle: String
-    val editingModeRemovalTitle: String
 
     val editingModeDetailsTitle: String
     val vocabDetailsEmptyMessage: (inlineIconId: String) -> AnnotatedString

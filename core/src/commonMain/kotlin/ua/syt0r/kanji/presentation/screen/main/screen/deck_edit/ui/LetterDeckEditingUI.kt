@@ -20,10 +20,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.Search
@@ -32,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,18 +63,36 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenCo
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditingMode
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditingModeSelector
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.LetterDeckEditListItem
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DeckReadingSearchQuery
 
 
 @Composable
 fun LetterDeckEditingUI(
     screenState: ScreenState.LetterDeckEditing,
     extraListSpacerState: ExtraListSpacerState,
-    submitSearch: (String) -> Unit,
+    submitAdd: (String) -> Unit,
     onItemClick: (DeckEditListItem) -> Unit,
     toggleRemoval: (DeckEditListItem) -> Unit,
 ) {
 
-    val deckEditingMode = rememberSaveable { mutableStateOf(LetterDeckEditingMode.Search) }
+    val deckEditingMode = rememberSaveable { mutableStateOf(LetterDeckEditingMode.Add) }
+    var searchQuery by rememberSaveable(deckEditingMode.value) { mutableStateOf("") }
+    val isSearching = deckEditingMode.value == LetterDeckEditingMode.Search
+    val editingGridState = rememberLazyGridState()
+    val searchGridState = rememberLazyGridState()
+    val deckItems = screenState.listState.value
+    val visibleItems = remember(deckItems, isSearching, searchQuery) {
+        if (isSearching && searchQuery.isNotBlank()) {
+            val query = DeckReadingSearchQuery.parse(searchQuery)
+            deckItems.filter { query.matches(it.character, it.readings) }
+        } else {
+            deckItems
+        }
+    }
+
+    LaunchedEffect(isSearching, searchQuery) {
+        if (isSearching) searchGridState.scrollToItem(0)
+    }
 
     Column(
         modifier = Modifier
@@ -91,8 +112,9 @@ fun LetterDeckEditingUI(
                 DeckEditingModeSelector(
                     selectedMode = deckEditingMode,
                     availableOptions = listOf(
-                        LetterDeckEditingMode.Search,
-                        LetterDeckEditingMode.Removal
+                        LetterDeckEditingMode.Add,
+                        LetterDeckEditingMode.Remove,
+                        LetterDeckEditingMode.Search
                     )
                 )
 
@@ -102,14 +124,29 @@ fun LetterDeckEditingUI(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     when (it) {
-                        LetterDeckEditingMode.Search -> {
-                            CharacterInputField(
-                                isEnabled = !screenState.searching.value,
-                                onInputSubmit = submitSearch
+                        LetterDeckEditingMode.Add -> {
+                            AddCharactersField(
+                                isEnabled = !screenState.adding.value,
+                                onInputSubmit = submitAdd
                             )
                         }
 
-                        LetterDeckEditingMode.Removal,
+                        LetterDeckEditingMode.Search -> {
+                            DeckCharactersField(
+                                text = searchQuery,
+                                onTextChange = { searchQuery = it },
+                                hint = resolveString { deckEdit.searchCharactersHint },
+                                trailingContent = {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(12.dp)
+                                    )
+                                }
+                            )
+                        }
+
+                        LetterDeckEditingMode.Remove,
                         LetterDeckEditingMode.ResetSrs -> Box(Modifier) // To avoid expand animation
                     }
                 }
@@ -120,18 +157,20 @@ fun LetterDeckEditingUI(
 
         LazyVerticalGrid(
             columns = GridCells.Adaptive(50.dp),
+            state = if (isSearching) searchGridState else editingGridState,
             modifier = Modifier.fillMaxWidth()
                 .onGloballyPositioned { extraListSpacerState.updateList(it) }
                 .nestedScroll(collapsibleContainerState.nestedScrollConnection)
         ) {
 
-            items(screenState.listState.value) {
+            items(visibleItems) {
                 ListItem(
                     item = it,
                     onClick = {
                         when (deckEditingMode.value) {
+                            LetterDeckEditingMode.Add,
                             LetterDeckEditingMode.Search -> onItemClick(it)
-                            LetterDeckEditingMode.Removal -> toggleRemoval(it)
+                            LetterDeckEditingMode.Remove -> toggleRemoval(it)
                             LetterDeckEditingMode.ResetSrs -> TODO()
                         }
                     }
@@ -152,13 +191,17 @@ private enum class LetterDeckEditingMode(
     override val icon: ImageVector,
     override val titleResolver: StringResolveScope<String>
 ) : DeckEditingMode {
+    Add(
+        icon = Icons.Default.Add,
+        titleResolver = { deckEdit.editingModeAddTitle }
+    ),
+    Remove(
+        icon = Icons.Default.Close,
+        titleResolver = { deckEdit.editingModeRemoveTitle }
+    ),
     Search(
         icon = Icons.Default.Search,
         titleResolver = { deckEdit.editingModeSearchTitle }
-    ),
-    Removal(
-        icon = Icons.Default.Close,
-        titleResolver = { deckEdit.editingModeRemovalTitle }
     ),
     ResetSrs(
         icon = Icons.Default.Memory,
@@ -167,14 +210,12 @@ private enum class LetterDeckEditingMode(
 }
 
 @Composable
-private fun CharacterInputField(
+private fun AddCharactersField(
     isEnabled: Boolean,
     onInputSubmit: (String) -> Unit
 ) {
 
     var enteredText by remember { mutableStateOf("") }
-    val interactionSource = remember { MutableInteractionSource() }
-
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
     val handleSubmit: () -> Unit = {
         onInputSubmit(enteredText)
@@ -182,6 +223,31 @@ private fun CharacterInputField(
         softwareKeyboardController?.hide()
     }
 
+    DeckCharactersField(
+        text = enteredText,
+        onTextChange = { enteredText = it },
+        hint = resolveString { deckEdit.addCharactersHint },
+        keyboardActions = KeyboardActions(onDone = { if (isEnabled) handleSubmit() }),
+        trailingContent = {
+            IconButton(
+                onClick = handleSubmit,
+                enabled = isEnabled
+            ) {
+                Icon(Icons.Default.Add, contentDescription = resolveString { deckEdit.editingModeAddTitle })
+            }
+        }
+    )
+}
+
+@Composable
+private fun DeckCharactersField(
+    text: String,
+    onTextChange: (String) -> Unit,
+    hint: String,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    trailingContent: @Composable () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
     val color = MaterialTheme.colorScheme.onSurfaceVariant
     Row(
         modifier = Modifier
@@ -194,9 +260,9 @@ private fun CharacterInputField(
     ) {
 
         IconButton(
-            onClick = { enteredText = "" }
+            onClick = { onTextChange("") }
         ) {
-            Icon(Icons.Default.Close, null)
+            Icon(Icons.Default.Close, contentDescription = resolveString { deckEdit.clearCharactersInput })
         }
 
         Box(modifier = Modifier.weight(1f)) {
@@ -204,8 +270,8 @@ private fun CharacterInputField(
             var isInputFocused by remember { mutableStateOf(false) }
 
             BasicTextField(
-                value = enteredText,
-                onValueChange = { enteredText = it },
+                value = text,
+                onValueChange = onTextChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { isInputFocused = it.isFocused },
@@ -214,17 +280,17 @@ private fun CharacterInputField(
                 interactionSource = interactionSource,
                 cursorBrush = SolidColor(color),
                 textStyle = MaterialTheme.typography.bodyMedium.copy(color),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions { handleSubmit() }
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = keyboardActions
             )
 
             androidx.compose.animation.AnimatedVisibility(
-                visible = !isInputFocused && enteredText.isEmpty(),
+                visible = !isInputFocused && text.isEmpty(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
                 Text(
-                    text = resolveString { deckEdit.searchHint },
+                    text = hint,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
@@ -232,12 +298,7 @@ private fun CharacterInputField(
 
         }
 
-        IconButton(
-            onClick = handleSubmit,
-            enabled = isEnabled
-        ) {
-            Icon(Icons.Default.Search, null)
-        }
+        trailingContent()
 
     }
 

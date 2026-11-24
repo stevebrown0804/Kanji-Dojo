@@ -384,10 +384,13 @@ object JapaneseDeckPickerStrings : DeckPickerStrings {
 object JapaneseDeckEditStrings : DeckEditStrings {
     override val createTitle: String = "デッキの作成"
     override val ediTitle: String = "デッキの編集"
-    override val searchHint: String = "文字を入力"
+    override val addCharactersHint: String = "文字を入力"
+    override val searchCharactersHint: String = "漢字や読みで検索"
+    override val clearCharactersInput: String = "入力を消去"
+    override val editingModeAddTitle: String = "追加"
     override val editingModeSearchTitle: String = "検索"
     override val editingModeDetailsTitle: String = "詳細"
-    override val editingModeRemovalTitle: String = "削除"
+    override val editingModeRemoveTitle: String = "削除"
     override val vocabDetailsEmptyMessage: (inlineIconId: String) -> AnnotatedString = {
         buildAnnotatedString {
             append("カードなし。新しいカードを追加するには、このデッキを保存して、")

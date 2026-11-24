@@ -12,7 +12,7 @@ import ua.syt0r.kanji.core.japanese.CharacterClassification
 import ua.syt0r.kanji.core.user_data.database.SavedVocabCard
 import ua.syt0r.kanji.core.user_data.database.VocabCardData
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenContract.ScreenState
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SearchResult
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.AddCharactersResult
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardEditResult
 
 @Serializable
@@ -72,7 +72,8 @@ sealed interface DeckEditListItem {
 data class LetterDeckEditListItem(
     val character: String,
     override val initialAction: DeckEditItemAction,
-    override val action: MutableState<DeckEditItemAction>
+    override val action: MutableState<DeckEditItemAction>,
+    val readings: List<String> = emptyList()
 ) : DeckEditListItem
 
 data class VocabDeckEditListItem(
@@ -98,9 +99,9 @@ enum class DeckEditItemAction { Nothing, Add, Remove }
 data class MutableLetterDeckEditingState(
     override val title: MutableState<String>,
     override val confirmExit: MutableState<Boolean>,
-    override val searching: MutableState<Boolean>,
+    override val adding: MutableState<Boolean>,
     override val listState: MutableState<List<LetterDeckEditListItem>>,
-    override val lastSearchResult: MutableState<SearchResult?>
+    override val lastAddResult: MutableState<AddCharactersResult?>
 ) : ScreenState.LetterDeckEditing
 
 data class MutableVocabDeckEditingState(

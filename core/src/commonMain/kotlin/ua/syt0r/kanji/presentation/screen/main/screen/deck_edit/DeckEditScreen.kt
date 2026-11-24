@@ -29,8 +29,8 @@ fun DeckEditScreen(
         configuration = configuration,
         state = viewModel.state.collectAsState(),
         navigateBack = { mainNavigationState.navigateBack() },
-        submitSearch = { viewModel.searchCharacters(it) },
-        dismissSearchResult = { viewModel.dismissSearchResult() },
+        submitAdd = { viewModel.addCharacters(it) },
+        dismissAddResult = { viewModel.dismissAddResult() },
         onItemClick = {
 
             val screenData = when (it) {

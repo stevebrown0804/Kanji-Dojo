@@ -3,7 +3,7 @@ package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.StateFlow
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SearchResult
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.AddCharactersResult
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardEditResult
 
 interface DeckEditScreenContract {
@@ -12,8 +12,8 @@ interface DeckEditScreenContract {
         val state: StateFlow<ScreenState>
         fun initialize(configuration: DeckEditScreenConfiguration)
         fun notifyVocabCardResult(editResult: VocabCardEditResult)
-        fun searchCharacters(input: String)
-        fun dismissSearchResult()
+        fun addCharacters(input: String)
+        fun dismissAddResult()
         fun toggleRemoval(item: DeckEditListItem)
         fun saveDeck()
         fun deleteDeck()
@@ -30,9 +30,9 @@ interface DeckEditScreenContract {
         }
 
         interface LetterDeckEditing : Loaded {
-            val searching: State<Boolean>
+            val adding: State<Boolean>
             val listState: State<List<LetterDeckEditListItem>>
-            val lastSearchResult: State<SearchResult?>
+            val lastAddResult: State<AddCharactersResult?>
             override fun getCurrentList(): List<LetterDeckEditListItem> {
                 return listState.value
             }

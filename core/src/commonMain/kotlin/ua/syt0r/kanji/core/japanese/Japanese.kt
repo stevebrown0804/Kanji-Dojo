@@ -144,6 +144,7 @@ fun getKanaInfo(kana: Char): KanaInfo {
 }
 
 expect fun String.kanaToRomaji(): String
+expect fun String.readingInputToHiragana(): String
 expect fun Char.isKanji(): Boolean
 expect fun Char.isHiragana(): Boolean
 expect fun Char.isKatakana(): Boolean
