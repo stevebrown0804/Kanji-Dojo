@@ -1,6 +1,12 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.info.use_case
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.stateIn
 import ua.syt0r.kanji.core.analytics.AnalyticsManager
 import ua.syt0r.kanji.core.app_data.AppDataRepository
 import ua.syt0r.kanji.core.app_data.Sentence
@@ -10,6 +16,7 @@ import ua.syt0r.kanji.core.japanese.CharacterClassification
 import ua.syt0r.kanji.core.japanese.CharacterClassifier
 import ua.syt0r.kanji.core.japanese.getKanaInfo
 import ua.syt0r.kanji.core.japanese.isKana
+import ua.syt0r.kanji.core.user_data.database.MojiPracticeRepository
 import ua.syt0r.kanji.presentation.common.Paginateable
 import ua.syt0r.kanji.presentation.common.paginateable
 import ua.syt0r.kanji.presentation.common.ui.kanji.KanjiRadicalDetails
@@ -23,6 +30,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.info.MojiInfoData
 class InfoLoadMojiStateUseCase(
     private val appDataRepository: AppDataRepository,
     private val characterClassifier: CharacterClassifier,
+    private val mojiPracticeRepository: MojiPracticeRepository,
     private val analyticsManager: AnalyticsManager
 ) : InfoScreenContract.LoadMojiStateUseCase {
 
@@ -107,6 +115,11 @@ class InfoLoadMojiStateUseCase(
                 }
             ),
             displayRadicals = radicals.map { it.radical }.distinct(),
+            containingDecks = mojiPracticeRepository.changesFlow
+                .onSubscription { emit(Unit) }
+                .map { mojiPracticeRepository.getDecksContainingMoji(character) }
+                .flowOn(Dispatchers.IO)
+                .stateIn(coroutineScope),
             vocab = getPaginateableVocab(character, coroutineScope),
             sentences = getPaginateableSentences(character, coroutineScope)
         )

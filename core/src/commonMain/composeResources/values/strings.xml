@@ -86,6 +86,8 @@
     <string name="vocab_card_invalid_meaning">Meaning is empty</string>
 
     <string name="info_no_data_moji">No data found for moji %1$s</string>
+    <string name="info_kanji_decks_label">Present in the following deck(s):</string>
+    <string name="info_kanji_decks_none">None</string>
     <string name="info_no_data_vocab">No data found for vocabulary entry %1$s</string>
     <string name="info_no_data_copy">Copy</string>
     <string name="info_no_data_jisho">Search on Jisho</string>

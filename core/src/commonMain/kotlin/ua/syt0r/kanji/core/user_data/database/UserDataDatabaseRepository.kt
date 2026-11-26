@@ -35,6 +35,7 @@ interface MojiPracticeRepository : ObservableRepository {
     ): List<MojiDeckConflict>
 
     suspend fun getDecks(): List<MojiDeck>
+    suspend fun getDecksContainingMoji(character: String): List<MojiDeck>
     suspend fun getDeck(id: Long): MojiDeck
     suspend fun getDeckCharacters(id: Long): List<String>
     suspend fun getDeckConflicts(

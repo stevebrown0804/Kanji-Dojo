@@ -1,6 +1,7 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.info
 
 import androidx.compose.ui.graphics.Path
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ua.syt0r.kanji.core.app_data.Sentence
@@ -9,6 +10,7 @@ import ua.syt0r.kanji.core.app_data.data.DetailedVocabReading
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
 import ua.syt0r.kanji.core.japanese.CharacterClassification
 import ua.syt0r.kanji.core.japanese.KanaReading
+import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.presentation.common.Paginateable
 import ua.syt0r.kanji.presentation.common.ui.kanji.KanjiRadicalsSectionData
 
@@ -65,6 +67,7 @@ sealed interface MojiInfoData {
         val frequency: Int?,
         val radicalsSectionData: KanjiRadicalsSectionData,
         val displayRadicals: List<String>,
+        val containingDecks: StateFlow<List<MojiDeck>>,
         override val vocab: Paginateable<JapaneseWord>,
         override val sentences: Paginateable<Sentence>
     ) : MojiInfoData

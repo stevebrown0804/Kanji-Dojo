@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -78,6 +80,7 @@ fun KanjiInfoUI(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun KanjiInfoHeading(data: MojiInfoData.Kanji) {
+    val containingDecks by data.containingDecks.collectAsState()
 
     AppListItem(
         headlineContent = {
@@ -114,6 +117,8 @@ private fun KanjiInfoHeading(data: MojiInfoData.Kanji) {
                     MojiInfoCopyButton(data.character)
 
                 }
+
+                KanjiInfoDeckMembership(decks = containingDecks)
 
                 if (data.meanings.isNotEmpty()) {
                     Text(

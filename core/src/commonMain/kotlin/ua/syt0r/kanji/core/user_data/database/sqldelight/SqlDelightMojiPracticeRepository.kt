@@ -100,6 +100,12 @@ class SqlDelightMojiPracticeRepository(
         }
     }
 
+    override suspend fun getDecksContainingMoji(character: String): List<MojiDeck> = readTransaction {
+        getMojiDecksForCharacters(listOf(character)).executeAsList().map {
+            MojiDeck(it.id, it.name, it.position.toInt())
+        }
+    }
+
     override suspend fun getDeck(
         id: Long,
     ): MojiDeck = readTransaction {

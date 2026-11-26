@@ -11,6 +11,7 @@ val infoScreenModule = module {
         InfoLoadMojiStateUseCase(
             appDataRepository = get(),
             characterClassifier = get(),
+            mojiPracticeRepository = get(),
             analyticsManager = get()
         )
     }
