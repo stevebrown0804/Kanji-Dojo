@@ -22,15 +22,15 @@ fun GeneralDashboardScreen(
         navigateToDailyLimitConfiguration = {
             mainNavigationState.navigate(MainDestination.DailyLimit)
         },
-        navigateToCreateLetterDeck = {
-            val destination = MainDestination.DeckPicker(DeckPickerScreenConfiguration.Letters)
+        navigateToCreateMojiDeck = {
+            val destination = MainDestination.DeckPicker(DeckPickerScreenConfiguration.Moji)
             mainNavigationState.navigate(destination)
         },
         navigateToCreateVocabDeck = {
             val destination = MainDestination.DeckPicker(DeckPickerScreenConfiguration.Vocab)
             mainNavigationState.navigate(destination)
         },
-        navigateToLetterPractice = { mainNavigationState.navigate(it) },
+        navigateToMojiPractice = { mainNavigationState.navigate(it) },
         navigateToVocabPractice = { mainNavigationState.navigate(it) },
     )
 

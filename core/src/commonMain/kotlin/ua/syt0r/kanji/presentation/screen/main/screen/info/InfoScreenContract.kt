@@ -38,8 +38,8 @@ interface InfoScreenContract {
 
         sealed interface Loaded : ScreenState {
 
-            data class Letter(
-                val data: LetterInfoData
+            data class Moji(
+                val data: MojiInfoData
             ) : Loaded
 
             data class Vocab(
@@ -50,7 +50,7 @@ interface InfoScreenContract {
 
     }
 
-    interface LoadLetterStateUseCase {
+    interface LoadMojiStateUseCase {
         suspend operator fun invoke(character: String, coroutineScope: CoroutineScope): ScreenState
     }
 

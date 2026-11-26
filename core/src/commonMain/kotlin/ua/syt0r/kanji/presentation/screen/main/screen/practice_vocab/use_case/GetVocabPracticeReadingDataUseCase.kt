@@ -54,11 +54,11 @@ class DefaultGetVocabPracticeReadingDataUseCase(
             }
 
             else -> {
-                val letter = card.kanaReading.random().toString()
-                question = letter
-                correctAnswer = letter
+                val moji = card.kanaReading.random().toString()
+                question = moji
+                correctAnswer = moji
                 revealedReading = card.kanaReading.toFurigana()
-                hiddenReading = revealedReading.withEncodedText(letter)
+                hiddenReading = revealedReading.withEncodedText(moji)
                 forceShowMeaning = card.kanaReading.length == 1
             }
         }

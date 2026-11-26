@@ -28,8 +28,8 @@ object EnglishStrings : Strings {
 
     override val loading: String = "Loading"
 
-    override val letterPracticeTypeWriting: String = "Writing"
-    override val letterPracticeTypeReading: String = "Flashcards"
+    override val mojiPracticeTypeWriting: String = "Writing"
+    override val mojiPracticeTypeReading: String = "Flashcards"
     override val vocabPracticeTypeFlashcard: String = "Flashcards"
     override val vocabPracticeTypeReadingPicker: String = "Reading Picker"
     override val vocabPracticeTypeWriting: String = "Writing"
@@ -57,7 +57,7 @@ object EnglishStrings : Strings {
     override val deckEdit: DeckEditStrings = EnglishDeckEditStrings
     override val deckDetails: DeckDetailsStrings = EnglishDeckDetailsStrings
     override val commonPractice: CommonPracticeStrings = EnglishCommonPracticeStrings
-    override val letterPractice: LetterPracticeStrings = EnglishLetterPracticeStrings
+    override val mojiPractice: MojiPracticeStrings = EnglishMojiPracticeStrings
     override val vocabPractice: VocabPracticeStrings = EnglishVocabPracticeStrings
     override val info: InfoScreenStrings = EnglishInfoScreenStrings
 
@@ -72,7 +72,7 @@ object EnglishStrings : Strings {
 object EnglishHomeStrings : HomeStrings {
     override val screenTitle: String = "Kanji Dojo"
     override val generalDashboardTabLabel: String = "Home"
-    override val lettersDashboardTabLabel: String = "Kanji and Kana"
+    override val mojiDashboardTabLabel: String = "Kanji and Kana"
     override val vocabDashboardTabLabel: String = "Vocabulary"
     override val statsTabLabel: String = "Statistics"
     override val searchTabLabel: String = "Search"
@@ -136,7 +136,7 @@ object EnglishDailyLimitStrings : DailyLimitStrings {
     override val enableSwitchTitle: String = "Daily Limit"
     override val enableSwitchDescription: String =
         "Limit the number of daily reviews prompted by the app"
-    override val lettersSectionTitle: String = "Letters"
+    override val mojiSectionTitle: String = "Moji"
     override val vocabSectionTitle: String = "Vocabulary"
     override val combinedLimitSwitchTitle: String = "Combined Limit"
     override val combinedLimitSwitchDescription: String = "Share limit across all practice types"
@@ -177,7 +177,7 @@ object EnglishTutorialDialogStrings : TutorialDialogStrings {
 
     override val page4Top: String = """
         • To start using the app create a deck
-        • Decks are used to organize the items you want to master. There are letter and vocab decks in the app
+        • Decks are used to organize the items you want to master. There are moji and vocab decks in the app
     """.trimIndent()
 
     override val page4Bottom: String = """
@@ -217,16 +217,16 @@ object EnglishStatsStrings : StatsStrings {
     override val timeSpentTitle: String = "Time spent"
     override val reviewsCountTitle: String = "Reviews"
     override val formattedDuration: (Duration) -> String = { formatDuration(it) }
-    override val uniqueLettersReviewed: String = "Unique letters reviewed"
+    override val uniqueMojiReviewed: String = "Unique moji reviewed"
     override val uniqueWordsReviewed: String = "Unique words reviewed"
 }
 
 object EnglishSearchStrings : SearchStrings {
-    override val inputHint: String = "Search for letters or words"
-    override val charactersTitle: (count: Int) -> String = { "Letters ($it)" }
+    override val inputHint: String = "Search for moji or words"
+    override val charactersTitle: (count: Int) -> String = { "Moji ($it)" }
     override val wordsTitle: (count: Int) -> String = { "Words ($it)" }
     override val radicalsSheetTitle: String = "Search by radicals"
-    override val radicalsFoundCharacters: String = "Found letters"
+    override val radicalsFoundCharacters: String = "Found moji"
     override val radicalsEmptyFoundCharacters: String = "Nothing found"
     override val radicalSheetRadicalsSectionTitle: String = "Radicals"
 }
@@ -418,9 +418,9 @@ object EnglishDeckEditStrings : DeckEditStrings {
     override val deleteButtonDefault: String = "Delete"
     override val deleteButtonCompleted: String = "Done"
 
-    override val unknownTitle: String = "Unknown letters"
+    override val unknownTitle: String = "Unknown moji"
     override val unknownMessage: (characters: List<String>) -> String = {
-        "Some letters were not found: ${it.joinToString()}"
+        "Some moji were not found: ${it.joinToString()}"
     }
     override val unknownButton: String = "Close"
 
@@ -455,8 +455,8 @@ object EnglishDeckDetailsStrings : DeckDetailsStrings {
     override val repetitions: (Int) -> String = { "Repetitions: $it" }
     override val lapses: (Int) -> String = { "Lapses: $it" }
 
-    override val dialogCommon: LetterDeckDetailDialogCommonStrings =
-        EnglishLetterDeckDetailDialogCommonStrings
+    override val dialogCommon: MojiDeckDetailDialogCommonStrings =
+        EnglishMojiDeckDetailDialogCommonStrings
     override val filterDialog: FilterDialogStrings = EnglishFilterDialogStrings
     override val sortDialog: SortDialogStrings = EnglishSortDialogStrings
     override val layoutDialog: PracticePreviewLayoutDialogStrings =
@@ -469,12 +469,12 @@ object EnglishDeckDetailsStrings : DeckDetailsStrings {
     override val filterAllLabel: String = "All"
     override val filterNoneLabel: String = "None"
     override val kanaGroupsModeActivatedLabel: String = "Kana Groups Mode"
-    override val shareLetterDeckClipboardMessage: String =
-        "Letters from deck were copied to the clipboard"
+    override val shareMojiDeckClipboardMessage: String =
+        "Moji from deck were copied to the clipboard"
 
 }
 
-object EnglishLetterDeckDetailDialogCommonStrings : LetterDeckDetailDialogCommonStrings {
+object EnglishMojiDeckDetailDialogCommonStrings : MojiDeckDetailDialogCommonStrings {
     override val buttonCancel: String = "Cancel"
     override val buttonApply: String = "Apply"
 }
@@ -499,7 +499,7 @@ object EnglishSortDialogStrings : SortDialogStrings {
 
 object EnglishPracticePreviewLayoutDialogStrings : PracticePreviewLayoutDialogStrings {
     override val title: String = "Layout"
-    override val singleCharacterOptionLabel: String = "Single Letter"
+    override val singleCharacterOptionLabel: String = "Single Moji"
     override val groupsOptionLabel: String = "Groups"
     override val kanaGroupsTitle: String = "Kana Groups"
     override val kanaGroupsSubtitle: String =
@@ -509,7 +509,7 @@ object EnglishPracticePreviewLayoutDialogStrings : PracticePreviewLayoutDialogSt
 object EnglishCommonPracticeStrings : CommonPracticeStrings {
     override val configurationTitle: String = "Configuration"
     override val configurationSelectedItemsLabel: String = "Selected:"
-    override val configurationCharactersPreview: String = "Letters preview"
+    override val configurationCharactersPreview: String = "Moji preview"
     override val shuffleConfigurationTitle: String = "Shuffle"
     override val shuffleConfigurationMessage: String = "Randomizes review order"
     override val configurationCompleteButton: String = "Start"
@@ -534,24 +534,24 @@ object EnglishCommonPracticeStrings : CommonPracticeStrings {
     override val earlyFinishDialogAcceptButton: String = "Finish"
 }
 
-object EnglishLetterPracticeStrings : LetterPracticeStrings {
-    override val configurationTitle: (practiceType: String) -> String = { "Letter Practice・$it" }
+object EnglishMojiPracticeStrings : MojiPracticeStrings {
+    override val configurationTitle: (practiceType: String) -> String = { "Moji Practice・$it" }
     override val hintStrokesTitle: String = "Hint Strokes"
-    override val hintStrokesMessage: String = "Controls when to show hint strokes for letters"
+    override val hintStrokesMessage: String = "Controls when to show hint strokes for moji"
     override val hintStrokeNewOnlyMode: String = "New only"
     override val hintStrokeAllMode: String = "For all"
     override val hintStrokeNoneMode: String = "Never"
     override val inputModeTitle: String = "Input Mode"
     override val inputModeMessage: String =
-        "Choose whether to validate each stroke or the entire letter"
+        "Choose whether to validate each stroke or the entire moji"
     override val inputModeStroke: String = "Stroke"
-    override val inputModeCharacter: String = "Letter"
+    override val inputModeCharacter: String = "Moji"
     override val kanaRomajiTitle: String = "Show romaji in kana practice"
     override val kanaRomajiMessage: String =
         "When reviewing kana show romaji expressions instead of kana"
     override val noTranslationLayoutTitle: String = "No translation layout"
     override val noTranslationLayoutMessage: String =
-        "Hides letter translations during writing practice"
+        "Hides moji translations during writing practice"
     override val leftHandedModeTitle: String = "Left-handed mode"
     override val leftHandedModeMessage: String =
         "Adjusts position of input in landscape mode of writing practice screen"

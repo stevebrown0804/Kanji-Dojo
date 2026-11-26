@@ -3,8 +3,9 @@ PRAGMA user_version = 14;
 getLastInsertRowId:
 SELECT last_insert_rowid();
 
-------- LETTER DECKS -------
+------- MOJI DECKS -------
 
+-- Keep these storage names compatible with existing databases and original-app exports.
 CREATE TABLE IF NOT EXISTS letter_deck (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     name TEXT NOT NULL,
@@ -18,50 +19,50 @@ CREATE TABLE IF NOT EXISTS letter_deck_entry (
     FOREIGN KEY(deck_id) REFERENCES letter_deck(id) ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
-insertLetterDeck:
+insertMojiDeck:
 INSERT INTO letter_deck(name, position)
 SELECT ?, IFNULL(MAX(position) + 1, 0) FROM letter_deck;
 
-deleteLetterDeck {
+deleteMojiDeck {
     DELETE FROM letter_deck WHERE id=:id;
     DELETE FROM letter_deck_entry WHERE deck_id=:id;
 }
 
-deleteLetterDecks {
+deleteMojiDecks {
     DELETE FROM letter_deck WHERE id IN :deckIds;
     DELETE FROM letter_deck_entry WHERE deck_id IN :deckIds;
 }
 
-updateLetterDeckTitle:
+updateMojiDeckTitle:
 UPDATE letter_deck SET name=? WHERE id=?;
 
-updateLetterDeckPosition:
+updateMojiDeckPosition:
 UPDATE letter_deck SET position=? WHERE id=?;
 
-getAllLetterDecks:
+getAllMojiDecks:
 SELECT * FROM letter_deck;
 
-getLetterDeck:
+getMojiDeck:
 SELECT * FROM letter_deck WHERE id=?;
 
-insertOrIgnoreLetterDeckEntry:
+insertOrIgnoreMojiDeckEntry:
 INSERT OR IGNORE INTO letter_deck_entry (character,deck_id) VALUES (?,?);
 
-deleteLetterDeckEntry:
+deleteMojiDeckEntry:
 DELETE FROM letter_deck_entry WHERE deck_id=? AND character=?;
 
-migrateLetterDeckEntries:
+migrateMojiDeckEntries:
 UPDATE OR REPLACE letter_deck_entry
 SET deck_id = :deckId
 WHERE deck_id IN :deckIdToMigrate;
 
-getEntriesForLetterDeck:
+getEntriesForMojiDeck:
 SELECT * FROM letter_deck_entry WHERE deck_id=?;
 
-getCharactersForLetterDecks:
+getCharactersForMojiDecks:
 SELECT DISTINCT character FROM letter_deck_entry WHERE deck_id IN :deckIds;
 
-getLetterDecksForCharacters:
+getMojiDecksForCharacters:
 SELECT entry.character, deck.id, deck.name, deck.position
 FROM letter_deck_entry AS entry
 JOIN letter_deck AS deck ON deck.id = entry.deck_id

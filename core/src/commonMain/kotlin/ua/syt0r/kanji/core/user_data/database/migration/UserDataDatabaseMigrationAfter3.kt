@@ -3,7 +3,7 @@ package ua.syt0r.kanji.core.user_data.database.migration
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import kotlinx.datetime.Instant
-import ua.syt0r.kanji.core.srs.LetterPracticeType
+import ua.syt0r.kanji.core.srs.MojiPracticeType
 import ua.syt0r.kanji.core.user_data.database.CharacterStudyProgress
 import ua.syt0r.kanji.core.user_data.database.UserDataDatabaseContract
 
@@ -58,7 +58,7 @@ object UserDataDatabaseMigrationAfter3 : UserDataDatabaseContract.Migration {
 
                 CharacterStudyProgress(
                     character = character,
-                    practiceType = LetterPracticeType.Writing,
+                    practiceType = MojiPracticeType.Writing,
                     lastReviewTime = Instant.fromEpochMilliseconds(lastReviewTime),
                     repeats = successfulReviewsAfterLastFailed.size,
                     lapses = failedReviews.size

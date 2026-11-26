@@ -27,10 +27,10 @@ fun DeckDetailsScreen(
         navigateUp = { mainNavigationState.navigateBack() },
         navigateToDeckEdit = {
             val deckEditConfiguration = when (configuration) {
-                is DeckDetailsScreenConfiguration.LetterDeck -> {
-                    DeckEditScreenConfiguration.LetterDeck.Edit(
+                is DeckDetailsScreenConfiguration.MojiDeck -> {
+                    DeckEditScreenConfiguration.MojiDeck.Edit(
                         title = viewModel.state.value.let { it as ScreenState.Loaded }.title,
-                        letterDeckId = configuration.deckId
+                        mojiDeckId = configuration.deckId
                     )
                 }
 
@@ -44,7 +44,7 @@ fun DeckDetailsScreen(
             mainNavigationState.navigate(MainDestination.DeckEdit(deckEditConfiguration))
         },
         navigateToCharacterDetails = {
-            val screenData = InfoScreenData.Letter(it)
+            val screenData = InfoScreenData.Moji(it)
             mainNavigationState.navigate(MainDestination.Info(screenData))
         },
         navigateToCardDetails = {

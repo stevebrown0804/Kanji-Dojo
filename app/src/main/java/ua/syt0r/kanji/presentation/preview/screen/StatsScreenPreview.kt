@@ -50,7 +50,7 @@ private val fakeData = StatsScreenContract.ScreenState.Loaded(
         totalStats = TotalStats(
             reviews = 200,
             timeSpent = 1.hours,
-            uniqueLettersStudied = Random.nextInt(0, 200),
+            uniqueMojiStudied = Random.nextInt(0, 200),
             uniqueWordsStudied = Random.nextInt(0, 200)
         )
     )

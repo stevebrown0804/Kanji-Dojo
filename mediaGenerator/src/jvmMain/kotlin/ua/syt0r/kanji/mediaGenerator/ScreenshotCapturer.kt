@@ -23,13 +23,13 @@ import org.koin.core.context.startKoin
 import ua.syt0r.kanji.core.logger.Logger
 import ua.syt0r.kanji.core.theme_manager.LocalThemeManager
 import ua.syt0r.kanji.di.appModules
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.theme.AppTheme
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.DefaultLetterPracticeScreenContent
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.LetterPracticeScreenContract
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.LetterPracticeScreenContract.ScreenState
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.DefaultMojiPracticeScreenContent
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.MojiPracticeScreenContract
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.MojiPracticeScreenContract.ScreenState
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeScreenConfiguration
 
 
 @Composable
@@ -68,7 +68,7 @@ fun main() {
             windowSize = DpSize(1200.dp, 800.dp)
         ) {
 
-            val viewModel: LetterPracticeScreenContract.ViewModel = getMultiplatformViewModel()
+            val viewModel: MojiPracticeScreenContract.ViewModel = getMultiplatformViewModel()
 
             ScreenshotColumn(
                 title = """
@@ -76,10 +76,10 @@ fun main() {
                         than 6000 characters
                     """.trimIndent()
             ) {
-                DefaultLetterPracticeScreenContent(
-                    configuration = LetterPracticeScreenConfiguration(
-                        ScreenLetterPracticeType.Writing,
-                        listOf(LetterPracticeScreenConfiguration.Card("字", -1))
+                DefaultMojiPracticeScreenContent(
+                    configuration = MojiPracticeScreenConfiguration(
+                        ScreenMojiPracticeType.Writing,
+                        listOf(MojiPracticeScreenConfiguration.Card("字", -1))
                     ),
                     mainNavigationState = mockk(),
                     viewModel = viewModel

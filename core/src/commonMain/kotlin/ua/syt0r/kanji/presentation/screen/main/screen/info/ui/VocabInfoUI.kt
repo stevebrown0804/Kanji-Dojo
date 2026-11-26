@@ -51,7 +51,7 @@ import ua.syt0r.kanji.presentation.common.trackList
 import ua.syt0r.kanji.presentation.common.ui.FuriganaText
 import ua.syt0r.kanji.presentation.common.ui.LocalOrientation
 import ua.syt0r.kanji.presentation.common.ui.Orientation
-import ua.syt0r.kanji.presentation.common.ui.kanji.HighlightedLetter
+import ua.syt0r.kanji.presentation.common.ui.kanji.HighlightedMoji
 import ua.syt0r.kanji.presentation.dialog.SaveWordDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenContract
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenPaddedListIndex
@@ -64,11 +64,11 @@ fun VocabInfoUI(
     vocabData: VocabInfoData,
     listState: LazyListState,
     listSpacerState: ExtraListSpacerState,
-    onLetterClick: (String) -> Unit
+    onMojiClick: (String) -> Unit
 ) {
 
     val senseExpanded = rememberSaveable { mutableStateOf(true) }
-    val lettersExpanded = rememberSaveable { mutableStateOf(true) }
+    val mojiExpanded = rememberSaveable { mutableStateOf(true) }
     val sentencesExpanded = rememberSaveable { mutableStateOf(true) }
     val sentences = vocabData.sentences.collectAsState()
 
@@ -94,16 +94,16 @@ fun VocabInfoUI(
                     expanded = senseExpanded
                 )
 
-                expandableVocabLettersSection(
+                expandableVocabMojiSection(
                     reading = vocabData.word.reading,
-                    onLetterClick = onLetterClick,
-                    expanded = lettersExpanded
+                    onMojiClick = onMojiClick,
+                    expanded = mojiExpanded
                 )
 
                 infoScreenExpandableSentenceSection(
                     expanded = sentencesExpanded,
                     paginateable = sentences,
-                    onFuriganaClick = onLetterClick
+                    onFuriganaClick = onMojiClick
                 )
 
                 listSpacerState.ExtraSpacer(this)
@@ -131,10 +131,10 @@ fun VocabInfoUI(
                         expanded = senseExpanded
                     )
 
-                    expandableVocabLettersSection(
+                    expandableVocabMojiSection(
                         reading = vocabData.word.reading,
-                        onLetterClick = onLetterClick,
-                        expanded = lettersExpanded
+                        onMojiClick = onMojiClick,
+                        expanded = mojiExpanded
                     )
 
                     listSpacerState.ExtraSpacer(this)
@@ -150,7 +150,7 @@ fun VocabInfoUI(
                     infoScreenExpandableSentenceSection(
                         expanded = sentencesExpanded,
                         paginateable = sentences,
-                        onFuriganaClick = onLetterClick
+                        onFuriganaClick = onMojiClick
                     )
 
                     listSpacerState.ExtraSpacer(this)
@@ -250,18 +250,18 @@ private fun VocabReadingSection(word: JapaneseWord) {
 
 
 @OptIn(ExperimentalLayoutApi::class)
-private fun LazyListScope.expandableVocabLettersSection(
+private fun LazyListScope.expandableVocabMojiSection(
     reading: VocabReading,
-    onLetterClick: (String) -> Unit,
+    onMojiClick: (String) -> Unit,
     expanded: MutableState<Boolean>
 ) {
 
     val text = reading.kanjiReading ?: reading.kanaReading
-    val letters = text.map { it.toString() }.distinct()
+    val moji = text.map { it.toString() }.distinct()
 
     infoScreenExpandableSection(
-        headerText = "Letters",
-        headerCount = letters.size,
+        headerText = "Moji",
+        headerCount = moji.size,
         expanded = expanded,
         expandedContent = {
             item {
@@ -272,10 +272,10 @@ private fun LazyListScope.expandableVocabLettersSection(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    letters.forEach {
-                        HighlightedLetter(
-                            letter = it,
-                            onClick = onLetterClick
+                    moji.forEach {
+                        HighlightedMoji(
+                            moji = it,
+                            onClick = onMojiClick
                         )
                     }
                 }

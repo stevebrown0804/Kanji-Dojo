@@ -6,13 +6,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ua.syt0r.kanji.core.analytics.AnalyticsManager
-import ua.syt0r.kanji.core.user_data.database.LetterDeckConflictResolution
-import ua.syt0r.kanji.core.user_data.database.LetterPracticeRepository
-import ua.syt0r.kanji.presentation.dialog.LetterDeckConflictPrompt
+import ua.syt0r.kanji.core.user_data.database.MojiDeckConflictResolution
+import ua.syt0r.kanji.core.user_data.database.MojiPracticeRepository
+import ua.syt0r.kanji.presentation.dialog.MojiDeckConflictPrompt
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.AddCharactersResult
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DeleteDeckUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditLetterDataUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditMojiDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditVocabDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SaveDeckUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.ValidateDeckCharactersUseCase
@@ -20,10 +20,10 @@ import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardEditRe
 
 class DeckEditViewModel(
     private val viewModelScope: CoroutineScope,
-    private val loadDeckEditLetterDataUseCase: LoadDeckEditLetterDataUseCase,
+    private val loadDeckEditMojiDataUseCase: LoadDeckEditMojiDataUseCase,
     private val loadDeckEditVocabDataUseCase: LoadDeckEditVocabDataUseCase,
     private val validateDeckCharactersUseCase: ValidateDeckCharactersUseCase,
-    private val letterPracticeRepository: LetterPracticeRepository,
+    private val mojiPracticeRepository: MojiPracticeRepository,
     private val saveDeckUseCase: SaveDeckUseCase,
     private val deleteDeckUseCase: DeleteDeckUseCase,
     private val analyticsManager: AnalyticsManager
@@ -33,10 +33,10 @@ class DeckEditViewModel(
 
     private val deckTitle = mutableStateOf("")
     private val wasDeckEdited = mutableStateOf(false)
-    private val approvedMoves = mutableMapOf<String, LetterDeckConflictResolution.Move>()
-    override val letterDeckConflictPrompt = LetterDeckConflictPrompt()
+    private val approvedMoves = mutableMapOf<String, MojiDeckConflictResolution.Move>()
+    override val mojiDeckConflictPrompt = MojiDeckConflictPrompt()
 
-    private lateinit var letterEditingState: MutableLetterDeckEditingState
+    private lateinit var mojiEditingState: MutableMojiDeckEditingState
     private lateinit var vocabDeckEditingState: MutableVocabDeckEditingState
 
     private val _state = MutableStateFlow<ScreenState>(ScreenState.Loading)
@@ -54,13 +54,13 @@ class DeckEditViewModel(
             }
 
             when (configuration) {
-                is DeckEditScreenConfiguration.LetterDeck -> {
-                    val letterData = loadDeckEditLetterDataUseCase(configuration)
-                    val addResult = validateDeckCharactersUseCase(letterData.characters)
+                is DeckEditScreenConfiguration.MojiDeck -> {
+                    val mojiData = loadDeckEditMojiDataUseCase(configuration)
+                    val addResult = validateDeckCharactersUseCase(mojiData.characters)
 
-                    deckTitle.value = letterData.title ?: ""
+                    deckTitle.value = mojiData.title ?: ""
 
-                    letterEditingState = MutableLetterDeckEditingState(
+                    mojiEditingState = MutableMojiDeckEditingState(
                         title = deckTitle,
                         confirmExit = wasDeckEdited,
                         adding = mutableStateOf(false),
@@ -68,12 +68,12 @@ class DeckEditViewModel(
                         lastAddResult = mutableStateOf(addResult),
                     )
 
-                    addLettersToEditList(
+                    addMojiToEditList(
                         addResult = addResult,
                         defaultAction = defaultListItemAction
                     )
 
-                    _state.value = letterEditingState
+                    _state.value = mojiEditingState
 
                     reportInvalidImportCharacter(addResult.unknownCharacters)
                 }
@@ -122,7 +122,7 @@ class DeckEditViewModel(
     }
 
     override fun addCharacters(input: String) {
-        val editingState = _state.value as? MutableLetterDeckEditingState ?: return
+        val editingState = _state.value as? MutableMojiDeckEditingState ?: return
         if (editingState.adding.value) return
 
         editingState.adding.value = true
@@ -135,22 +135,22 @@ class DeckEditViewModel(
                     .toMutableSet()
 
                 if (newCharacters.isNotEmpty()) {
-                    val targetDeckId = (configuration as? DeckEditScreenConfiguration.LetterDeck.Edit)
-                        ?.letterDeckId
-                    val conflicts = letterPracticeRepository.getDeckConflicts(
+                    val targetDeckId = (configuration as? DeckEditScreenConfiguration.MojiDeck.Edit)
+                        ?.mojiDeckId
+                    val conflicts = mojiPracticeRepository.getDeckConflicts(
                         newCharacters.toList(),
                         targetDeckId
                     )
                     for (conflict in conflicts) {
-                        when (val decision = letterDeckConflictPrompt.choose(conflict)) {
-                            LetterDeckConflictResolution.Leave -> newCharacters.remove(conflict.character)
-                            is LetterDeckConflictResolution.Move -> approvedMoves[conflict.character] = decision
+                        when (val decision = mojiDeckConflictPrompt.choose(conflict)) {
+                            MojiDeckConflictResolution.Leave -> newCharacters.remove(conflict.character)
+                            is MojiDeckConflictResolution.Move -> approvedMoves[conflict.character] = decision
                         }
                     }
                 }
 
                 if (newCharacters.isNotEmpty()) {
-                    addLettersToEditList(addResult, DeckEditItemAction.Add, newCharacters)
+                    addMojiToEditList(addResult, DeckEditItemAction.Add, newCharacters)
                     wasDeckEdited.value = true
                 }
                 editingState.lastAddResult.value = addResult
@@ -161,23 +161,23 @@ class DeckEditViewModel(
     }
 
     override fun dismissAddResult() {
-        letterEditingState.lastAddResult.value = null
+        mojiEditingState.lastAddResult.value = null
     }
 
-    private fun addLettersToEditList(
+    private fun addMojiToEditList(
         addResult: AddCharactersResult,
         defaultAction: DeckEditItemAction,
         charactersToAdd: Iterable<String> = addResult.detectedCharacter
     ) {
         val newListItems = charactersToAdd.map { character ->
-            LetterDeckEditListItem(
+            MojiDeckEditListItem(
                 character = character,
                 initialAction = defaultAction,
                 action = mutableStateOf(defaultAction),
                 readings = addResult.readingsByCharacter[character].orEmpty()
             )
         }
-        letterEditingState.listState.value = letterEditingState.listState.value.plus(newListItems)
+        mojiEditingState.listState.value = mojiEditingState.listState.value.plus(newListItems)
     }
 
     override fun toggleRemoval(item: DeckEditListItem) {
@@ -191,13 +191,13 @@ class DeckEditViewModel(
 
     override fun saveDeck() {
         val loadedState = _state.value as? ScreenState.Loaded ?: return
-        if (loadedState is ScreenState.LetterDeckEditing && loadedState.adding.value) return
+        if (loadedState is ScreenState.MojiDeckEditing && loadedState.adding.value) return
 
         val title = deckTitle.value
         val list = loadedState.getCurrentList()
         _state.value = ScreenState.SavingChanges
         viewModelScope.launch {
-            letterDeckConflictPrompt.save(approvedMoves) { resolutions ->
+            mojiDeckConflictPrompt.save(approvedMoves) { resolutions ->
                 saveDeckUseCase(configuration, title, list, resolutions)
             }
             _state.value = ScreenState.Completed(false)

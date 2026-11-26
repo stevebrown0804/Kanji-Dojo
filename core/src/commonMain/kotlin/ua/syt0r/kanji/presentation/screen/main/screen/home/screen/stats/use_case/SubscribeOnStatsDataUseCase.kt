@@ -19,8 +19,8 @@ import kotlinx.datetime.toLocalDateTime
 import ua.syt0r.kanji.core.RefreshableData
 import ua.syt0r.kanji.core.logger.Logger
 import ua.syt0r.kanji.core.refreshableDataFlow
-import ua.syt0r.kanji.core.srs.LetterPracticeType
-import ua.syt0r.kanji.core.srs.LetterSrsManager
+import ua.syt0r.kanji.core.srs.MojiPracticeType
+import ua.syt0r.kanji.core.srs.MojiSrsManager
 import ua.syt0r.kanji.core.srs.VocabPracticeType
 import ua.syt0r.kanji.core.time.TimeUtils
 import ua.syt0r.kanji.core.user_data.database.ReviewHistoryRepository
@@ -41,7 +41,7 @@ interface SubscribeOnStatsDataUseCase {
 }
 
 class DefaultSubscribeOnStatsDataUseCase(
-    private val letterSrsManager: LetterSrsManager,
+    private val mojiSrsManager: MojiSrsManager,
     private val reviewHistoryRepository: ReviewHistoryRepository,
     private val timeUtils: TimeUtils,
     private val appPreferences: PreferencesContract.AppPreferences
@@ -51,7 +51,7 @@ class DefaultSubscribeOnStatsDataUseCase(
         lifecycleState: StateFlow<LifecycleState>
     ): Flow<RefreshableData<StatsData>> {
         return refreshableDataFlow(
-            dataChangeFlow = letterSrsManager.dataChangeFlow,
+            dataChangeFlow = mojiSrsManager.dataChangeFlow,
             lifecycleState = lifecycleState,
             valueProvider = { getStats(this) }
         )
@@ -158,8 +158,8 @@ class DefaultSubscribeOnStatsDataUseCase(
                 .toInt(),
             timeSpent = reviewHistoryRepository
                 .getTotalPracticeTime(SingleReviewDurationLimit.inWholeMilliseconds),
-            uniqueLettersStudied = reviewHistoryRepository
-                .getUniqueReviewItemsCount(LetterPracticeType.srsPracticeTypeValues)
+            uniqueMojiStudied = reviewHistoryRepository
+                .getUniqueReviewItemsCount(MojiPracticeType.srsPracticeTypeValues)
                 .toInt(),
             uniqueWordsStudied = reviewHistoryRepository
                 .getUniqueReviewItemsCount(VocabPracticeType.srsPracticeTypeValues)

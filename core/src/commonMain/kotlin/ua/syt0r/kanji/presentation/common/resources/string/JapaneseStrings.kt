@@ -28,8 +28,8 @@ object JapaneseStrings : Strings {
 
     override val loading: String = "読み込み中"
 
-    override val letterPracticeTypeWriting: String = "書く事"
-    override val letterPracticeTypeReading: String = "読む事"
+    override val mojiPracticeTypeWriting: String = "書く事"
+    override val mojiPracticeTypeReading: String = "読む事"
     override val vocabPracticeTypeFlashcard: String = "フラッシュカード"
     override val vocabPracticeTypeReadingPicker: String = "読み取りピッカー"
     override val vocabPracticeTypeWriting: String = "書く事"
@@ -55,7 +55,7 @@ object JapaneseStrings : Strings {
     override val deckEdit: DeckEditStrings = JapaneseDeckEditStrings
     override val deckDetails: DeckDetailsStrings = JapaneseDeckDetailsStrings
     override val commonPractice: CommonPracticeStrings = JapaneseCommonPracticeStrings
-    override val letterPractice: LetterPracticeStrings = JapaneseLetterPracticeStrings
+    override val mojiPractice: MojiPracticeStrings = JapaneseMojiPracticeStrings
     override val vocabPractice: VocabPracticeStrings = JapaneseVocabPracticeStrings
     override val info: InfoScreenStrings = JapaneseInfoScreenStrings
 
@@ -70,7 +70,7 @@ object JapaneseStrings : Strings {
 object JapaneseHomeStrings : HomeStrings {
     override val screenTitle: String = JapaneseStrings.appName
     override val generalDashboardTabLabel: String = "ホーム"
-    override val lettersDashboardTabLabel: String = "文字"
+    override val mojiDashboardTabLabel: String = "文字"
     override val vocabDashboardTabLabel: String = "単語"
     override val statsTabLabel: String = "統計"
     override val searchTabLabel: String = "検索"
@@ -133,7 +133,7 @@ object JapaneseDailyLimitStrings : DailyLimitStrings {
     override val enableSwitchTitle: String = "有効"
     override val enableSwitchDescription: String =
         "アプリによって促される毎日の練習の数を制限するには有効にします"
-    override val lettersSectionTitle: String = "文字"
+    override val mojiSectionTitle: String = "文字"
     override val vocabSectionTitle: String = "単語"
     override val combinedLimitSwitchTitle: String = "共通の上限"
     override val combinedLimitSwitchDescription: String = "すべての練習タイプで共通の上限を設定"
@@ -209,7 +209,7 @@ object JapaneseStatsStrings : StatsStrings {
     override val timeSpentTitle: String = "練習時間"
     override val reviewsCountTitle: String = "練習回数"
     override val formattedDuration: (Duration) -> String = { formatDuration(it) }
-    override val uniqueLettersReviewed: String = "練習した異なる文字の数"
+    override val uniqueMojiReviewed: String = "練習した異なる文字の数"
     override val uniqueWordsReviewed: String = "練習した異なる単語の数"
 }
 
@@ -448,8 +448,8 @@ object JapaneseDeckDetailsStrings : DeckDetailsStrings {
     override val repetitions: (Int) -> String = { "連続正解回数: $it" }
     override val lapses: (Int) -> String = { "忘却回数: $it" }
 
-    override val dialogCommon: LetterDeckDetailDialogCommonStrings =
-        JapaneseLetterDeckDetailDialogCommonStrings
+    override val dialogCommon: MojiDeckDetailDialogCommonStrings =
+        JapaneseMojiDeckDetailDialogCommonStrings
     override val filterDialog: FilterDialogStrings = JapaneseFilterDialogStrings
     override val sortDialog: SortDialogStrings = JapaneseSortDialogStrings
     override val layoutDialog: PracticePreviewLayoutDialogStrings =
@@ -463,11 +463,11 @@ object JapaneseDeckDetailsStrings : DeckDetailsStrings {
     override val filterNoneLabel: String = "何も"
     override val kanaGroupsModeActivatedLabel: String = "仮名グループモード"
 
-    override val shareLetterDeckClipboardMessage: String =
+    override val shareMojiDeckClipboardMessage: String =
         "デッキからの文字がクリップボードにコピーされました"
 }
 
-object JapaneseLetterDeckDetailDialogCommonStrings : LetterDeckDetailDialogCommonStrings {
+object JapaneseMojiDeckDetailDialogCommonStrings : MojiDeckDetailDialogCommonStrings {
     override val buttonCancel: String = "キャンセル"
     override val buttonApply: String = "適用"
 }
@@ -539,7 +539,7 @@ object JapaneseCommonPracticeStrings : CommonPracticeStrings {
 
 }
 
-object JapaneseLetterPracticeStrings : LetterPracticeStrings {
+object JapaneseMojiPracticeStrings : MojiPracticeStrings {
     override val configurationTitle: (practiceType: String) -> String = { "文字練習・$it" }
     override val hintStrokesTitle: String = "字画のヒント表示"
     override val hintStrokesMessage: String = "ヒントを表示する条件を設定する"
@@ -567,7 +567,7 @@ object JapaneseLetterPracticeStrings : LetterPracticeStrings {
 
     override val variantsTitle: String = "異体字"
     override val variantsHint: String = "クリックして表示"
-    override val unicodeTitle: (String) -> String = EnglishLetterPracticeStrings.unicodeTitle
+    override val unicodeTitle: (String) -> String = EnglishMojiPracticeStrings.unicodeTitle
     override val strokeCountTitle: (count: Int) -> String = { "${it}画" }
 }
 

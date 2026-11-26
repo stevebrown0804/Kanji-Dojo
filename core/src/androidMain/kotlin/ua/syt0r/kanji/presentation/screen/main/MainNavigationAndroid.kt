@@ -120,20 +120,20 @@ private class AndroidMainNavigationState(
     fun getRoute(clazz: KClass<out MainDestination>): String {
         val configuration = clazzToConfiguration.getValue(clazz)
         return when (configuration) {
-            is MainDestinationConfiguration.NoParams -> clazz.simpleName!!
-            is MainDestinationConfiguration.WithArguments -> "${clazz.simpleName}/{$DESTINATION_ARGUMENT_KEY}"
+            is MainDestinationConfiguration.NoParams -> configuration.routeName
+            is MainDestinationConfiguration.WithArguments -> "${configuration.routeName}/{$DESTINATION_ARGUMENT_KEY}"
         }
     }
 
     private fun getActualRoute(destination: MainDestination): String {
         val configuration = clazzToConfiguration.getValue(destination::class)
         if (configuration is MainDestinationConfiguration.NoParams)
-            return destination::class.simpleName!!
+            return configuration.routeName
 
         val uri = Uri.encode(
             json.encodeToString(PolymorphicSerializer(MainDestination::class), destination)
         )
-        return "${destination::class.simpleName}/$uri"
+        return "${configuration.routeName}/$uri"
     }
 
     private fun getDestination(entry: NavBackStackEntry): MainDestination {

@@ -4,7 +4,7 @@ import app.cash.sqldelight.db.SqlDriver
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import ua.syt0r.kanji.core.file.PlatformFile
-import ua.syt0r.kanji.core.srs.LetterPracticeType
+import ua.syt0r.kanji.core.srs.MojiPracticeType
 import ua.syt0r.kanji.core.user_data.db.UserDataDatabase
 import ua.syt0r.kanji.core.userdata.db.Fsrs_card
 import ua.syt0r.kanji.core.userdata.db.Review_history
@@ -35,25 +35,25 @@ class UserDatabaseInfo(
 )
 
 
-data class LetterDeck(
+data class MojiDeck(
     val id: Long,
     val name: String,
     val position: Int,
 )
 
-data class LetterDeckConflict(
+data class MojiDeckConflict(
     val character: String,
-    val decks: List<LetterDeck>,
+    val decks: List<MojiDeck>,
 )
 
-sealed interface LetterDeckConflictResolution {
-    data object Leave : LetterDeckConflictResolution
-    data class Move(val sourceDeckIds: Set<Long>) : LetterDeckConflictResolution
+sealed interface MojiDeckConflictResolution {
+    data object Leave : MojiDeckConflictResolution
+    data class Move(val sourceDeckIds: Set<Long>) : MojiDeckConflictResolution
 }
 
 data class CharacterStudyProgress(
     val character: String,
-    val practiceType: LetterPracticeType,
+    val practiceType: MojiPracticeType,
     val lastReviewTime: Instant,
     val repeats: Int,
     val lapses: Int,

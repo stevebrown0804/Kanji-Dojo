@@ -158,8 +158,8 @@ private fun ToolbarActions(
                 )
 
                 false -> DisplayingToolbarActions.Default(
-                    showVisibilityButton = loadedState is ScreenState.Loaded.Letters,
-                    sharableDeckData = loadedState.let { it as? ScreenState.Loaded.Letters }
+                    showVisibilityButton = loadedState is ScreenState.Loaded.Moji,
+                    sharableDeckData = loadedState.let { it as? ScreenState.Loaded.Moji }
                         ?.sharableDeckData
                 )
 

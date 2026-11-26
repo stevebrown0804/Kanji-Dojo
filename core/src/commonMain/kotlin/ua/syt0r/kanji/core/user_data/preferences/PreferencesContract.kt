@@ -14,15 +14,15 @@ interface PreferencesContract {
         val localDataTimestamp: SuspendedProperty<Instant?>
 
 
-        val practiceType: SuspendedProperty<PreferencesLetterPracticeType>
+        val practiceType: SuspendedProperty<PreferencesMojiPracticeType>
         val filterNew: SuspendedProperty<Boolean>
         val filterDue: SuspendedProperty<Boolean>
         val filterDone: SuspendedProperty<Boolean>
-        val sortOption: SuspendedProperty<PreferencesLetterSortOption>
+        val sortOption: SuspendedProperty<PreferencesMojiSortOption>
 
         val isSortDescending: SuspendedProperty<Boolean>
 
-        val practicePreviewLayout: SuspendedProperty<PreferencesDeckDetailsLetterLayout>
+        val practicePreviewLayout: SuspendedProperty<PreferencesDeckDetailsMojiLayout>
 
         val kanaGroupsEnabled: SuspendedProperty<Boolean>
 
@@ -40,8 +40,8 @@ interface PreferencesContract {
         val tutorialSeen: SuspendedProperty<Boolean>
         val generalDashboardStudyTargets: SuspendedProperty<Map<String, Boolean>>
 
-        val letterDashboardPracticeType: SuspendedProperty<PreferencesLetterPracticeType>
-        val letterDashboardSortByTime: SuspendedProperty<Boolean>
+        val mojiDashboardPracticeType: SuspendedProperty<PreferencesMojiPracticeType>
+        val mojiDashboardSortByTime: SuspendedProperty<Boolean>
 
         val vocabDashboardPracticeType: SuspendedProperty<PreferencesVocabPracticeType>
         val vocabDashboardSortByTime: SuspendedProperty<Boolean>
@@ -61,7 +61,7 @@ interface PreferencesContract {
         val highlightRadicals: SuspendedProperty<Boolean>
         val kanaAutoPlay: SuspendedProperty<Boolean>
 
-        val writingInputMethod: SuspendedProperty<PreferencesLetterPracticeWritingInputMode>
+        val writingInputMethod: SuspendedProperty<PreferencesMojiPracticeWritingInputMode>
         val writingRomajiInsteadOfKanaWords: SuspendedProperty<Boolean>
 
         val readingRomajiFuriganaForKanaWords: SuspendedProperty<Boolean>
@@ -75,10 +75,18 @@ interface PreferencesContract {
 }
 
 enum class PreferencesNewCardsOrder { First, Last, Mixed }
-enum class PreferencesLetterPracticeType { Writing, Reading }
-enum class PreferencesLetterSortOption { AddOrder, Frequency, Name, ReviewTime }
-enum class PreferencesDeckDetailsLetterLayout { Character, Groups }
+enum class PreferencesMojiPracticeType { Writing, Reading }
+enum class PreferencesMojiSortOption { AddOrder, Frequency, Name, ReviewTime }
+enum class PreferencesDeckDetailsMojiLayout { Character, Groups }
 enum class PreferencesTheme { System, Light, Dark, Amoled }
-enum class PreferencesLetterPracticeWritingInputMode { Stroke, Character }
+enum class PreferencesMojiPracticeWritingInputMode { Stroke, Character }
 enum class PreferencesVocabPracticeType { Flashcard, ReadingPicker, Writing }
-enum class PreferencesDefaultHomeTab { GeneralDashboard, Letters, Vocab }
+enum class PreferencesDefaultHomeTab {
+    GeneralDashboard, Moji, Vocab;
+
+    val storageName: String
+        get() = when (this) {
+            Moji -> "Letters"
+            else -> name
+        }
+}

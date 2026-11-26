@@ -1,7 +1,7 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common
 
 import androidx.compose.runtime.MutableState
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenPracticeType
 import kotlin.time.Duration
 
@@ -22,7 +22,7 @@ data class DeckStudyProgress<T>(
 
 }
 
-typealias LetterDeckStudyProgress = DeckStudyProgress<String>
+typealias MojiDeckStudyProgress = DeckStudyProgress<String>
 typealias VocabDeckStudyProgress = DeckStudyProgress<Long>
 
 interface DeckDashboardItem {
@@ -33,18 +33,18 @@ interface DeckDashboardItem {
     val studyProgress: Map<ScreenPracticeType, DeckStudyProgress<out Any>>
 }
 
-data class LetterDeckDashboardItem(
+data class MojiDeckDashboardItem(
     override val deckId: Long,
     override val title: String,
     override val position: Int,
     override val elapsedSinceLastReview: Duration?,
-    val writingProgress: LetterDeckStudyProgress,
-    val readingProgress: LetterDeckStudyProgress
+    val writingProgress: MojiDeckStudyProgress,
+    val readingProgress: MojiDeckStudyProgress
 ) : DeckDashboardItem {
 
-    override val studyProgress: Map<ScreenPracticeType, LetterDeckStudyProgress> = mapOf(
-        ScreenLetterPracticeType.Writing to writingProgress,
-        ScreenLetterPracticeType.Reading to readingProgress
+    override val studyProgress: Map<ScreenPracticeType, MojiDeckStudyProgress> = mapOf(
+        ScreenMojiPracticeType.Writing to writingProgress,
+        ScreenMojiPracticeType.Reading to readingProgress
     )
 
 }

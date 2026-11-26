@@ -8,14 +8,14 @@ sealed interface PracticeType {
     val srsPracticeType: SrsPracticeType
 }
 
-enum class LetterPracticeType(
+enum class MojiPracticeType(
     override val srsPracticeType: SrsPracticeType
 ) : PracticeType {
 
-    Writing(SrsPracticeType.LetterWriting),
-    Reading(SrsPracticeType.LetterReading);
+    Writing(SrsPracticeType.MojiWriting),
+    Reading(SrsPracticeType.MojiReading);
 
-    fun toSrsKey(letter: String) = SrsCardKey(letter, srsPracticeType.value)
+    fun toSrsKey(moji: String) = SrsCardKey(moji, srsPracticeType.value)
 
     companion object {
         val srsPracticeTypeValues: List<Long> = values().map { it.srsPracticeType.value }
@@ -46,8 +46,8 @@ data class SrsCardKey(
 
 enum class SrsPracticeType(val value: Long) {
 
-    LetterWriting(0),
-    LetterReading(1),
+    MojiWriting(0),
+    MojiReading(1),
 
     VocabFlashcard(10),
     VocabReadingPicker(11),

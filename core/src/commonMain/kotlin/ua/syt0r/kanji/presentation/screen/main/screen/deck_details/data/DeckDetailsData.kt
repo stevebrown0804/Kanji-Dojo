@@ -4,10 +4,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ua.syt0r.kanji.core.srs.SrsItemStatus
 import ua.syt0r.kanji.core.user_data.database.SavedVocabCard
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 
 
@@ -17,7 +18,8 @@ sealed interface DeckDetailsScreenConfiguration {
     val deckId: Long
 
     @Serializable
-    data class LetterDeck(override val deckId: Long) : DeckDetailsScreenConfiguration
+    @SerialName("ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsScreenConfiguration.LetterDeck")
+    data class MojiDeck(override val deckId: Long) : DeckDetailsScreenConfiguration
 
     @Serializable
     data class VocabDeck(override val deckId: Long) : DeckDetailsScreenConfiguration
@@ -29,9 +31,9 @@ sealed interface DeckDetailsData {
     val deckTitle: String
     val items: List<DeckDetailsItemData>
 
-    data class LetterDeckData(
+    data class MojiDeckData(
         override val deckTitle: String,
-        override val items: List<DeckDetailsItemData.LetterData>,
+        override val items: List<DeckDetailsItemData.MojiData>,
         val sharableDeckData: String,
     ) : DeckDetailsData
 
@@ -47,7 +49,7 @@ sealed interface DeckDetailsVisibleData {
     val items: List<DeckDetailsListItem>
 
     data class Items(
-        override val items: List<DeckDetailsListItem.Letter>
+        override val items: List<DeckDetailsListItem.Moji>
     ) : DeckDetailsVisibleData
 
     data class Groups(
@@ -64,11 +66,11 @@ sealed interface DeckDetailsVisibleData {
 
 sealed interface DeckDetailsItemData {
 
-    data class LetterData(
+    data class MojiData(
         val character: String,
         val positionInPractice: Int,
         val frequency: Int?,
-        val summaryMap: Map<ScreenLetterPracticeType, PracticeItemSummary>
+        val summaryMap: Map<ScreenMojiPracticeType, PracticeItemSummary>
     ) : DeckDetailsItemData
 
     data class VocabData(
@@ -100,9 +102,9 @@ sealed interface DeckDetailsListItem {
     val key: DeckDetailsListItemKey
     val selected: MutableState<Boolean>
 
-    data class Letter(
+    data class Moji(
         override val key: DeckDetailsListItemKey,
-        val data: DeckDetailsItemData.LetterData,
+        val data: DeckDetailsItemData.MojiData,
         val initialSelectionState: Boolean
     ) : DeckDetailsListItem {
         override val selected: MutableState<Boolean> = mutableStateOf(initialSelectionState)
@@ -111,7 +113,7 @@ sealed interface DeckDetailsListItem {
     data class Group(
         val index: Int,
         override val key: DeckDetailsListItemKey,
-        val items: List<DeckDetailsItemData.LetterData>,
+        val items: List<DeckDetailsItemData.MojiData>,
         val summary: PracticeGroupSummary,
         val reviewState: SrsItemStatus,
         val initialSelectionState: Boolean

@@ -10,22 +10,16 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
-import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import org.junit.BeforeClass
 import org.junit.Test
-import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
-import ua.syt0r.kanji.core.sync.SyncFeatureState
-import ua.syt0r.kanji.core.sync.SyncManager
 import ua.syt0r.kanji.di.appModules
 import ua.syt0r.kanji.mediaGenerator.ScreenshotColumn
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 import ua.syt0r.kanji.presentation.common.ui.Orientation
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
@@ -35,12 +29,12 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.DeckPicke
 import ua.syt0r.kanji.presentation.screen.main.screen.home.HomeScreenTab
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.DeckDashboardListItemHeaderButtonTestTag
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.CharacterInputData
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.DefaultLetterPracticeScreenContent
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.LetterPracticeScreenContract
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeConfiguration
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeReviewState
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.WritingPracticeHintMode
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.DefaultMojiPracticeScreenContent
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.MojiPracticeScreenContract
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeReviewState
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeScreenConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.WritingPracticeHintMode
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.VocabPracticeScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.VocabPracticeScreenContract
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.data.VocabPracticeScreenConfiguration
@@ -84,14 +78,7 @@ class ScreenshotTests {
         @BeforeClass
         @JvmStatic
         fun setup() {
-            val testModule = module {
-                single<SyncManager> {
-                    mockk {
-                        every { state } returns MutableStateFlow(SyncFeatureState.Disabled)
-                    }
-                }
-            }
-            startKoin { modules(appModules.plus(testModule)) }
+            startKoin { modules(appModules) }
         }
 
     }
@@ -110,7 +97,7 @@ class ScreenshotTests {
         autoAdvance = true
     ) { configuration ->
 
-        val viewModel = getMultiplatformViewModel<LetterPracticeScreenContract.ViewModel>()
+        val viewModel = getMultiplatformViewModel<MojiPracticeScreenContract.ViewModel>()
 
         ScreenshotColumn(
             title = """
@@ -118,10 +105,10 @@ class ScreenshotTests {
                 than 6000 characters
             """.trimIndent()
         ) {
-            DefaultLetterPracticeScreenContent(
-                configuration = LetterPracticeScreenConfiguration(
-                    ScreenLetterPracticeType.Writing,
-                    listOf(LetterPracticeScreenConfiguration.Card("字", -1))
+            DefaultMojiPracticeScreenContent(
+                configuration = MojiPracticeScreenConfiguration(
+                    ScreenMojiPracticeType.Writing,
+                    listOf(MojiPracticeScreenConfiguration.Card("字", -1))
                 ),
                 mainNavigationState = mockk(),
                 viewModel = viewModel
@@ -133,15 +120,15 @@ class ScreenshotTests {
             waitForIdle()
 
             viewModel.state
-                .waitForFirstInstance<LetterPracticeScreenContract.ScreenState.Configuring>()
-                .let { it.configuration as LetterPracticeConfiguration.Writing }
+                .waitForFirstInstance<MojiPracticeScreenContract.ScreenState.Configuring>()
+                .let { it.configuration as MojiPracticeConfiguration.Writing }
                 .hintMode.value = WritingPracticeHintMode.All
 
             onNodeWithText("Start").performClick()
 
             val reviewState = viewModel.state
-                .waitForFirstInstance<LetterPracticeScreenContract.ScreenState.Review>()
-                .let { it.reviewState as LetterPracticeReviewState.Writing }
+                .waitForFirstInstance<MojiPracticeScreenContract.ScreenState.Review>()
+                .let { it.reviewState as MojiPracticeReviewState.Writing }
                 .studyWriterState!!
 
             reviewState.strokes.dropLast(1).forEach {
@@ -169,7 +156,7 @@ class ScreenshotTests {
         autoAdvance = true
     ) { configuration ->
 
-        val viewModel = getMultiplatformViewModel<LetterPracticeScreenContract.ViewModel>()
+        val viewModel = getMultiplatformViewModel<MojiPracticeScreenContract.ViewModel>()
 
         ScreenshotColumn(
             title = """
@@ -178,10 +165,10 @@ class ScreenshotTests {
                 vocabulary samples
             """.trimIndent()
         ) {
-            DefaultLetterPracticeScreenContent(
-                configuration = LetterPracticeScreenConfiguration(
-                    ScreenLetterPracticeType.Reading,
-                    listOf(LetterPracticeScreenConfiguration.Card("番", -1))
+            DefaultMojiPracticeScreenContent(
+                configuration = MojiPracticeScreenConfiguration(
+                    ScreenMojiPracticeType.Reading,
+                    listOf(MojiPracticeScreenConfiguration.Card("番", -1))
                 ),
                 mainNavigationState = mockk(),
                 viewModel = viewModel
@@ -193,12 +180,12 @@ class ScreenshotTests {
             waitForIdle()
 
             viewModel.state
-                .waitForFirstInstance<LetterPracticeScreenContract.ScreenState.Configuring>()
-                .let { it.configuration as LetterPracticeConfiguration.Reading }
+                .waitForFirstInstance<MojiPracticeScreenContract.ScreenState.Configuring>()
+                .let { it.configuration as MojiPracticeConfiguration.Reading }
 
             onNodeWithText("Start").performClick()
 
-            viewModel.state.waitForFirstInstance<LetterPracticeScreenContract.ScreenState.Review>()
+            viewModel.state.waitForFirstInstance<MojiPracticeScreenContract.ScreenState.Review>()
 
             onNode(hasText("Show Answer")).performClick()
 
@@ -265,12 +252,12 @@ class ScreenshotTests {
                     System to learn efficiently
                 """.trimIndent()
         ) {
-            MainScreen(koinInject())
+            MainScreen()
         }
 
         TestLaunchedEffect {
             waitForIdle()
-            onNodeWithTag(HomeScreenTab.LettersDashboard.buttonTestTag).performClick()
+            onNodeWithTag(HomeScreenTab.MojiDashboard.buttonTestTag).performClick()
             waitForIdle()
             onAllNodesWithTag(DeckDashboardListItemHeaderButtonTestTag).run {
                 listOf(get(1), get(2)).forEach {
@@ -301,7 +288,7 @@ class ScreenshotTests {
                 """.trimIndent()
         ) {
             DeckPickerScreen(
-                configuration = DeckPickerScreenConfiguration.Letters,
+                configuration = DeckPickerScreenConfiguration.Moji,
                 mainNavigationState = mockk()
             )
         }

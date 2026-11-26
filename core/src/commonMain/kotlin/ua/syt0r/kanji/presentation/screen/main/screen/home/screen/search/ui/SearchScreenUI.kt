@@ -73,7 +73,7 @@ import ua.syt0r.kanji.presentation.common.isNearListEnd
 import ua.syt0r.kanji.presentation.common.rememberCollapsibleContainerState
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
 import ua.syt0r.kanji.presentation.common.trackItemPosition
-import ua.syt0r.kanji.presentation.common.ui.kanji.HighlightedLetter
+import ua.syt0r.kanji.presentation.common.ui.kanji.HighlightedMoji
 import ua.syt0r.kanji.presentation.dialog.SaveWordDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.search.SearchScreenContract
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.search.SearchScreenContract.ScreenState
@@ -311,8 +311,8 @@ private fun ListContent(
                 ) {
                     item { Spacer(modifier = Modifier.width(20.dp)) }
                     items(screenState.characters) {
-                        HighlightedLetter(
-                            letter = it,
+                        HighlightedMoji(
+                            moji = it,
                             onClick = onCharacterClick,
                             aspectRatioConstraintOrientation = Orientation.Vertical
                         )

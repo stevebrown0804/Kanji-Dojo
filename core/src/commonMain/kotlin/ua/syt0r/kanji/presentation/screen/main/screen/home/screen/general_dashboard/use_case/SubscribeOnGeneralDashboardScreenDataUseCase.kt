@@ -25,9 +25,9 @@ import ua.syt0r.kanji.core.logger.Logger
 import ua.syt0r.kanji.core.logger.runWithTimeLog
 import ua.syt0r.kanji.core.mergeSharedFlows
 import ua.syt0r.kanji.core.refreshableDataProducerFlow
-import ua.syt0r.kanji.core.srs.LetterPracticeType
-import ua.syt0r.kanji.core.srs.LetterSrsDeck
-import ua.syt0r.kanji.core.srs.LetterSrsManager
+import ua.syt0r.kanji.core.srs.MojiPracticeType
+import ua.syt0r.kanji.core.srs.MojiSrsDeck
+import ua.syt0r.kanji.core.srs.MojiSrsManager
 import ua.syt0r.kanji.core.srs.SrsDecksData
 import ua.syt0r.kanji.core.srs.VocabPracticeType
 import ua.syt0r.kanji.core.srs.VocabSrsDeck
@@ -44,7 +44,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashbo
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.StudyTargetPracticeOptions
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.StudyTargetProgress
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.StudyTargetState
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.data.VocabPracticeScreenConfiguration
 import kotlin.time.Duration.Companion.days
 
@@ -57,7 +57,7 @@ interface SubscribeOnGeneralDashboardScreenDataUseCase {
 }
 
 class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
-    private val letterSrsManager: LetterSrsManager,
+    private val mojiSrsManager: MojiSrsManager,
     private val vocabSrsManager: VocabSrsManager,
     private val preferencesRepository: PreferencesContract.AppPreferences,
     private val reviewHistoryRepository: ReviewHistoryRepository,
@@ -70,7 +70,7 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
     ): Flow<RefreshableData<ScreenState.Loaded>> = refreshableDataProducerFlow(
         dataChangeFlow = mergeSharedFlows(
             coroutineScope,
-            letterSrsManager.dataChangeFlow,
+            mojiSrsManager.dataChangeFlow,
             vocabSrsManager.dataChangeFlow
         ),
         lifecycleState = lifecycleState,
@@ -80,8 +80,8 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
     private suspend fun ProducerScope<ScreenState.Loaded>.produceState() {
         Logger.d("produceState")
 
-        val deferredLettersDecks = async {
-            runWithTimeLog("letterDecksData") { letterSrsManager.getDecks() }
+        val deferredMojiDecks = async {
+            runWithTimeLog("mojiDecksData") { mojiSrsManager.getDecks() }
         }
 
         val deferredVocabDecks = async {
@@ -94,7 +94,7 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
 
         val preferencesStudyTargets = preferencesRepository.generalDashboardStudyTargets.get()
             .mapNotNull { (name, enabled) ->
-                val target = StudyTarget.entries.find { it.name == name } ?: return@mapNotNull null
+                val target = StudyTarget.entries.find { it.preferenceKey == name } ?: return@mapNotNull null
                 target to enabled
             }
 
@@ -109,8 +109,8 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
                         studyTarget = studyTarget,
                         enabled = enabled,
                         progress = when (studyTarget.practiceType) {
-                            is LetterPracticeType -> getPracticeTypeProgress(
-                                decksData = deferredLettersDecks.await(),
+                            is MojiPracticeType -> getPracticeTypeProgress(
+                                decksData = deferredMojiDecks.await(),
                                 practiceType = studyTarget.practiceType
                             )
 
@@ -133,7 +133,7 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
         snapshotFlow { studyTargets.value }
             .drop(1)
             .onEach {
-                val updatedMap = it.associate { it.studyTarget.name to it.enabled }
+                val updatedMap = it.associate { it.studyTarget.preferenceKey to it.enabled }
                 preferencesRepository.generalDashboardStudyTargets.set(updatedMap)
             }
             .launchIn(this)
@@ -141,8 +141,8 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
     }
 
     private fun CoroutineScope.getPracticeTypeProgress(
-        decksData: SrsDecksData<LetterSrsDeck, LetterPracticeType>,
-        practiceType: LetterPracticeType
+        decksData: SrsDecksData<MojiSrsDeck, MojiPracticeType>,
+        practiceType: MojiPracticeType
     ): StudyTargetProgress {
         if (decksData.decks.isEmpty()) return StudyTargetProgress.NoDecks
 
@@ -164,7 +164,7 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
 
         val leftover = decksData.dailyProgress.leftoversByPracticeTypeMap.getValue(practiceType)
 
-        fun Pair<String, Long>.mapToCard() = LetterPracticeScreenConfiguration.Card(first, second)
+        fun Pair<String, Long>.mapToCard() = MojiPracticeScreenConfiguration.Card(first, second)
 
         val resultNew = combinedDailyNew.toList().take(leftover.new).map { it.mapToCard() }
         val dueCards = combinedDailyDue.toList().take(leftover.due).map { it.mapToCard() }

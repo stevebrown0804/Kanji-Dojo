@@ -12,7 +12,7 @@ import ua.syt0r.kanji.core.RefreshableData
 import ua.syt0r.kanji.core.analytics.AnalyticsManager
 import ua.syt0r.kanji.presentation.LifecycleAwareViewModel
 import ua.syt0r.kanji.presentation.LifecycleState
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.screen.main.MainDestination
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.DeckDetailsScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsConfiguration
@@ -25,12 +25,12 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.GetD
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.SubscribeOnDeckDetailsDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.SubscribeOnVocabDeckDetailsDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.UpdateDeckDetailsConfigurationUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.data.VocabPracticeScreenConfiguration
 
 class DeckDetailsViewModel(
     private val viewModelScope: CoroutineScope,
-    private val subscribeOnLettersDataUseCase: SubscribeOnDeckDetailsDataUseCase,
+    private val subscribeOnMojiDataUseCase: SubscribeOnDeckDetailsDataUseCase,
     private val subscribeOnVocabDataUseCase: SubscribeOnVocabDeckDetailsDataUseCase,
     private val getConfigurationUseCase: DeckDetailsGetConfigurationUseCase,
     private val updateConfigurationUseCase: UpdateDeckDetailsConfigurationUseCase,
@@ -52,8 +52,8 @@ class DeckDetailsViewModel(
         this.configuration = configuration
 
         when (configuration) {
-            is DeckDetailsScreenConfiguration.LetterDeck -> {
-                subscribeOnLettersDataUseCase(configuration, lifecycleState)
+            is DeckDetailsScreenConfiguration.MojiDeck -> {
+                subscribeOnMojiDataUseCase(configuration, lifecycleState)
                     .onEach { it.applyToState() }
                     .launchIn(viewModelScope)
             }
@@ -67,20 +67,20 @@ class DeckDetailsViewModel(
 
     }
 
-    override fun getPracticeConfiguration(group: DeckDetailsListItem.Group): MainDestination.LetterPractice {
+    override fun getPracticeConfiguration(group: DeckDetailsListItem.Group): MainDestination.MojiPractice {
         val deckId = configuration.deckId
         val loadedState = state.value as ScreenState.Loaded
 
         val configuration = loadedState.configuration.value
-        configuration as DeckDetailsConfiguration.LetterDeckConfiguration
+        configuration as DeckDetailsConfiguration.MojiDeckConfiguration
 
         val characters = group.items.map { it.character }
-        return MainDestination.LetterPractice(
-            configuration = LetterPracticeScreenConfiguration(
-                cards = characters.map { LetterPracticeScreenConfiguration.Card(it, deckId) },
+        return MainDestination.MojiPractice(
+            configuration = MojiPracticeScreenConfiguration(
+                cards = characters.map { MojiPracticeScreenConfiguration.Card(it, deckId) },
                 practiceType = when (configuration.practiceType) {
-                    ScreenLetterPracticeType.Writing -> ScreenLetterPracticeType.Writing
-                    ScreenLetterPracticeType.Reading -> ScreenLetterPracticeType.Reading
+                    ScreenMojiPracticeType.Writing -> ScreenMojiPracticeType.Writing
+                    ScreenMojiPracticeType.Reading -> ScreenMojiPracticeType.Reading
                 }
             )
         )
@@ -93,7 +93,7 @@ class DeckDetailsViewModel(
         val deckId = this.configuration.deckId
         return when (val configuration = loadedState.configuration.value) {
 
-            is DeckDetailsConfiguration.LetterDeckConfiguration -> {
+            is DeckDetailsConfiguration.MojiDeckConfiguration -> {
 
                 val characters: List<String> = when (currentVisibleData) {
                     is DeckDetailsVisibleData.Items -> currentVisibleData.items.asSequence()
@@ -111,14 +111,14 @@ class DeckDetailsViewModel(
 
                 }
 
-                MainDestination.LetterPractice(
-                    configuration = LetterPracticeScreenConfiguration(
+                MainDestination.MojiPractice(
+                    configuration = MojiPracticeScreenConfiguration(
                         cards = characters.map {
-                            LetterPracticeScreenConfiguration.Card(it, deckId)
+                            MojiPracticeScreenConfiguration.Card(it, deckId)
                         },
                         practiceType = when (configuration.practiceType) {
-                            ScreenLetterPracticeType.Writing -> ScreenLetterPracticeType.Writing
-                            ScreenLetterPracticeType.Reading -> ScreenLetterPracticeType.Reading
+                            ScreenMojiPracticeType.Writing -> ScreenMojiPracticeType.Writing
+                            ScreenMojiPracticeType.Reading -> ScreenMojiPracticeType.Reading
                         }
                     )
                 )
@@ -155,16 +155,16 @@ class DeckDetailsViewModel(
             is RefreshableData.Loaded -> {
 
                 when (value) {
-                    is DeckDetailsData.LetterDeckData -> {
+                    is DeckDetailsData.MojiDeckData -> {
                         val configuration = mutableStateOf(
-                            getConfigurationUseCase.lettersConfiguration()
+                            getConfigurationUseCase.mojiConfiguration()
                         )
 
                         snapshotFlow { configuration.value }
                             .onEach { updateConfigurationUseCase(it) }
                             .launchIn(viewModelScope)
 
-                        _state.value = ScreenState.Loaded.Letters(
+                        _state.value = ScreenState.Loaded.Moji(
                             title = value.deckTitle,
                             items = value.items,
                             configuration = configuration,

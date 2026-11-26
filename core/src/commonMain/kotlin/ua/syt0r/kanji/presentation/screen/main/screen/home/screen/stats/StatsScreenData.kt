@@ -46,6 +46,6 @@ data class TimePeriodStats(
 data class TotalStats(
     val reviews: Int,
     val timeSpent: Duration,
-    val uniqueLettersStudied: Int,
+    val uniqueMojiStudied: Int,
     val uniqueWordsStudied: Int
 )

@@ -40,7 +40,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashbo
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.StudyTargetProgress
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.StudyTargetState
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.SrsAnswerButton
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeScreenConfiguration
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Duration.Companion.days
@@ -113,18 +113,18 @@ fun TutorialDialog(
 
                 StudyTargetItem(
                     studyTargetState = StudyTargetState(
-                        studyTarget = StudyTarget.LetterWriting,
+                        studyTarget = StudyTarget.MojiWriting,
                         enabled = true,
                         progress = StudyTargetProgress.WithDecks(
                             options = StudyTargetPracticeOptions(
                                 newCards = (0L..2L).map {
-                                    LetterPracticeScreenConfiguration.Card(it.toString(), it)
+                                    MojiPracticeScreenConfiguration.Card(it.toString(), it)
                                 },
                                 dueCards = (0L..18L).map {
-                                    LetterPracticeScreenConfiguration.Card(it.toString(), it)
+                                    MojiPracticeScreenConfiguration.Card(it.toString(), it)
                                 },
                                 combinedCards = (0L..20L).map {
-                                    LetterPracticeScreenConfiguration.Card(it.toString(), it)
+                                    MojiPracticeScreenConfiguration.Card(it.toString(), it)
                                 }
                             ),
                             totalProgress = 0.8f
@@ -152,7 +152,7 @@ fun TutorialDialog(
 
                 StudyTargetItem(
                     studyTargetState = StudyTargetState(
-                        studyTarget = StudyTarget.LetterWriting,
+                        studyTarget = StudyTarget.MojiWriting,
                         enabled = true,
                         progress = StudyTargetProgress.NoDecks
                     ),

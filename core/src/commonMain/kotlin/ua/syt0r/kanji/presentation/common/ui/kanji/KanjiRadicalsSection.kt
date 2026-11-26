@@ -38,8 +38,8 @@ fun KanjiRadicalUI(
 
     AppListItem(
         leadingContent = {
-            HighlightedLetter(
-                letter = radicalDetails.value,
+            HighlightedMoji(
+                moji = radicalDetails.value,
                 onClick = onRadicalClick
             )
         },

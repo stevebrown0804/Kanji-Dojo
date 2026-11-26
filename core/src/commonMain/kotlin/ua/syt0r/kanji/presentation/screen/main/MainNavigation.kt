@@ -2,10 +2,11 @@ package ua.syt0r.kanji.presentation.screen.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import org.koin.compose.koinInject
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.screen.about.AboutScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.backup.BackupScreenContract
@@ -20,8 +21,8 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.DeckPicke
 import ua.syt0r.kanji.presentation.screen.main.screen.home.HomeScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenData
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.LetterPracticeScreenContract
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.MojiPracticeScreenContract
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.VocabPracticeScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.data.VocabPracticeScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.SuggestedVocabCardData
@@ -140,18 +141,19 @@ interface MainDestination {
     }
 
     @Serializable
-    data class LetterPractice(
-        val configuration: LetterPracticeScreenConfiguration
+    @SerialName("ua.syt0r.kanji.presentation.screen.main.MainDestination.LetterPractice")
+    data class MojiPractice(
+        val configuration: MojiPracticeScreenConfiguration
     ) : MainDestination {
 
         override val analyticsName: String = when (configuration.practiceType) {
-            ScreenLetterPracticeType.Writing -> "writing_practice"
-            ScreenLetterPracticeType.Reading -> "reading_practice"
+            ScreenMojiPracticeType.Writing -> "writing_practice"
+            ScreenMojiPracticeType.Reading -> "reading_practice"
         }
 
         @Composable
         override fun Content(state: MainNavigationState) {
-            val content = koinInject<LetterPracticeScreenContract.Content>()
+            val content = koinInject<MojiPracticeScreenContract.Content>()
             content(
                 configuration = configuration,
                 mainNavigationState = state,
@@ -244,6 +246,11 @@ interface MainDestination {
 sealed interface MainDestinationConfiguration<T : MainDestination> {
 
     val clazz: KClass<T>
+    val routeName: String
+        get() = when (clazz) {
+            MainDestination.MojiPractice::class -> "LetterPractice"
+            else -> clazz.simpleName!!
+        }
     val subclassRegisterer: (PolymorphicModuleBuilder<MainDestination>) -> Unit
 
     data class NoParams<T : MainDestination>(
@@ -295,6 +302,6 @@ val defaultMainDestinations: List<MainDestinationConfiguration<*>> = listOf(
     MainDestination.DeckDetails::class.configuration(),
     MainDestination.DeckEdit::class.configuration(),
     MainDestination.Info::class.configuration(),
-    MainDestination.LetterPractice::class.configuration(),
+    MainDestination.MojiPractice::class.configuration(),
     MainDestination.VocabPractice::class.configuration(),
 )

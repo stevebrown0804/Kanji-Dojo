@@ -52,11 +52,8 @@ import coil3.PlatformContext
 import coil3.compose.asPainter
 import coil3.executeBlocking
 import coil3.request.ImageRequest
-import io.mockk.every
-import io.mockk.mockk
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import media.Res
 import media.kanji_dojo_icon
@@ -66,12 +63,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.junit.BeforeClass
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
 import ua.syt0r.kanji.core.app_data.AppDataRepository
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
 import ua.syt0r.kanji.core.app_data.data.formattedVocabReading
-import ua.syt0r.kanji.core.sync.SyncFeatureState
-import ua.syt0r.kanji.core.sync.SyncManager
 import ua.syt0r.kanji.di.appModules
 import ua.syt0r.kanji.presentation.common.ui.FuriganaText
 import ua.syt0r.kanji.presentation.common.ui.kanji.StrokeWidth
@@ -88,14 +82,7 @@ class VideoTests {
         @BeforeClass
         @JvmStatic
         fun setup() {
-            val testModule = module {
-                single<SyncManager> {
-                    mockk {
-                        every { state } returns MutableStateFlow(SyncFeatureState.Disabled)
-                    }
-                }
-            }
-            startKoin { modules(appModules.plus(testModule)) }
+            startKoin { modules(appModules) }
         }
 
     }
@@ -107,8 +94,8 @@ class VideoTests {
         val content: @Composable (CompletableDeferred<Unit>) -> Unit
     )
 
-    data class VideoLetterDescriptor(
-        val letter: String,
+    data class VideoMojiDescriptor(
+        val moji: String,
         val priorityExamples: List<Any> = emptyList(), // string or WordProvider
         val examplesMapper: (List<JapaneseWord>) -> List<JapaneseWord> = { it },
         val image: String? = null
@@ -119,37 +106,37 @@ class VideoTests {
         val provider: (List<JapaneseWord>) -> JapaneseWord
     )
 
-    data class VideoLetterData(
-        val letter: String,
+    data class VideoMojiData(
+        val moji: String,
         val meanings: List<String>,
         val strokes: List<Path>,
         val examples: List<JapaneseWord>,
         val image: Painter?
     )
 
-    val v1 = listOf<VideoLetterDescriptor>(
-        VideoLetterDescriptor("止", listOf("止まる", "止まり")),
-        VideoLetterDescriptor("口", listOf("口", "北口", "南口")),
-        VideoLetterDescriptor("入", listOf("入口")),
-        VideoLetterDescriptor("出", listOf("出口")),
-        VideoLetterDescriptor("禁", listOf("禁止", "禁煙", "禁物"))
+    val v1 = listOf<VideoMojiDescriptor>(
+        VideoMojiDescriptor("止", listOf("止まる", "止まり")),
+        VideoMojiDescriptor("口", listOf("口", "北口", "南口")),
+        VideoMojiDescriptor("入", listOf("入口")),
+        VideoMojiDescriptor("出", listOf("出口")),
+        VideoMojiDescriptor("禁", listOf("禁止", "禁煙", "禁物"))
     )
 
-    val v2 = listOf<VideoLetterDescriptor>(
-        VideoLetterDescriptor(
+    val v2 = listOf<VideoMojiDescriptor>(
+        VideoMojiDescriptor(
             "料",
             listOf("無料", "有料")
         ),
-        VideoLetterDescriptor("時", listOf("時間", "営業時間")),
-        VideoLetterDescriptor(
-            letter = "開",
+        VideoMojiDescriptor("時", listOf("時間", "営業時間")),
+        VideoMojiDescriptor(
+            moji = "開",
             examplesMapper = {
                 val m1 = it.first().copy(glossary = listOf("to open (e.g. business, etc.)"))
                 listOf(m1).plus(it.drop(1))
             }
         ),
-        VideoLetterDescriptor("閉", listOf("閉まる")),
-        VideoLetterDescriptor("手", listOf("手", "お手洗い"))
+        VideoMojiDescriptor("閉", listOf("閉まる")),
+        VideoMojiDescriptor("手", listOf("手", "お手洗い"))
     )
 
     @OptIn(ExperimentalTestApi::class)
@@ -160,12 +147,12 @@ class VideoTests {
 
         val contentList = remember {
             val imageLoader = ImageLoader.Builder(PlatformContext.INSTANCE).build()
-            val letterDataList = v2.map { (letter, priorityWords, examplesMapper, imageUrl) ->
+            val mojiDataList = v2.map { (moji, priorityWords, examplesMapper, imageUrl) ->
                 runBlocking {
-                    VideoLetterData(
-                        letter = letter,
-                        meanings = appDataRepository.getMeanings(letter),
-                        strokes = parseKanjiStrokes(appDataRepository.getStrokes(letter)),
+                    VideoMojiData(
+                        moji = moji,
+                        meanings = appDataRepository.getMeanings(moji),
+                        strokes = parseKanjiStrokes(appDataRepository.getStrokes(moji)),
                         examples = priorityWords
                             .map {
                                 when (it) {
@@ -177,7 +164,7 @@ class VideoTests {
                                     else -> error("not supported")
                                 }
                             }
-                            .plus(appDataRepository.getWordExamples(letter))
+                            .plus(appDataRepository.getWordExamples(moji))
                             .distinctBy { it.id }
                             .take(5)
                             .let { examplesMapper(it) },
@@ -204,12 +191,12 @@ class VideoTests {
                     title = "Japanese kanji",
                     subtitle = "Part #2",
                     topic = "Street signs 2",
-                    letters = letterDataList.map { it.letter }
+                    moji = mojiDataList.map { it.moji }
                 )
 
             }
 
-            val writingContent = letterDataList.mapIndexed { letterIndex, letterData ->
+            val writingContent = mojiDataList.mapIndexed { mojiIndex, mojiData ->
 
                 VideoContent {
 
@@ -226,8 +213,8 @@ class VideoTests {
                     }
 
                     KanjiView(
-                        letterIndex = letterIndex,
-                        data = letterData,
+                        mojiIndex = mojiIndex,
+                        data = mojiData,
                         stokeAnimationStart = stokeAnimationStart,
                         stokeAnimationFinish = stokeAnimationFinish
                     )
@@ -243,7 +230,7 @@ class VideoTests {
                     it.complete(Unit)
                 }
                 VideoOutro(
-                    letterDataList = letterDataList
+                    mojiDataList = mojiDataList
                 )
             }
 
@@ -355,7 +342,7 @@ private fun VideoIntro(
     title: String,
     subtitle: String,
     topic: String,
-    letters: List<String>
+    moji: List<String>
 ) {
 
     Column(
@@ -389,7 +376,7 @@ private fun VideoIntro(
         )
 
         Text(
-            text = letters.joinToString("、"),
+            text = moji.joinToString("、"),
             fontSize = 26.sp,
             fontWeight = FontWeight.ExtraLight,
             color = onLightBgColor
@@ -401,13 +388,13 @@ private fun VideoIntro(
 
 @Composable
 private fun KanjiView(
-    letterIndex: Int,
-    data: VideoTests.VideoLetterData,
+    mojiIndex: Int,
+    data: VideoTests.VideoMojiData,
     stokeAnimationStart: CompletableDeferred<Unit>,
     stokeAnimationFinish: CompletableDeferred<Unit>
 ) {
 
-    val letter: String = data.letter
+    val moji: String = data.moji
     val meanings: List<String> = data.meanings
     val strokes: List<Path> = data.strokes
     val examples: List<JapaneseWord> = data.examples
@@ -419,7 +406,7 @@ private fun KanjiView(
     ) {
 
         Text(
-            text = letter,
+            text = moji,
             fontWeight = FontWeight.SemiBold,
             fontSize = 84.sp
         )
@@ -507,7 +494,7 @@ private fun KanjiView(
                 state = rememberUpdatedState(null)
             ) {
 
-                AutoAnimatedLetter(
+                AutoAnimatedMoji(
                     strokes = strokes,
                     modifier = Modifier.fillMaxSize(),
                     animationDelay = stokeAnimationStart,
@@ -517,7 +504,7 @@ private fun KanjiView(
             }
 
             Text(
-                text = letterIndex.plus(1).toString(),
+                text = mojiIndex.plus(1).toString(),
                 color = onLightBgColor,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
@@ -538,7 +525,7 @@ private fun KanjiView(
 }
 
 @Composable
-fun AutoAnimatedLetter(
+fun AutoAnimatedMoji(
     strokes: List<Path>,
     modifier: Modifier,
     animationDelay: CompletableDeferred<Unit>,
@@ -599,7 +586,7 @@ fun AutoAnimatedLetter(
 }
 
 @Composable
-fun VideoOutro(letterDataList: List<VideoTests.VideoLetterData>) {
+fun VideoOutro(mojiDataList: List<VideoTests.VideoMojiData>) {
 
     Column(
         modifier = Modifier
@@ -623,14 +610,14 @@ fun VideoOutro(letterDataList: List<VideoTests.VideoLetterData>) {
                 textAlign = TextAlign.End
             )
 
-            letterDataList.forEachIndexed { i, it ->
+            mojiDataList.forEachIndexed { i, it ->
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
 
                     Text(
-                        text = it.letter,
+                        text = it.moji,
                         style = exampleReadingStyle,
                         fontSize = 34.sp,
                         modifier = Modifier.alignByBaseline(),

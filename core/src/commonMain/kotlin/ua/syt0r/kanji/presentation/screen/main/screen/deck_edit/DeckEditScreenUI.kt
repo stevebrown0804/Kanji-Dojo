@@ -70,7 +70,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenCo
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.ui.DeckEditLeaveConfirmationDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.ui.DeckEditUnknownCharactersDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.ui.DeleteDeckDialog
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.ui.LetterDeckEditingUI
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.ui.MojiDeckEditingUI
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.ui.SaveDeckDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.ui.VocabDeckEditingUI
 
@@ -224,10 +224,10 @@ private fun Toolbar(
             Text(
                 text = resolveString {
                     when (configuration) {
-                        is DeckEditScreenConfiguration.LetterDeck.Edit,
+                        is DeckEditScreenConfiguration.MojiDeck.Edit,
                         is DeckEditScreenConfiguration.VocabDeck.Edit -> deckEdit.ediTitle
 
-                        is DeckEditScreenConfiguration.LetterDeck,
+                        is DeckEditScreenConfiguration.MojiDeck,
                         is DeckEditScreenConfiguration.VocabDeck -> deckEdit.createTitle
                     }
                 }
@@ -298,8 +298,8 @@ private fun LoadedState(
     ) {
 
         when (screenState) {
-            is ScreenState.LetterDeckEditing -> {
-                LetterDeckEditingUI(
+            is ScreenState.MojiDeckEditing -> {
+                MojiDeckEditingUI(
                     screenState = screenState,
                     extraListSpacerState = extraListSpacerState,
                     submitAdd = submitAdd,
@@ -330,8 +330,8 @@ private fun LoadedState(
 
         val shouldShow = remember {
             derivedStateOf {
-                val letterEditingState = screenState as? ScreenState.LetterDeckEditing
-                letterEditingState?.adding?.value?.not() ?: true
+                val mojiEditingState = screenState as? ScreenState.MojiDeckEditing
+                mojiEditingState?.adding?.value?.not() ?: true
             }
         }
 

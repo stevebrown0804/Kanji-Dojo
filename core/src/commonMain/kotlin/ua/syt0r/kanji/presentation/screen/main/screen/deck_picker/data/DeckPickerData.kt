@@ -1,6 +1,7 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data
 
 import androidx.compose.ui.text.AnnotatedString
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ua.syt0r.kanji.core.app_data.WordClassification
 import ua.syt0r.kanji.core.japanese.CharacterClassification
@@ -11,7 +12,8 @@ import ua.syt0r.kanji.presentation.common.resources.string.StringResolveScope
 sealed interface DeckPickerScreenConfiguration {
 
     @Serializable
-    object Letters : DeckPickerScreenConfiguration
+    @SerialName("ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.DeckPickerScreenConfiguration.Letters")
+    object Moji : DeckPickerScreenConfiguration
 
     @Serializable
     object Vocab : DeckPickerScreenConfiguration
@@ -28,7 +30,7 @@ sealed interface DeckPickerDeck {
     val title: StringResolveScope<String>
 }
 
-data class LetterDeckPickerDeck(
+data class MojiDeckPickerDeck(
     override val title: StringResolveScope<String>,
     val previewText: String,
     val classification: CharacterClassification

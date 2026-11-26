@@ -74,17 +74,20 @@ object StringSuspendedPropertyType : SuspendedPropertyType.Raw<String> {
 
 
 class EnumSuspendedPropertyType<T : Enum<T>>(
-    private val enumValues: Array<T>
+    private val enumValues: Array<T>,
+    private val storageName: (T) -> String = { it.name }
 ) : SuspendedPropertyType.Wrapper<T, String> {
 
     override val backingPropertyType = StringSuspendedPropertyType
 
-    override fun convertToBacking(value: T): String = value.name
-    override fun convertToExposed(value: String): T = enumValues.first { it.name == value }
+    override fun convertToBacking(value: T): String = storageName(value)
+    override fun convertToExposed(value: String): T = enumValues.first { storageName(it) == value }
 
     companion object {
-        inline fun <reified T : Enum<T>> enumSuspendedPropertyType(): EnumSuspendedPropertyType<T> {
-            return EnumSuspendedPropertyType(enumValues<T>())
+        inline fun <reified T : Enum<T>> enumSuspendedPropertyType(
+            noinline storageName: (T) -> String = { it.name }
+        ): EnumSuspendedPropertyType<T> {
+            return EnumSuspendedPropertyType(enumValues<T>(), storageName)
         }
     }
 

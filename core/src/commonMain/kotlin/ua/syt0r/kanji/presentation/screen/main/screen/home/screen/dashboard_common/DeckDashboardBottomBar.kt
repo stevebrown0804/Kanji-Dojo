@@ -33,7 +33,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ua.syt0r.kanji.presentation.common.AppDropdownMenu
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
@@ -44,7 +44,7 @@ data class DeckDashboardPracticeTypeItem<T : ScreenPracticeType>(
     val hasPendingReviews: Boolean
 )
 
-typealias LetterDeckDashboardPracticeTypeItem = DeckDashboardPracticeTypeItem<ScreenLetterPracticeType>
+typealias MojiDeckDashboardPracticeTypeItem = DeckDashboardPracticeTypeItem<ScreenMojiPracticeType>
 typealias VocabDeckDashboardPracticeTypeItem = DeckDashboardPracticeTypeItem<ScreenVocabPracticeType>
 
 @Composable

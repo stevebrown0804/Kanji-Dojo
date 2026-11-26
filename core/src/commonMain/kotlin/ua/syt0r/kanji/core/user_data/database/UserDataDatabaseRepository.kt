@@ -11,18 +11,18 @@ interface ObservableRepository {
     val changesFlow: SharedFlow<Unit>
 }
 
-interface LetterPracticeRepository : ObservableRepository {
+interface MojiPracticeRepository : ObservableRepository {
     suspend fun createDeck(
         title: String,
         characters: List<String>,
-        conflictResolutions: Map<String, LetterDeckConflictResolution> = emptyMap(),
-    ): List<LetterDeckConflict>
+        conflictResolutions: Map<String, MojiDeckConflictResolution> = emptyMap(),
+    ): List<MojiDeckConflict>
 
     suspend fun createDeckAndMerge(
         title: String,
         deckIdToMerge: List<Long>,
-        conflictResolutions: Map<String, LetterDeckConflictResolution> = emptyMap(),
-    ): List<LetterDeckConflict>
+        conflictResolutions: Map<String, MojiDeckConflictResolution> = emptyMap(),
+    ): List<MojiDeckConflict>
 
     suspend fun updateDeckPositions(deckIdToPositionMap: Map<Long, Int>)
     suspend fun deleteDeck(id: Long)
@@ -31,16 +31,16 @@ interface LetterPracticeRepository : ObservableRepository {
         title: String,
         charactersToAdd: List<String>,
         charactersToRemove: List<String>,
-        conflictResolutions: Map<String, LetterDeckConflictResolution> = emptyMap(),
-    ): List<LetterDeckConflict>
+        conflictResolutions: Map<String, MojiDeckConflictResolution> = emptyMap(),
+    ): List<MojiDeckConflict>
 
-    suspend fun getDecks(): List<LetterDeck>
-    suspend fun getDeck(id: Long): LetterDeck
+    suspend fun getDecks(): List<MojiDeck>
+    suspend fun getDeck(id: Long): MojiDeck
     suspend fun getDeckCharacters(id: Long): List<String>
     suspend fun getDeckConflicts(
         characters: List<String>,
         targetDeckId: Long?,
-    ): List<LetterDeckConflict>
+    ): List<MojiDeckConflict>
 }
 
 interface VocabPracticeRepository : ObservableRepository {

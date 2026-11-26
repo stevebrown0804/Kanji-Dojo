@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ua.syt0r.kanji.core.RefreshableData
 import ua.syt0r.kanji.core.app_data.WordClassification
@@ -23,22 +24,27 @@ sealed interface DeckEditScreenConfiguration {
     }
 
     @Serializable
-    sealed interface LetterDeck : DeckEditScreenConfiguration {
+    @SerialName("ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration.LetterDeck")
+    sealed interface MojiDeck : DeckEditScreenConfiguration {
 
         @Serializable
-        data object CreateNew : LetterDeck
+        @SerialName("ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration.LetterDeck.CreateNew")
+        data object CreateNew : MojiDeck
 
         @Serializable
+        @SerialName("ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration.LetterDeck.CreateDerived")
         data class CreateDerived(
             val title: String,
             val classification: CharacterClassification
-        ) : LetterDeck
+        ) : MojiDeck
 
         @Serializable
+        @SerialName("ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration.LetterDeck.Edit")
         data class Edit(
             override val title: String,
-            val letterDeckId: Long
-        ) : LetterDeck, EditExisting
+            @SerialName("letterDeckId")
+            val mojiDeckId: Long
+        ) : MojiDeck, EditExisting
 
     }
 
@@ -69,7 +75,7 @@ sealed interface DeckEditListItem {
     val action: MutableState<DeckEditItemAction>
 }
 
-data class LetterDeckEditListItem(
+data class MojiDeckEditListItem(
     val character: String,
     override val initialAction: DeckEditItemAction,
     override val action: MutableState<DeckEditItemAction>,
@@ -96,13 +102,13 @@ data class VocabDeckEditListItem(
 
 enum class DeckEditItemAction { Nothing, Add, Remove }
 
-data class MutableLetterDeckEditingState(
+data class MutableMojiDeckEditingState(
     override val title: MutableState<String>,
     override val confirmExit: MutableState<Boolean>,
     override val adding: MutableState<Boolean>,
-    override val listState: MutableState<List<LetterDeckEditListItem>>,
+    override val listState: MutableState<List<MojiDeckEditListItem>>,
     override val lastAddResult: MutableState<AddCharactersResult?>
-) : ScreenState.LetterDeckEditing
+) : ScreenState.MojiDeckEditing
 
 data class MutableVocabDeckEditingState(
     override val title: MutableState<String>,

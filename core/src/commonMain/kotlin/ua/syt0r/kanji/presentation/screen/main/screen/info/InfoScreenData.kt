@@ -1,6 +1,7 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.info
 
 import androidx.compose.ui.graphics.Path
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ua.syt0r.kanji.core.app_data.Sentence
 import ua.syt0r.kanji.core.app_data.data.DetailedJapaneseWord
@@ -15,8 +16,10 @@ import ua.syt0r.kanji.presentation.common.ui.kanji.KanjiRadicalsSectionData
 sealed interface InfoScreenData {
 
     @Serializable
-    data class Letter(
-        val letter: String
+    @SerialName("ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenData.Letter")
+    data class Moji(
+        @SerialName("letter")
+        val moji: String
     ) : InfoScreenData
 
     @Serializable
@@ -34,7 +37,7 @@ fun JapaneseWord.toInfoScreenData() = InfoScreenData.Vocab(
     kanaReading = reading.kanaReading
 )
 
-sealed interface LetterInfoData {
+sealed interface MojiInfoData {
 
     val character: String
     val strokes: List<Path>
@@ -49,7 +52,7 @@ sealed interface LetterInfoData {
         val reading: KanaReading,
         override val vocab: Paginateable<JapaneseWord>,
         override val sentences: Paginateable<Sentence>
-    ) : LetterInfoData
+    ) : MojiInfoData
 
     data class Kanji(
         override val character: String,
@@ -64,7 +67,7 @@ sealed interface LetterInfoData {
         val displayRadicals: List<String>,
         override val vocab: Paginateable<JapaneseWord>,
         override val sentences: Paginateable<Sentence>
-    ) : LetterInfoData
+    ) : MojiInfoData
 
 }
 

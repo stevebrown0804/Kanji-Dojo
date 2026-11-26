@@ -30,7 +30,11 @@ actual fun rememberHomeNavigationState(defaultTab: HomeScreenTab): HomeNavigatio
     // and wrong selected tab is displayed
     LaunchedEffect(Unit) {
         navController.currentBackStackEntryFlow
-            .map { it.destination.route?.let { route -> HomeScreenTab.valueOf(route) } }
+            .map {
+                it.destination.route?.let { route ->
+                    HomeScreenTab.entries.first { tab -> tab.routeName == route }
+                }
+            }
             .filterNotNull()
             .onEach { tabState.value = it }
             .collect()
@@ -40,7 +44,7 @@ actual fun rememberHomeNavigationState(defaultTab: HomeScreenTab): HomeNavigatio
 }
 
 private val HomeScreenTab.route: String
-    get() = this.name
+    get() = routeName
 
 @Stable
 private class AndroidHomeNavigationState(

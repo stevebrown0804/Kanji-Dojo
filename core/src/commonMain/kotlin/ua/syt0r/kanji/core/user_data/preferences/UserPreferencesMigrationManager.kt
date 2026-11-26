@@ -66,7 +66,7 @@ private object DailyLimitDataMigration : DataMigration<Preferences> {
     private val legacyKeys = listOf(legacyNewLimitKey, legacyDueLimitKey, legacySortByTimeKey)
 
     private val dailyLimitConfigurationKey = stringPreferencesKey("daily_limit_configuration")
-    private val letterDashboardSortByTimeKey =
+    private val mojiDashboardSortByTimeKey =
         booleanPreferencesKey("letter_dashboard_sort_by_time")
     private val vocabDashboardSortByTimeKey =
         booleanPreferencesKey("vocab_dashboard_sort_by_time")
@@ -85,12 +85,12 @@ private object DailyLimitDataMigration : DataMigration<Preferences> {
         val legacySortByTime = mutablePreferences[legacySortByTimeKey] ?: false
 
         val dailyLimitConfiguration = DailyLimitConfiguration(
-            letterCombinedLimit = PracticeLimit(legacyNew, legacyDue)
+            mojiCombinedLimit = PracticeLimit(legacyNew, legacyDue)
         )
         val dailyLimitConfigurationJson = json.encodeToString(dailyLimitConfiguration)
 
         mutablePreferences[dailyLimitConfigurationKey] = dailyLimitConfigurationJson
-        mutablePreferences[letterDashboardSortByTimeKey] = legacySortByTime
+        mutablePreferences[mojiDashboardSortByTimeKey] = legacySortByTime
         mutablePreferences[vocabDashboardSortByTimeKey] = legacySortByTime
 
         legacyKeys.forEach { mutablePreferences.remove(it) }

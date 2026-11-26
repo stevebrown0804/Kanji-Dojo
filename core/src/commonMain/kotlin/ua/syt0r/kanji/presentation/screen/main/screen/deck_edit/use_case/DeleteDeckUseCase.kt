@@ -1,6 +1,6 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case
 
-import ua.syt0r.kanji.core.user_data.database.LetterPracticeRepository
+import ua.syt0r.kanji.core.user_data.database.MojiPracticeRepository
 import ua.syt0r.kanji.core.user_data.database.VocabPracticeRepository
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration
 
@@ -9,14 +9,14 @@ interface DeleteDeckUseCase {
 }
 
 class DefaultDeleteDeckUseCase(
-    private val letterPracticeRepository: LetterPracticeRepository,
+    private val mojiPracticeRepository: MojiPracticeRepository,
     private val vocabPracticeRepository: VocabPracticeRepository
 ) : DeleteDeckUseCase {
 
     override suspend fun invoke(configuration: DeckEditScreenConfiguration) {
         when (configuration) {
-            is DeckEditScreenConfiguration.LetterDeck.Edit -> {
-                letterPracticeRepository.deleteDeck(configuration.letterDeckId)
+            is DeckEditScreenConfiguration.MojiDeck.Edit -> {
+                mojiPracticeRepository.deleteDeck(configuration.mojiDeckId)
             }
 
             is DeckEditScreenConfiguration.VocabDeck.Edit -> {

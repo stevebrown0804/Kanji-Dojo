@@ -13,7 +13,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenContract.Sc
 class InfoScreenViewModel(
     private val viewModelScope: CoroutineScope,
     screenData: InfoScreenData,
-    private val loadLetterStateUseCase: InfoScreenContract.LoadLetterStateUseCase,
+    private val loadMojiStateUseCase: InfoScreenContract.LoadMojiStateUseCase,
     private val loadVocabStateUseCase: InfoScreenContract.LoadVocabStateUseCase,
     private val analyticsManager: AnalyticsManager
 ) : InfoScreenContract.ViewModel {
@@ -28,10 +28,10 @@ class InfoScreenViewModel(
 
     private suspend fun InfoScreenData.toState(): ScreenState {
         return when (this) {
-            is InfoScreenData.Letter -> {
-                if (letter.length == 1) {
-                    reportLetter(letter)
-                    loadLetterStateUseCase(letter, viewModelScope)
+            is InfoScreenData.Moji -> {
+                if (moji.length == 1) {
+                    reportMoji(moji)
+                    loadMojiStateUseCase(moji, viewModelScope)
                 } else {
                     loadVocabStateUseCase(asVocabData(), viewModelScope)
                 }
@@ -43,19 +43,19 @@ class InfoScreenViewModel(
         }
     }
 
-    private fun InfoScreenData.Letter.asVocabData(): InfoScreenData.Vocab {
+    private fun InfoScreenData.Moji.asVocabData(): InfoScreenData.Vocab {
         val kanjiReading: String?
         val kanaReading: String?
 
         when {
-            letter.any { it.isKanji() } -> {
-                kanjiReading = letter
+            moji.any { it.isKanji() } -> {
+                kanjiReading = moji
                 kanaReading = null
             }
 
             else -> {
                 kanjiReading = null
-                kanaReading = letter
+                kanaReading = moji
             }
         }
 
@@ -66,8 +66,8 @@ class InfoScreenViewModel(
         )
     }
 
-    private fun reportLetter(letter: String) {
-        analyticsManager.sendEvent("kanji_info_open") { put("character", letter) }
+    private fun reportMoji(moji: String) {
+        analyticsManager.sendEvent("kanji_info_open") { put("character", moji) }
     }
 
 }

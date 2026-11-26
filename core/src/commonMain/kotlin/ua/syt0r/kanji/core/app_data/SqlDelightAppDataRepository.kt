@@ -15,7 +15,7 @@ import ua.syt0r.kanji.core.app_data.data.ReadingType
 import ua.syt0r.kanji.core.app_data.data.VocabReading
 import ua.syt0r.kanji.core.app_data.data.VocabReadingInfo
 import ua.syt0r.kanji.core.app_data.db.AppDataDatabase
-import ua.syt0r.kanji.core.appdata.db.LettersQueries
+import ua.syt0r.kanji.core.appdata.db.MojiQueries
 import ua.syt0r.kanji.core.appdata.db.VocabQueries
 import ua.syt0r.kanji.core.logger.Logger
 
@@ -23,10 +23,10 @@ class SqlDelightAppDataRepository(
     private val deferredDatabase: Deferred<AppDataDatabase>
 ) : AppDataRepository {
 
-    private suspend fun <T> lettersQuery(
-        transactionScope: LettersQueries.() -> T
+    private suspend fun <T> mojiQuery(
+        transactionScope: MojiQueries.() -> T
     ): T {
-        val queries = deferredDatabase.await().lettersQueries
+        val queries = deferredDatabase.await().mojiQueries
         return queries.transactionWithResult { queries.transactionScope() }
     }
 
@@ -37,13 +37,13 @@ class SqlDelightAppDataRepository(
         return queries.transactionWithResult { queries.transactionScope() }
     }
 
-    override suspend fun getStrokes(character: String): List<String> = lettersQuery {
+    override suspend fun getStrokes(character: String): List<String> = mojiQuery {
         getStrokes(character).executeAsList()
     }
 
     override suspend fun getRadicalsInCharacter(
         character: String
-    ): List<CharacterRadical> = lettersQuery {
+    ): List<CharacterRadical> = mojiQuery {
         getCharacterRadicals(character).executeAsList().map {
             it.run {
                 CharacterRadical(
@@ -56,26 +56,26 @@ class SqlDelightAppDataRepository(
         }
     }
 
-    override suspend fun getMeanings(kanji: String): List<String> = lettersQuery {
+    override suspend fun getMeanings(kanji: String): List<String> = mojiQuery {
         getKanjiMeanings(kanji).executeAsList()
     }
 
     override suspend fun getReadings(
         kanji: String
-    ): Map<String, ReadingType> = lettersQuery {
+    ): Map<String, ReadingType> = mojiQuery {
         getKanjiReadings(kanji).executeAsList().associate { readingData ->
             readingData.reading to ReadingType.entries
                 .find { it.value == readingData.reading_type }!!
         }
     }
 
-    override suspend fun getClassificationsForKanji(kanji: String): List<String> = lettersQuery {
+    override suspend fun getClassificationsForKanji(kanji: String): List<String> = mojiQuery {
         getClassificationsForKanji(kanji).executeAsList()
     }
 
     override suspend fun getKanjiForClassification(
         classification: String
-    ): List<String> = lettersQuery {
+    ): List<String> = mojiQuery {
         getKanjiWithClassification(classification).executeAsList()
     }
 
@@ -85,7 +85,7 @@ class SqlDelightAppDataRepository(
         getVocabKanaReadingsOfLength(length.toLong(), limit.toLong()).executeAsList()
     }
 
-    override suspend fun getData(kanji: String): KanjiData? = lettersQuery {
+    override suspend fun getData(kanji: String): KanjiData? = mojiQuery {
         getKanjiData(kanji).executeAsOneOrNull()?.run {
             KanjiData(
                 kanji = kanji, frequency = frequency?.toInt(), variantFamily = variantFamily
@@ -93,19 +93,19 @@ class SqlDelightAppDataRepository(
         }
     }
 
-    override suspend fun getRadicals(): List<RadicalData> = lettersQuery {
+    override suspend fun getRadicals(): List<RadicalData> = mojiQuery {
         getRadicals().executeAsList().map { RadicalData(it.radical, it.strokesCount.toInt()) }
     }
 
     override suspend fun getCharactersWithRadicals(
         radicals: List<String>
-    ): List<String> = lettersQuery {
+    ): List<String> = mojiQuery {
         getCharsWithRadicals(radicals, radicals.size.toLong()).executeAsList()
     }
 
     override suspend fun getAllRadicalsInCharactersWithSelectedRadicals(
         radicals: Set<String>
-    ): List<String> = lettersQuery {
+    ): List<String> = mojiQuery {
         getAllRadicalsInCharactersWithSelectedRadicals(
             radicals,
             radicals.size.toLong()
@@ -132,8 +132,8 @@ class SqlDelightAppDataRepository(
             }
     }
 
-    override suspend fun getWordExamples(letter: String): List<JapaneseWord> {
-        val entries = lettersQuery { getVocabExamplesForLetter(letter).executeAsList() }
+    override suspend fun getWordExamples(moji: String): List<JapaneseWord> {
+        val entries = mojiQuery { getVocabExamplesForMoji(moji).executeAsList() }
 
         val wordIdList = entries.map { it.vocab_id }.toSet()
         val vocabSenses = getWordSenses(wordIdList).associateBy { it.wordId }

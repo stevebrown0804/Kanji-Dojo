@@ -3,14 +3,14 @@ package ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashb
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.StringResource
 import ua.syt0r.kanji.Res
-import ua.syt0r.kanji.core.srs.LetterPracticeType
+import ua.syt0r.kanji.core.srs.MojiPracticeType
 import ua.syt0r.kanji.core.srs.PracticeType
 import ua.syt0r.kanji.core.srs.VocabPracticeType
 import ua.syt0r.kanji.practice_type_flashcard
 import ua.syt0r.kanji.practice_type_reading_picker
 import ua.syt0r.kanji.practice_type_writing
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeConfigurationCard
-import ua.syt0r.kanji.study_category_letter
+import ua.syt0r.kanji.study_category_moji
 import ua.syt0r.kanji.study_category_vocab
 
 
@@ -43,15 +43,15 @@ enum class StudyTarget(
     val practiceType: PracticeType
 ) {
 
-    LetterWriting(
-        Res.string.study_category_letter,
+    MojiWriting(
+        Res.string.study_category_moji,
         Res.string.practice_type_writing,
-        LetterPracticeType.Writing
+        MojiPracticeType.Writing
     ),
-    LetterFlashcards(
-        Res.string.study_category_letter,
+    MojiFlashcards(
+        Res.string.study_category_moji,
         Res.string.practice_type_flashcard,
-        LetterPracticeType.Reading
+        MojiPracticeType.Reading
     ),
     VocabFlashcard(
         Res.string.study_category_vocab,
@@ -67,7 +67,14 @@ enum class StudyTarget(
         Res.string.study_category_vocab,
         Res.string.practice_type_reading_picker,
         VocabPracticeType.ReadingPicker
-    )
+    );
+
+    val preferenceKey: String
+        get() = when (this) {
+            MojiWriting -> "LetterWriting"
+            MojiFlashcards -> "LetterFlashcards"
+            else -> name
+        }
 
 }
 

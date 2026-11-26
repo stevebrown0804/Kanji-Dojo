@@ -1,14 +1,14 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case
 
 import ua.syt0r.kanji.core.logger.Logger
-import ua.syt0r.kanji.core.user_data.database.LetterDeckConflict
-import ua.syt0r.kanji.core.user_data.database.LetterDeckConflictResolution
-import ua.syt0r.kanji.core.user_data.database.LetterPracticeRepository
+import ua.syt0r.kanji.core.user_data.database.MojiDeckConflict
+import ua.syt0r.kanji.core.user_data.database.MojiDeckConflictResolution
+import ua.syt0r.kanji.core.user_data.database.MojiPracticeRepository
 import ua.syt0r.kanji.core.user_data.database.VocabPracticeRepository
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditItemAction
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditListItem
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.LetterDeckEditListItem
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.MojiDeckEditListItem
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.VocabDeckEditListItem
 
 interface SaveDeckUseCase {
@@ -16,12 +16,12 @@ interface SaveDeckUseCase {
         configuration: DeckEditScreenConfiguration,
         title: String,
         list: List<DeckEditListItem>,
-        conflictResolutions: Map<String, LetterDeckConflictResolution>
-    ): List<LetterDeckConflict>
+        conflictResolutions: Map<String, MojiDeckConflictResolution>
+    ): List<MojiDeckConflict>
 }
 
 class DefaultSaveDeckUseCase(
-    private val letterPracticeRepository: LetterPracticeRepository,
+    private val mojiPracticeRepository: MojiPracticeRepository,
     private val vocabPracticeRepository: VocabPracticeRepository
 ) : SaveDeckUseCase {
 
@@ -29,27 +29,27 @@ class DefaultSaveDeckUseCase(
         configuration: DeckEditScreenConfiguration,
         title: String,
         list: List<DeckEditListItem>,
-        conflictResolutions: Map<String, LetterDeckConflictResolution>
-    ): List<LetterDeckConflict> {
+        conflictResolutions: Map<String, MojiDeckConflictResolution>
+    ): List<MojiDeckConflict> {
         Logger.logMethod()
         when (configuration) {
-            is DeckEditScreenConfiguration.LetterDeck.CreateNew,
-            is DeckEditScreenConfiguration.LetterDeck.CreateDerived -> {
-                return letterPracticeRepository.createDeck(
+            is DeckEditScreenConfiguration.MojiDeck.CreateNew,
+            is DeckEditScreenConfiguration.MojiDeck.CreateDerived -> {
+                return mojiPracticeRepository.createDeck(
                     title = title,
-                    characters = list.filter<LetterDeckEditListItem>(DeckEditItemAction.Add)
+                    characters = list.filter<MojiDeckEditListItem>(DeckEditItemAction.Add)
                         .map { it.character },
                     conflictResolutions = conflictResolutions
                 )
             }
 
-            is DeckEditScreenConfiguration.LetterDeck.Edit -> {
-                return letterPracticeRepository.updateDeck(
-                    id = configuration.letterDeckId,
+            is DeckEditScreenConfiguration.MojiDeck.Edit -> {
+                return mojiPracticeRepository.updateDeck(
+                    id = configuration.mojiDeckId,
                     title = title,
-                    charactersToAdd = list.filter<LetterDeckEditListItem>(DeckEditItemAction.Add)
+                    charactersToAdd = list.filter<MojiDeckEditListItem>(DeckEditItemAction.Add)
                         .map { it.character },
-                    charactersToRemove = list.filter<LetterDeckEditListItem>(DeckEditItemAction.Remove)
+                    charactersToRemove = list.filter<MojiDeckEditListItem>(DeckEditItemAction.Remove)
                         .map { it.character },
                     conflictResolutions = conflictResolutions
                 )

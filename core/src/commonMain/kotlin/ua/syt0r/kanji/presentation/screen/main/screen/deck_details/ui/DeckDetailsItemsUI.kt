@@ -37,11 +37,11 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDeta
 
 @Composable
 fun DeckDetailsItemsUI(
-    configuration: DeckDetailsConfiguration.LetterDeckConfiguration,
+    configuration: DeckDetailsConfiguration.MojiDeckConfiguration,
     selectionModeEnabled: MutableState<Boolean>,
     visibleData: DeckDetailsVisibleData.Items,
     extraListSpacerState: ExtraListSpacerState,
-    onConfigurationUpdate: (DeckDetailsConfiguration.LetterDeckConfiguration) -> Unit,
+    onConfigurationUpdate: (DeckDetailsConfiguration.MojiDeckConfiguration) -> Unit,
     onCharacterClick: (String) -> Unit,
     onSelectionToggled: (DeckDetailsListItem) -> Unit,
 ) {
@@ -89,7 +89,7 @@ fun DeckDetailsItemsUI(
                 items = visibleData.items,
                 key = { it.key.value },
             ) {
-                LetterListItem(
+                MojiListItem(
                     item = it,
                     isSelectionModeEnabled = selectionModeEnabled,
                     configuration = configuration,
@@ -107,12 +107,12 @@ fun DeckDetailsItemsUI(
 }
 
 @Composable
-private fun LetterListItem(
-    item: DeckDetailsListItem.Letter,
+private fun MojiListItem(
+    item: DeckDetailsListItem.Moji,
     isSelectionModeEnabled: State<Boolean>,
-    configuration: DeckDetailsConfiguration.LetterDeckConfiguration,
+    configuration: DeckDetailsConfiguration.MojiDeckConfiguration,
     onCharacterClick: (String) -> Unit,
-    onSelectionToggled: (DeckDetailsListItem.Letter) -> Unit
+    onSelectionToggled: (DeckDetailsListItem.Moji) -> Unit
 ) {
 
     Row(

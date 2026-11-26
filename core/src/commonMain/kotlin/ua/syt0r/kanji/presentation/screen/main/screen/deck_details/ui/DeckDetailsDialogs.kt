@@ -50,7 +50,7 @@ import ua.syt0r.kanji.presentation.common.resources.string.resolveString
 import ua.syt0r.kanji.presentation.common.theme.extraColorScheme
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsLayout
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.FilterConfiguration
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.LettersSortOption
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.MojiSortOption
 
 
 private data class FilterCheckboxRowData(
@@ -143,8 +143,8 @@ private fun FilterRow(data: FilterCheckboxRowData) {
 @Composable
 fun DeckDetailsSortDialog(
     onDismissRequest: () -> Unit,
-    onApplyClick: (sortOption: LettersSortOption, isDescending: Boolean) -> Unit,
-    sortOption: LettersSortOption,
+    onApplyClick: (sortOption: MojiSortOption, isDescending: Boolean) -> Unit,
+    sortOption: MojiSortOption,
     isDesc: Boolean
 ) {
 
@@ -157,7 +157,7 @@ fun DeckDetailsSortDialog(
         onApplyClick = { onApplyClick(selectedSortOption, isDescending) }
     ) {
 
-        LettersSortOption.entries.forEach {
+        MojiSortOption.entries.forEach {
 
             SelectableRow(
                 isSelected = it == selectedSortOption,

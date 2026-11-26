@@ -49,7 +49,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import ua.syt0r.kanji.core.srs.SrsItemStatus
 import ua.syt0r.kanji.presentation.common.AppDropdownMenu
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.copyCentered
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.DeckDetailsCharacterBox
@@ -65,7 +65,7 @@ private sealed interface SheetContentState {
     object NothingSelected : SheetContentState
 
     data class Loaded(
-        val practiceType: ScreenLetterPracticeType,
+        val practiceType: ScreenMojiPracticeType,
         val group: DeckDetailsListItem.Group,
     ) : SheetContentState
 
@@ -75,7 +75,7 @@ private sealed interface SheetContentState {
 private fun State<ScreenState>.toSheetContentState(): State<SheetContentState> {
     return remember {
         derivedStateOf {
-            val screenState = value.let { it as? ScreenState.Loaded.Letters }
+            val screenState = value.let { it as? ScreenState.Loaded.Moji }
                 ?: return@derivedStateOf SheetContentState.Loading
 
             val visibleData = screenState.visibleDataState.value
@@ -139,7 +139,7 @@ fun DeckDetailsBottomSheet(
 
 @Composable
 private fun PracticeGroupDetails(
-    practiceType: ScreenLetterPracticeType,
+    practiceType: ScreenMojiPracticeType,
     group: DeckDetailsListItem.Group,
     onCharacterClick: (String) -> Unit = {},
     onStartClick: () -> Unit = {},
@@ -162,7 +162,7 @@ private fun PracticeGroupDetails(
                 style = MaterialTheme.typography.titleLarge.copyCentered(),
             )
 
-            LetterGroupSrsIndicator(group.summary.state)
+            MojiGroupSrsIndicator(group.summary.state)
 
         }
 
@@ -227,7 +227,7 @@ private fun PracticeGroupDetails(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LetterGroupSrsIndicator(state: SrsItemStatus) {
+private fun MojiGroupSrsIndicator(state: SrsItemStatus) {
 
     var hintDropdownShown by remember { mutableStateOf(false) }
 

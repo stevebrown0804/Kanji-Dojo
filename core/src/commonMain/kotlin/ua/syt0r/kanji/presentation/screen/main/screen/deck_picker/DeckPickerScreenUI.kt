@@ -53,7 +53,7 @@ import ua.syt0r.kanji.presentation.common.resources.string.resolveString
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.DeckPickerScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.DeckPickerCategory
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.DeckPickerDeck
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.LetterDeckPickerDeck
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.MojiDeckPickerDeck
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.data.VocabDeckPickerDeck
 
 private val listHeadingButtonTextStyle: TextStyle
@@ -66,7 +66,7 @@ fun DeckPickerScreenUI(
     state: State<ScreenState>,
     onUpButtonClick: () -> Unit,
     createEmpty: () -> Unit,
-    onLetterDeckClick: (classification: CharacterClassification, title: String) -> Unit,
+    onMojiDeckClick: (classification: CharacterClassification, title: String) -> Unit,
     onVocabDeckClick: (classification: WordClassification, title: String) -> Unit,
     onLinkClick: (String) -> Unit
 ) {
@@ -100,7 +100,7 @@ fun DeckPickerScreenUI(
                 is ScreenState.Loaded -> LoadedState(
                     screenState = screenState,
                     createEmpty = createEmpty,
-                    onLetterDeckClick = onLetterDeckClick,
+                    onMojiDeckClick = onMojiDeckClick,
                     onVocabDeckClick = onVocabDeckClick,
                     onLinkClick = onLinkClick
                 )
@@ -127,7 +127,7 @@ private fun LoadingState() {
 private fun LoadedState(
     screenState: ScreenState.Loaded,
     createEmpty: () -> Unit,
-    onLetterDeckClick: (classification: CharacterClassification, title: String) -> Unit,
+    onMojiDeckClick: (classification: CharacterClassification, title: String) -> Unit,
     onVocabDeckClick: (classification: WordClassification, title: String) -> Unit,
     onLinkClick: (String) -> Unit
 ) {
@@ -209,7 +209,7 @@ private fun LoadedState(
                 ) { _, it ->
                     CategoryItem(
                         deck = it,
-                        onLetterDeckClick = onLetterDeckClick,
+                        onMojiDeckClick = onMojiDeckClick,
                         onVocabDeckClick = onVocabDeckClick,
                         modifier = Modifier.animateItem()
                     )
@@ -253,7 +253,7 @@ private fun CategoryHeader(
 @Composable
 private fun CategoryItem(
     deck: DeckPickerDeck,
-    onLetterDeckClick: (classification: CharacterClassification, title: String) -> Unit,
+    onMojiDeckClick: (classification: CharacterClassification, title: String) -> Unit,
     onVocabDeckClick: (classification: WordClassification, title: String) -> Unit,
     modifier: Modifier
 ) {
@@ -261,7 +261,7 @@ private fun CategoryItem(
     val title = resolveString(deck.title)
     ListItem(
         leadingContent = {
-            if (deck is LetterDeckPickerDeck) {
+            if (deck is MojiDeckPickerDeck) {
 
                 Card(
                     modifier = Modifier.padding(vertical = 8.dp).size(46.dp)
@@ -294,7 +294,7 @@ private fun CategoryItem(
         },
         modifier = modifier.clip(MaterialTheme.shapes.large).clickable {
             when (deck) {
-                is LetterDeckPickerDeck -> onLetterDeckClick(deck.classification, title)
+                is MojiDeckPickerDeck -> onMojiDeckClick(deck.classification, title)
                 is VocabDeckPickerDeck -> onVocabDeckClick(deck.classification, title)
             }
         }

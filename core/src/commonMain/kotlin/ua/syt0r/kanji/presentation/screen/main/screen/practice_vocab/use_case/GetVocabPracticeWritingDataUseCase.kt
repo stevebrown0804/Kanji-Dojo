@@ -31,17 +31,17 @@ class DefaultGetVocabPracticeWritingDataUseCase(
         val card = vocabCardResolver.resolveUserCard(descriptor.cardId)
         val strokeEvaluator = DefaultKanjiStrokeEvaluator()
 
-        val letters: String
+        val moji: String
         val summaryReading: FuriganaString
 
         when {
             card.furigana != null -> {
-                letters = card.furigana.withoutAnnotations()
+                moji = card.furigana.withoutAnnotations()
                 summaryReading = card.furigana
             }
 
             card.kanjiReading != null -> {
-                letters = card.kanjiReading
+                moji = card.kanjiReading
                 summaryReading = formattedVocabReading(
                     kanaReading = card.kanaReading,
                     kanjiReading = card.kanjiReading
@@ -49,12 +49,12 @@ class DefaultGetVocabPracticeWritingDataUseCase(
             }
 
             else -> {
-                letters = card.kanaReading
+                moji = card.kanaReading
                 summaryReading = card.kanaReading.toFurigana()
             }
         }
 
-        val writerData = letters
+        val writerData = moji
             .map { it.toString() }
             .map { character ->
                 val strokes = appDataRepository.getStrokes(character)

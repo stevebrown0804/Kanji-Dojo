@@ -58,8 +58,8 @@ class OfflineDatabaseMigrationTest {
     private fun studyRecords(database: UserDataDatabase): List<List<Any>> =
         database.userDataQueries.run {
             listOf(
-                getAllLetterDecks().executeAsList(),
-                getEntriesForLetterDeck(1).executeAsList(),
+                getAllMojiDecks().executeAsList(),
+                getEntriesForMojiDeck(1).executeAsList(),
                 getVocabDecks().executeAsList(),
                 getVocabDeckEntries().executeAsList(),
                 getFsrsCards().executeAsList(),

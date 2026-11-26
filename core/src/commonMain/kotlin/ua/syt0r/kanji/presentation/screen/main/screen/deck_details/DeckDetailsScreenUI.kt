@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 import ua.syt0r.kanji.core.srs.SrsItemStatus
 import ua.syt0r.kanji.presentation.common.ExtraListSpacerState
 import ua.syt0r.kanji.presentation.common.MultiplatformBackHandler
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 import ua.syt0r.kanji.presentation.common.rememberExtraListSpacerState
 import ua.syt0r.kanji.presentation.common.resources.icon.ExtraIcons
@@ -62,7 +62,7 @@ import ua.syt0r.kanji.presentation.common.resources.icon.RadioButtonChecked
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
 import ua.syt0r.kanji.presentation.common.theme.extraColorScheme
 import ua.syt0r.kanji.presentation.common.ui.FancyLoading
-import ua.syt0r.kanji.presentation.common.ui.kanji.HighlightedLetter
+import ua.syt0r.kanji.presentation.common.ui.kanji.HighlightedMoji
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.DeckDetailsScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsListItem
@@ -90,7 +90,7 @@ fun DeckDetailsScreenUI(
 
     var shouldShowVisibilityDialog by remember { mutableStateOf(false) }
     if (shouldShowVisibilityDialog) {
-        val loadedState = state.value.let { it as ScreenState.Loaded.Letters }
+        val loadedState = state.value.let { it as ScreenState.Loaded.Moji }
         val configuration = loadedState.configuration.value
         DeckDetailsLayoutDialog(
             layout = configuration.layout,
@@ -269,7 +269,7 @@ private fun ScreenLoadedState(
 
             when (visibleData) {
                 is DeckDetailsVisibleData.Groups -> {
-                    screenState as ScreenState.Loaded.Letters
+                    screenState as ScreenState.Loaded.Moji
                     DeckDetailsGroupsUI(
                         configuration = screenState.configuration.value,
                         selectionModeEnabled = screenState.isSelectionModeEnabled,
@@ -285,7 +285,7 @@ private fun ScreenLoadedState(
                 }
 
                 is DeckDetailsVisibleData.Items -> {
-                    screenState as ScreenState.Loaded.Letters
+                    screenState as ScreenState.Loaded.Moji
                     DeckDetailsItemsUI(
                         configuration = screenState.configuration.value,
                         selectionModeEnabled = screenState.isSelectionModeEnabled,
@@ -370,9 +370,9 @@ private fun FAB(
 
 @Composable
 fun DeckDetailsConfigurationRow(
-    configuration: DeckDetailsConfiguration.LetterDeckConfiguration,
+    configuration: DeckDetailsConfiguration.MojiDeckConfiguration,
     kanaGroupsMode: Boolean,
-    onConfigurationUpdate: (DeckDetailsConfiguration.LetterDeckConfiguration) -> Unit,
+    onConfigurationUpdate: (DeckDetailsConfiguration.MojiDeckConfiguration) -> Unit,
 ) {
 
     var showFilterOptionDialog by remember { mutableStateOf(false) }
@@ -410,8 +410,8 @@ fun DeckDetailsConfigurationRow(
             selected = true,
             onClick = {
                 val newPracticeType = when (configuration.practiceType) {
-                    ScreenLetterPracticeType.Writing -> ScreenLetterPracticeType.Reading
-                    ScreenLetterPracticeType.Reading -> ScreenLetterPracticeType.Writing
+                    ScreenMojiPracticeType.Writing -> ScreenMojiPracticeType.Reading
+                    ScreenMojiPracticeType.Reading -> ScreenMojiPracticeType.Writing
                 }
                 onConfigurationUpdate(configuration.copy(practiceType = newPracticeType))
             },
@@ -420,8 +420,8 @@ fun DeckDetailsConfigurationRow(
             trailingIcon = {
                 Icon(
                     imageVector = when (configuration.practiceType) {
-                        ScreenLetterPracticeType.Writing -> Icons.Default.Draw
-                        ScreenLetterPracticeType.Reading -> Icons.Default.LocalLibrary
+                        ScreenMojiPracticeType.Writing -> Icons.Default.Draw
+                        ScreenMojiPracticeType.Reading -> Icons.Default.LocalLibrary
                     },
                     contentDescription = null
                 )
@@ -550,8 +550,8 @@ fun DeckDetailsCharacterBox(
     onClick: () -> Unit,
     constraintOrientation: Orientation = Orientation.Horizontal
 ) {
-    HighlightedLetter(
-        letter = character,
+    HighlightedMoji(
+        moji = character,
         onClick = { onClick() },
         aspectRatioConstraintOrientation = constraintOrientation,
         modifier = Modifier.border(

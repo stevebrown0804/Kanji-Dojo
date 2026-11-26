@@ -90,7 +90,7 @@ fun VersionChangeDialog(
                         - Added experimental Text Analysis screen
                         - Added option to save custom vocab cards
                         - Added example sentences to vocab flashcards practice
-                        - Optimized word examples loading for letter practice
+                        - Optimized word examples loading for moji practice
                         - Optimized vocab deck edit loading time
                         """.trimIndent()
                     )
@@ -98,8 +98,8 @@ fun VersionChangeDialog(
                 version("2.1.7", LocalDate(2025, 3, 25)) {
                     append(
                         """
-                        - Added submit button for stroke input mode to skip review for forgotten letters and see the result immediately
-                        - Updated top vocabulary examples for most letters
+                        - Added submit button for stroke input mode to skip review for forgotten moji and see the result immediately
+                        - Updated top vocabulary examples for most moji
                         - Fixed missing senses on vocabulary info screen
                         - Fixed overlapping kana readings on vocabulary info screen
                         - Fixed some vocabulary reading priorities
@@ -118,7 +118,7 @@ fun VersionChangeDialog(
                         - The reading priority configuration was removed. Now readings can be edited on the deck edit screen
                         - Updated JLPT vocab decks, removed uncommon variants of the same words
                         - Added a new vocab info screen
-                        - Added example sentences to letter info screen
+                        - Added example sentences to moji info screen
                         - Fixed links not opening on macOS
                         - Fixed missing sync cancel button in Japanese language
                         - Added several missing Japanese translations
@@ -151,7 +151,7 @@ fun VersionChangeDialog(
                     append(
                         """
                         - Updated JLPT vocab decks using data from yomichan-jlpt-vocab open source project
-                        - Fixed several misclassified letters from grade 4-6 and secondary school decks
+                        - Fixed several misclassified moji from grade 4-6 and secondary school decks
                         - Fixed daily limit toggle value not being saved
                         - Updated vocab reading picker mode, now meanings are shown for all kana words
                         - Small UI updates
@@ -164,15 +164,15 @@ fun VersionChangeDialog(
                         - Note for old users: read the migration notice down below!
                         - Added daily limit for vocab practice
                         - Added more daily limit configurations
-                        - Added new sorting option by expected review date on letter deck details screen
+                        - Added new sorting option by expected review date on moji deck details screen
                         - Added pending review indicators to dropdown menus when selecting practice types
                         - New MacOS redistributable
-                        - Fixed translations being visible when doing letter reading practice and card is hidden
-                        - Fixed letters being hidden when learning writing with hints
+                        - Fixed translations being visible when doing moji reading practice and card is hidden
+                        - Fixed moji being hidden when learning writing with hints
                         - Fixed timezone not being considered when calculating daily streak
-                        - Migration notice: after migration to the FSRS, which is far less strict than the old algorithm that was resetting study progress each time you do a mistake, the next review intervals for the letters practiced before the migration can end up quite big
-                        - To reduce the intervals visit the letter deck details screen (> button next to the deck on the Letters tab)
-                        - Then sort letters with the new Expected Review option and review them using Again button
+                        - Migration notice: after migration to the FSRS, which is far less strict than the old algorithm that was resetting study progress each time you do a mistake, the next review intervals for the moji practiced before the migration can end up quite big
+                        - To reduce the intervals visit the moji deck details screen (> button next to the deck on the Kanji and Kana tab)
+                        - Then sort moji with the new Expected Review option and review them using Again button
                         - Always use Again button to reduce given intervals if you are not confident about your recall ability
                         """.trimIndent()
                     )
@@ -181,10 +181,10 @@ fun VersionChangeDialog(
                     append(
                         """
                         - Added daily streak section to home screen
-                        - Added fancy kana voice button to letter practice
+                        - Added fancy kana voice button to moji practice
                         - Upgraded FSRS algorithm to version 5
                         - Fixed issue with FSRS intervals not decreasing when using Again and Hard buttons
-                        - Fixed issue with redundant filtering of some letters in search
+                        - Fixed issue with redundant filtering of some moji in search
                         """.trimIndent()
                     )
                 }
@@ -193,8 +193,8 @@ fun VersionChangeDialog(
                         """
                         - Added new home screen with aggregated review data
                         - Added tutorial
-                        - Replaced previous custom SRS algorithm for letter practice with FSRS 
-                        - Now letter practice is saving review results in the middle of practice
+                        - Replaced previous custom SRS algorithm for moji practice with FSRS
+                        - Now moji practice is saving review results in the middle of practice
                         - Added ability to merge and sort vocab decks
                         - Added experimental JLPT vocab decks
                         - Added vocab deck details screen with ability to filter and select individual words for practice

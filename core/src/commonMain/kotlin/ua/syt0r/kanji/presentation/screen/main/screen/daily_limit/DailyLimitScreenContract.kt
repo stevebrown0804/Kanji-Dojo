@@ -2,7 +2,7 @@ package ua.syt0r.kanji.presentation.screen.main.screen.daily_limit
 
 import androidx.compose.runtime.MutableState
 import kotlinx.coroutines.flow.StateFlow
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 
 interface DailyLimitScreenContract {
@@ -18,9 +18,9 @@ interface DailyLimitScreenContract {
 
         data class Loaded(
             val enabled: MutableState<Boolean>,
-            val isLetterLimitCombined: MutableState<Boolean>,
-            val letterCombined: LimitItem,
-            val letterSeparate: Map<ScreenLetterPracticeType, LimitItem>,
+            val isMojiLimitCombined: MutableState<Boolean>,
+            val mojiCombined: LimitItem,
+            val mojiSeparate: Map<ScreenMojiPracticeType, LimitItem>,
             val isVocabLimitCombined: MutableState<Boolean>,
             val vocabCombined: LimitItem,
             val vocabSeparate: Map<ScreenVocabPracticeType, LimitItem>,

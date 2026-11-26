@@ -39,8 +39,8 @@ interface Strings {
 
     val loading: String
 
-    val letterPracticeTypeWriting: String
-    val letterPracticeTypeReading: String
+    val mojiPracticeTypeWriting: String
+    val mojiPracticeTypeReading: String
     val vocabPracticeTypeFlashcard: String
     val vocabPracticeTypeReadingPicker: String
     val vocabPracticeTypeWriting: String
@@ -70,7 +70,7 @@ interface Strings {
     val deckEdit: DeckEditStrings
 
     val commonPractice: CommonPracticeStrings
-    val letterPractice: LetterPracticeStrings
+    val mojiPractice: MojiPracticeStrings
     val vocabPractice: VocabPracticeStrings
 
     val info: InfoScreenStrings
@@ -98,7 +98,7 @@ interface HomeStrings {
     val screenTitle: String
 
     val generalDashboardTabLabel: String
-    val lettersDashboardTabLabel: String
+    val mojiDashboardTabLabel: String
     val vocabDashboardTabLabel: String
     val statsTabLabel: String
     val searchTabLabel: String
@@ -147,7 +147,7 @@ interface CommonDashboardStrings {
 interface DailyLimitStrings {
     val enableSwitchTitle: String
     val enableSwitchDescription: String
-    val lettersSectionTitle: String
+    val mojiSectionTitle: String
     val vocabSectionTitle: String
     val combinedLimitSwitchTitle: String
     val combinedLimitSwitchDescription: String
@@ -168,7 +168,7 @@ interface StatsStrings {
     val timeSpentTitle: String
     val reviewsCountTitle: String
     val formattedDuration: (Duration) -> String
-    val uniqueLettersReviewed: String
+    val uniqueMojiReviewed: String
     val uniqueWordsReviewed: String
 }
 
@@ -366,12 +366,12 @@ interface DeckDetailsStrings {
     val filterNoneLabel: String
     val kanaGroupsModeActivatedLabel: String
 
-    val dialogCommon: LetterDeckDetailDialogCommonStrings
+    val dialogCommon: MojiDeckDetailDialogCommonStrings
     val filterDialog: FilterDialogStrings
     val sortDialog: SortDialogStrings
     val layoutDialog: PracticePreviewLayoutDialogStrings
 
-    val shareLetterDeckClipboardMessage: String
+    val shareMojiDeckClipboardMessage: String
 
 }
 
@@ -400,7 +400,7 @@ interface PracticePreviewLayoutDialogStrings {
     val kanaGroupsSubtitle: String
 }
 
-interface LetterDeckDetailDialogCommonStrings {
+interface MojiDeckDetailDialogCommonStrings {
     val buttonCancel: String
     val buttonApply: String
 }
@@ -430,7 +430,7 @@ interface CommonPracticeStrings {
     val earlyFinishDialogAcceptButton: String
 }
 
-interface LetterPracticeStrings {
+interface MojiPracticeStrings {
     val configurationTitle: (practiceType: String) -> String
     val hintStrokesTitle: String
     val hintStrokesMessage: String

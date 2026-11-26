@@ -4,11 +4,11 @@ import org.koin.dsl.module
 import ua.syt0r.kanji.presentation.multiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DeckDetailsApplyFilterUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DeckDetailsApplySortUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DeckDetailsCreateLetterGroupsUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DeckDetailsCreateMojiGroupsUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DeckDetailsGetConfigurationUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DefaultDeckDetailsApplyFilterUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DefaultDeckDetailsApplySortUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DefaultDeckDetailsCreateLetterGroupsUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DefaultDeckDetailsCreateMojiGroupsUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DefaultDeckDetailsGetConfigurationUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DefaultGetDeckDetailsVisibleDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case.DefaultSubscribeOnDeckDetailsDataUseCase
@@ -24,7 +24,7 @@ val deckDetailsScreenModule = module {
     multiplatformViewModel<DeckDetailsScreenContract.ViewModel> {
         DeckDetailsViewModel(
             viewModelScope = it.component1(),
-            subscribeOnLettersDataUseCase = get(),
+            subscribeOnMojiDataUseCase = get(),
             subscribeOnVocabDataUseCase = get(),
             getConfigurationUseCase = get(),
             updateConfigurationUseCase = get(),
@@ -35,7 +35,7 @@ val deckDetailsScreenModule = module {
 
     factory<SubscribeOnDeckDetailsDataUseCase> {
         DefaultSubscribeOnDeckDetailsDataUseCase(
-            letterSrsManager = get(),
+            mojiSrsManager = get(),
             appDataRepository = get()
         )
     }
@@ -60,8 +60,8 @@ val deckDetailsScreenModule = module {
         )
     }
 
-    factory<DeckDetailsCreateLetterGroupsUseCase> {
-        DefaultDeckDetailsCreateLetterGroupsUseCase()
+    factory<DeckDetailsCreateMojiGroupsUseCase> {
+        DefaultDeckDetailsCreateMojiGroupsUseCase()
     }
 
     factory<DeckDetailsApplyFilterUseCase> {

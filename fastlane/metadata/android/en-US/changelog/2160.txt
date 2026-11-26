@@ -3,7 +3,7 @@
 - The reading priority configuration was removed. Now readings can be edited on the deck edit screen
 - Updated JLPT vocab decks, removed uncommon variants of the same words
 - Added a new vocab info screen
-- Added example sentences to letter info screen
+- Added example sentences to moji info screen
 - Fixed links not opening on macOS
 - Fixed missing sync cancel button in Japanese language
 - Added several missing Japanese translations

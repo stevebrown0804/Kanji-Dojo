@@ -55,9 +55,9 @@ class PracticePreferences(
     )
 
     override val writingInputMethod = createProperty(
-        type = enumSuspendedPropertyType<PreferencesLetterPracticeWritingInputMode>(),
+        type = enumSuspendedPropertyType<PreferencesMojiPracticeWritingInputMode>(),
         key = "writing_input_method",
-        initialValue = { PreferencesLetterPracticeWritingInputMode.Stroke }
+        initialValue = { PreferencesMojiPracticeWritingInputMode.Stroke }
     )
 
     override val writingRomajiInsteadOfKanaWords: SuspendedProperty<Boolean> = createProperty(

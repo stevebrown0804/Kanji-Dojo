@@ -34,7 +34,7 @@ enum class DisplayableDefaultHomeTab(
 ) : DisplayableEnum {
 
     GeneralDashboard(PreferencesDefaultHomeTab.GeneralDashboard, { home.generalDashboardTabLabel }),
-    Letters(PreferencesDefaultHomeTab.Letters, { home.lettersDashboardTabLabel }),
+    Moji(PreferencesDefaultHomeTab.Moji, { home.mojiDashboardTabLabel }),
     Vocab(PreferencesDefaultHomeTab.Vocab, { home.vocabDashboardTabLabel });
 
     companion object {

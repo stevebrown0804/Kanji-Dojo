@@ -8,10 +8,10 @@ import kotlinx.coroutines.launch
 import ua.syt0r.kanji.core.analytics.AnalyticsManager
 import ua.syt0r.kanji.core.srs.DailyLimitConfiguration
 import ua.syt0r.kanji.core.srs.DailyLimitManager
-import ua.syt0r.kanji.core.srs.LetterPracticeType
+import ua.syt0r.kanji.core.srs.MojiPracticeType
 import ua.syt0r.kanji.core.srs.PracticeLimit
 import ua.syt0r.kanji.core.srs.VocabPracticeType
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 import ua.syt0r.kanji.presentation.screen.main.screen.daily_limit.DailyLimitScreenContract.ScreenState
 
@@ -39,11 +39,11 @@ class DailyLimitScreenViewModel(
 
             _state.value = ScreenState.Loaded(
                 enabled = mutableStateOf(dailyLimitManager.isEnabled()),
-                isLetterLimitCombined = mutableStateOf(configuration.isLetterLimitCombined),
-                letterCombined = configuration.letterCombinedLimit.toScreenType(),
-                letterSeparate = ScreenLetterPracticeType.values()
+                isMojiLimitCombined = mutableStateOf(configuration.isMojiLimitCombined),
+                mojiCombined = configuration.mojiCombinedLimit.toScreenType(),
+                mojiSeparate = ScreenMojiPracticeType.values()
                     .associateWith {
-                        configuration.letterSeparatedLimit.getValue(it.dataType).toScreenType()
+                        configuration.mojiSeparatedLimit.getValue(it.dataType).toScreenType()
                     },
                 isVocabLimitCombined = mutableStateOf(configuration.isVocabLimitCombined),
                 vocabCombined = configuration.vocabCombinedLimit.toScreenType(),
@@ -69,19 +69,19 @@ class DailyLimitScreenViewModel(
         viewModelScope.launch {
             val configuration = loadedState.run {
 
-                val isLetterLimitCombined: Boolean = isLetterLimitCombined.value
-                val letterCombinedLimit: PracticeLimit
-                val letterSeparatedLimit: Map<LetterPracticeType, PracticeLimit>
+                val isMojiLimitCombined: Boolean = isMojiLimitCombined.value
+                val mojiCombinedLimit: PracticeLimit
+                val mojiSeparatedLimit: Map<MojiPracticeType, PracticeLimit>
 
-                when (isLetterLimitCombined) {
+                when (isMojiLimitCombined) {
                     true -> {
-                        letterCombinedLimit = letterCombined.toManagerType()
-                        letterSeparatedLimit = configuration.letterSeparatedLimit
+                        mojiCombinedLimit = mojiCombined.toManagerType()
+                        mojiSeparatedLimit = configuration.mojiSeparatedLimit
                     }
 
                     false -> {
-                        letterCombinedLimit = configuration.letterCombinedLimit
-                        letterSeparatedLimit = loadedState.letterSeparate
+                        mojiCombinedLimit = configuration.mojiCombinedLimit
+                        mojiSeparatedLimit = loadedState.mojiSeparate
                             .map { (practiceType, limitItem) ->
                                 practiceType.dataType to limitItem.toManagerType()
                             }
@@ -110,9 +110,9 @@ class DailyLimitScreenViewModel(
                 }
 
                 DailyLimitConfiguration(
-                    isLetterLimitCombined = isLetterLimitCombined,
-                    letterCombinedLimit = letterCombinedLimit,
-                    letterSeparatedLimit = letterSeparatedLimit,
+                    isMojiLimitCombined = isMojiLimitCombined,
+                    mojiCombinedLimit = mojiCombinedLimit,
+                    mojiSeparatedLimit = mojiSeparatedLimit,
                     isVocabLimitCombined = isVocabLimitCombined,
                     vocabCombinedLimit = vocabCombinedLimit,
                     vocabSeparatedLimit = vocabSeparatedLimit

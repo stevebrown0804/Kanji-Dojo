@@ -16,8 +16,8 @@ fun InfoScreen(
     InfoScreenUI(
         state = viewModel.state,
         onUpButtonClick = { mainNavigationState.navigateBack() },
-        onLetterClick = {
-            val nextScreenData = InfoScreenData.Letter(it)
+        onMojiClick = {
+            val nextScreenData = InfoScreenData.Moji(it)
             if (screenData != nextScreenData)
                 mainNavigationState.navigate(MainDestination.Info(nextScreenData))
         },

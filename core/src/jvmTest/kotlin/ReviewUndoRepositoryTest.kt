@@ -7,7 +7,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import ua.syt0r.kanji.core.logger.LoggerConfiguration
-import ua.syt0r.kanji.core.srs.LetterPracticeType
+import ua.syt0r.kanji.core.srs.MojiPracticeType
 import ua.syt0r.kanji.core.srs.fsrs.FsrsCard
 import ua.syt0r.kanji.core.srs.fsrs.FsrsCardParams
 import ua.syt0r.kanji.core.srs.fsrs.FsrsCardStatus
@@ -35,7 +35,7 @@ class ReviewUndoRepositoryTest {
         val cards = SqlDelightFsrsCardRepository(manager)
         val history = SqlDelightReviewHistoryRepository(manager)
         val priorReview = review(1_000, grade = 3)
-        val readingReview = priorReview.copy(practiceType = LetterPracticeType.Reading.toSrsKey(key.itemKey).practiceType)
+        val readingReview = priorReview.copy(practiceType = MojiPracticeType.Reading.toSrsKey(key.itemKey).practiceType)
         cards.update(key, priorSchedule)
         history.addReview(priorReview)
         history.addReview(readingReview)
@@ -111,7 +111,7 @@ class ReviewUndoRepositoryTest {
         assertEquals(listOf(savedReview), history.allReviews())
     }
 
-    private val key = LetterPracticeType.Writing.toSrsKey("休")
+    private val key = MojiPracticeType.Writing.toSrsKey("休")
     private val priorSchedule = FsrsCard(
         status = FsrsCardStatus.Review,
         params = FsrsCardParams.Existing(

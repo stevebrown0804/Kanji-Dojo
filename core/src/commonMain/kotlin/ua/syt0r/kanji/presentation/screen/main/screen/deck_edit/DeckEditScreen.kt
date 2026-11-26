@@ -3,7 +3,7 @@ package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import ua.syt0r.kanji.presentation.dialog.LetterDeckConflictDialog
+import ua.syt0r.kanji.presentation.dialog.MojiDeckConflictDialog
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.MainDestination
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
@@ -35,7 +35,7 @@ fun DeckEditScreen(
         onItemClick = {
 
             val screenData = when (it) {
-                is LetterDeckEditListItem -> InfoScreenData.Letter(it.character)
+                is MojiDeckEditListItem -> InfoScreenData.Moji(it.character)
                 is VocabDeckEditListItem -> {
                     val cardData = it.resultCardData.value
                     InfoScreenData.Vocab(
@@ -79,6 +79,6 @@ fun DeckEditScreen(
         },
     )
 
-    LetterDeckConflictDialog(viewModel.letterDeckConflictPrompt)
+    MojiDeckConflictDialog(viewModel.mojiDeckConflictPrompt)
 
 }

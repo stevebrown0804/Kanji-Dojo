@@ -18,7 +18,7 @@ interface DeckDetailsScreenContract {
 
         fun loadData(configuration: DeckDetailsScreenConfiguration)
 
-        fun getPracticeConfiguration(group: DeckDetailsListItem.Group): MainDestination.LetterPractice
+        fun getPracticeConfiguration(group: DeckDetailsListItem.Group): MainDestination.MojiPractice
         fun getMultiselectPracticeConfiguration(): MainDestination
 
     }
@@ -35,10 +35,10 @@ interface DeckDetailsScreenContract {
             val isSelectionModeEnabled: MutableState<Boolean>
             val visibleDataState: State<DeckDetailsVisibleData>
 
-            data class Letters(
+            data class Moji(
                 override val title: String,
-                override val items: List<DeckDetailsItemData.LetterData>,
-                override val configuration: MutableState<DeckDetailsConfiguration.LetterDeckConfiguration>,
+                override val items: List<DeckDetailsItemData.MojiData>,
+                override val configuration: MutableState<DeckDetailsConfiguration.MojiDeckConfiguration>,
                 override val isSelectionModeEnabled: MutableState<Boolean>,
                 override val visibleDataState: State<DeckDetailsVisibleData>,
                 val sharableDeckData: String

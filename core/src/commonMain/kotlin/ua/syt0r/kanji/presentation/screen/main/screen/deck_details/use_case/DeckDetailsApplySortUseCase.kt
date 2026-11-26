@@ -1,30 +1,30 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case
 
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsItemData
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.LettersSortOption
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.MojiSortOption
 
 interface DeckDetailsApplySortUseCase {
     operator fun invoke(
-        items: List<DeckDetailsItemData.LetterData>,
-        practiceType: ScreenLetterPracticeType,
-        sortOption: LettersSortOption,
+        items: List<DeckDetailsItemData.MojiData>,
+        practiceType: ScreenMojiPracticeType,
+        sortOption: MojiSortOption,
         isDescending: Boolean,
-    ): List<DeckDetailsItemData.LetterData>
+    ): List<DeckDetailsItemData.MojiData>
 }
 
 class DefaultDeckDetailsApplySortUseCase : DeckDetailsApplySortUseCase {
 
     override fun invoke(
-        items: List<DeckDetailsItemData.LetterData>,
-        practiceType: ScreenLetterPracticeType,
-        sortOption: LettersSortOption,
+        items: List<DeckDetailsItemData.MojiData>,
+        practiceType: ScreenMojiPracticeType,
+        sortOption: MojiSortOption,
         isDescending: Boolean,
-    ): List<DeckDetailsItemData.LetterData> {
+    ): List<DeckDetailsItemData.MojiData> {
         val comparator = when (sortOption) {
-            LettersSortOption.ADD_ORDER -> {
+            MojiSortOption.ADD_ORDER -> {
 
-                val reviewDateComparator: Comparator<DeckDetailsItemData.LetterData> = when (
+                val reviewDateComparator: Comparator<DeckDetailsItemData.MojiData> = when (
                     isDescending
                 ) {
                     true -> compareByDescending { it.positionInPractice }
@@ -35,9 +35,9 @@ class DefaultDeckDetailsApplySortUseCase : DeckDetailsApplySortUseCase {
 
             }
 
-            LettersSortOption.NAME -> {
+            MojiSortOption.NAME -> {
 
-                val nameComparator: Comparator<DeckDetailsItemData.LetterData> =
+                val nameComparator: Comparator<DeckDetailsItemData.MojiData> =
                     when (isDescending) {
                         true -> compareByDescending { it.character }
                         false -> compareBy { it.character }
@@ -47,9 +47,9 @@ class DefaultDeckDetailsApplySortUseCase : DeckDetailsApplySortUseCase {
 
             }
 
-            LettersSortOption.FREQUENCY -> {
+            MojiSortOption.FREQUENCY -> {
 
-                val frequencyComparator: Comparator<DeckDetailsItemData.LetterData> =
+                val frequencyComparator: Comparator<DeckDetailsItemData.MojiData> =
                     when (isDescending) {
                         true -> compareByDescending { it.frequency }
                         false -> compareBy { it.frequency }
@@ -59,7 +59,7 @@ class DefaultDeckDetailsApplySortUseCase : DeckDetailsApplySortUseCase {
 
             }
 
-            LettersSortOption.REVIEW_TIME -> {
+            MojiSortOption.REVIEW_TIME -> {
                 when {
                     isDescending -> compareByDescending {
                         it.summaryMap.getValue(practiceType).expectedReviewDate

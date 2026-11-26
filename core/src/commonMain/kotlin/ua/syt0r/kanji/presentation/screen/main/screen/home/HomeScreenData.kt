@@ -14,7 +14,7 @@ import ua.syt0r.kanji.presentation.common.resources.string.StringResolveScope
 import ua.syt0r.kanji.presentation.common.textDp
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.GeneralDashboardScreen
-import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.letters_dashboard.LettersDashboardScreen
+import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.moji_dashboard.MojiDashboardScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.search.SearchScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.settings.SettingsScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.stats.StatsScreen
@@ -33,8 +33,8 @@ enum class HomeScreenTab(
         titleResolver = { home.generalDashboardTabLabel },
         content = { GeneralDashboardScreen(it) }
     ),
-    LettersDashboard(
-        analyticsName = "letters_dashboard",
+    MojiDashboard(
+        analyticsName = "moji_dashboard",
         iconContent = {
             Text(
                 text = "字",
@@ -42,8 +42,8 @@ enum class HomeScreenTab(
                 fontWeight = FontWeight.Bold
             )
         },
-        titleResolver = { home.lettersDashboardTabLabel },
-        content = { LettersDashboardScreen(mainNavigationState = it) }
+        titleResolver = { home.mojiDashboardTabLabel },
+        content = { MojiDashboardScreen(mainNavigationState = it) }
     ),
     VocabDashboard(
         analyticsName = "vocab_dashboard",
@@ -77,6 +77,12 @@ enum class HomeScreenTab(
     );
 
     val buttonTestTag = name
+
+    val routeName: String
+        get() = when (this) {
+            MojiDashboard -> "LettersDashboard"
+            else -> name
+        }
 
     companion object {
         val VisibleTabs: List<HomeScreenTab> = entries

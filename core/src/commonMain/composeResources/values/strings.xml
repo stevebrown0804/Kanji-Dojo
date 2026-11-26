@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="study_category_letter">Letter</string>
+    <string name="study_category_moji">Moji</string>
     <string name="study_category_vocab">Vocabulary</string>
     <string name="practice_type_writing">Writing</string>
     <string name="practice_type_flashcard">Flashcards</string>
@@ -54,11 +54,11 @@
     <string name="practice_summary_empty">No reviews</string>
     <string name="practice_summary_button">Finish</string>
 
-    <string name="save_letters_dialog_title">Add letters to deck</string>
-    <string name="save_letters_dialog_contains">Already contains: %1$s</string>
-    <string name="letter_deck_conflict_message">Kanji are currently only allowed to be in a single deck.\n\nThis kanji is in: %1$s.\n\nWould you like to move the kanji or leave it where it is?</string>
-    <string name="letter_deck_conflict_leave">Leave it</string>
-    <string name="letter_deck_conflict_move">Move it</string>
+    <string name="save_moji_dialog_title">Add moji to deck</string>
+    <string name="save_moji_dialog_contains">Already contains: %1$s</string>
+    <string name="moji_deck_conflict_message">Kanji are currently only allowed to be in a single deck.\n\nThis kanji is in: %1$s.\n\nWould you like to move the kanji or leave it where it is?</string>
+    <string name="moji_deck_conflict_leave">Leave it</string>
+    <string name="moji_deck_conflict_move">Move it</string>
     <string name="save_word_dialog_title">Add %1$s to vocabulary deck</string>
     <string name="save_word_dialog_contains_hint">Already contains</string>
     <string name="save_word_dialog_create_deck_button">Create New Deck</string>
@@ -85,7 +85,7 @@
     <string name="vocab_card_invalid_kana">Kana reading is empty</string>
     <string name="vocab_card_invalid_meaning">Meaning is empty</string>
 
-    <string name="info_no_data_letter">No data found for letter %1$s</string>
+    <string name="info_no_data_moji">No data found for moji %1$s</string>
     <string name="info_no_data_vocab">No data found for vocabulary entry %1$s</string>
     <string name="info_no_data_copy">Copy</string>
     <string name="info_no_data_jisho">Search on Jisho</string>

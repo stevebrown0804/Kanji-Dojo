@@ -27,16 +27,16 @@ and audio assets when they are not already available locally.
 - [Credits](#credits)
 
 ## About this app
-Practice writing Japanese letters, learn their meanings and related words 
+Practice writing Japanese moji, learn their meanings and related words
 
 ### Features
 - Memorize how to write and read kana and kanji
 - Follow JLPT levels or school grades
 - Create your own decks to study, more than 6000 characters in total are available
 - Use SRS reviewing system to avoid forgetting learned information
-- Search letters and words with built-in dictionary
+- Search moji and words with built-in dictionary
 - Study words with flashcards
-- Available modes to write words and pick correct letter readings
+- Available modes to write words and pick correct moji readings
 - Works offline
 
 Repository with dictionary data and parsers here: [Kanji-Dojo-Data](https://github.com/syt0r/Kanji-Dojo-Data)

@@ -46,11 +46,11 @@ private enum class GroupItemState { Default, Selected, Unselected }
 
 @Composable
 fun DeckDetailsGroupsUI(
-    configuration: DeckDetailsConfiguration.LetterDeckConfiguration,
+    configuration: DeckDetailsConfiguration.MojiDeckConfiguration,
     visibleData: DeckDetailsVisibleData.Groups,
     selectionModeEnabled: MutableState<Boolean>,
     extraListSpacerState: ExtraListSpacerState,
-    onConfigurationUpdate: (DeckDetailsConfiguration.LetterDeckConfiguration) -> Unit,
+    onConfigurationUpdate: (DeckDetailsConfiguration.MojiDeckConfiguration) -> Unit,
     selectGroup: (DeckDetailsListItem.Group) -> Unit,
     toggleGroupSelection: (DeckDetailsListItem.Group) -> Unit,
 ) {

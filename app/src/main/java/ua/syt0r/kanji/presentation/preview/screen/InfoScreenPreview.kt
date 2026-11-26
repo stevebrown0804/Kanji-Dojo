@@ -19,7 +19,7 @@ private fun Preview(
         InfoScreenUI(
             state = rememberUpdatedState(state),
             onUpButtonClick = {},
-            onLetterClick = {},
+            onMojiClick = {},
             onWordClick = {}
         )
     }
@@ -29,5 +29,5 @@ private fun Preview(
 @Preview
 @Composable
 private fun NoDataPreview() {
-    Preview(ScreenState.NoData(InfoScreenData.Letter("A")))
+    Preview(ScreenState.NoData(InfoScreenData.Moji("A")))
 }

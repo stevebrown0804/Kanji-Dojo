@@ -1,8 +1,8 @@
 import kotlinx.datetime.Instant
 import ua.syt0r.kanji.core.srs.SrsPracticeType
-import ua.syt0r.kanji.core.user_data.database.LetterDeckConflictResolution
+import ua.syt0r.kanji.core.user_data.database.MojiDeckConflictResolution
 import ua.syt0r.kanji.core.user_data.database.ReviewHistoryItem
-import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightLetterPracticeRepository
+import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightMojiPracticeRepository
 import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightReviewHistoryRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,7 +13,7 @@ class SingleDeckPerKanjiRepositoryTest {
 
     @Test
     fun switchOffAllowsDuplicatesAndSwitchOnChecksOnlyNewKanji() = withDatabase { manager, _ ->
-        val repository = SqlDelightLetterPracticeRepository(manager)
+        val repository = SqlDelightMojiPracticeRepository(manager)
         repository.createDeck("Source", listOf("休", "国", "ひ"))
         assertTrue(repository.getDeckConflicts(listOf("休"), null).isEmpty())
         assertTrue(repository.createDeck("Destination", listOf("休")).isEmpty())
@@ -28,7 +28,7 @@ class SingleDeckPerKanjiRepositoryTest {
         assertEquals("Destination", repository.getDeck(destination).name)
         assertEquals(listOf("休"), repository.getDeckCharacters(destination))
 
-        val resolutions = mapOf("国" to LetterDeckConflictResolution.Leave)
+        val resolutions = mapOf("国" to MojiDeckConflictResolution.Leave)
         assertTrue(repository.updateDeck(destination, "Changed", listOf("休", "国", "ひ"), emptyList(), resolutions).isEmpty())
         assertEquals(setOf("休", "ひ"), repository.getDeckCharacters(destination).toSet())
         assertEquals(setOf("休", "国", "ひ"), repository.getDeckCharacters(source).toSet())
@@ -40,24 +40,24 @@ class SingleDeckPerKanjiRepositoryTest {
 
     @Test
     fun moveRequiresApprovalForEveryCurrentSourceAndKeepsReviewHistory() = withDatabase { manager, _ ->
-        val repository = SqlDelightLetterPracticeRepository(manager)
+        val repository = SqlDelightMojiPracticeRepository(manager)
         val history = SqlDelightReviewHistoryRepository(manager)
         repository.createDeck("First", listOf("国", "休"))
         repository.createDeck("Second", listOf("国"))
         val first = repository.deckId("First")
         val second = repository.deckId("Second")
-        val review = ReviewHistoryItem("国", SrsPracticeType.LetterWriting.value, Instant.fromEpochMilliseconds(1000), 1.seconds, 3, 0, first)
+        val review = ReviewHistoryItem("国", SrsPracticeType.MojiWriting.value, Instant.fromEpochMilliseconds(1000), 1.seconds, 3, 0, first)
         history.addReview(review)
         manager.writeTransaction { setOnlyAllowSingleDeckPerKanji(1L) }
 
-        val staleResolutions = mapOf("国" to LetterDeckConflictResolution.Move(setOf(first)))
+        val staleResolutions = mapOf("国" to MojiDeckConflictResolution.Move(setOf(first)))
         val conflicts = repository.createDeck("Destination", listOf("国", "日"), staleResolutions)
         assertEquals("国", conflicts.single().character)
         assertEquals(setOf(first, second), conflicts.single().decks.map { it.id }.toSet())
         assertEquals(setOf("First", "Second"), repository.getDecks().map { it.name }.toSet())
         assertEquals(setOf("国", "休"), repository.getDeckCharacters(first).toSet())
 
-        val resolutions = mapOf("国" to LetterDeckConflictResolution.Move(setOf(first, second)))
+        val resolutions = mapOf("国" to MojiDeckConflictResolution.Move(setOf(first, second)))
         assertTrue(repository.createDeck("Destination", listOf("国", "日"), resolutions).isEmpty())
         assertEquals(setOf("国", "日"), repository.getDeckCharacters(repository.deckId("Destination")).toSet())
         assertEquals(listOf("休"), repository.getDeckCharacters(first))
@@ -67,7 +67,7 @@ class SingleDeckPerKanjiRepositoryTest {
 
     @Test
     fun mergingChecksOnlyDecksOutsideTheMerge() = withDatabase { manager, _ ->
-        val repository = SqlDelightLetterPracticeRepository(manager)
+        val repository = SqlDelightMojiPracticeRepository(manager)
         repository.createDeck("First", listOf("人", "日", "休"))
         repository.createDeck("Second", listOf("人", "月"))
         repository.createDeck("Outside", listOf("日", "休", "国"))
@@ -81,8 +81,8 @@ class SingleDeckPerKanjiRepositoryTest {
         assertEquals(setOf("First", "Second", "Outside"), repository.getDecks().map { it.name }.toSet())
 
         val resolutions = mapOf(
-            "休" to LetterDeckConflictResolution.Leave,
-            "日" to LetterDeckConflictResolution.Move(setOf(outside))
+            "休" to MojiDeckConflictResolution.Leave,
+            "日" to MojiDeckConflictResolution.Move(setOf(outside))
         )
         assertTrue(repository.createDeckAndMerge("Merged", selected, resolutions).isEmpty())
         assertEquals(setOf("Outside", "Merged"), repository.getDecks().map { it.name }.toSet())
@@ -90,7 +90,7 @@ class SingleDeckPerKanjiRepositoryTest {
         assertEquals(setOf("休", "国"), repository.getDeckCharacters(outside).toSet())
     }
 
-    private suspend fun SqlDelightLetterPracticeRepository.deckId(name: String): Long =
+    private suspend fun SqlDelightMojiPracticeRepository.deckId(name: String): Long =
         getDecks().single { it.name == name }.id
 
 }

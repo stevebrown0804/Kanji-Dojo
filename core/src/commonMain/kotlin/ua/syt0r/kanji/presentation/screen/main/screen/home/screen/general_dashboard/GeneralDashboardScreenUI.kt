@@ -67,7 +67,7 @@ import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
 import ua.syt0r.kanji.Res
 import ua.syt0r.kanji.core.launchOnInvoke
-import ua.syt0r.kanji.core.srs.LetterPracticeType
+import ua.syt0r.kanji.core.srs.MojiPracticeType
 import ua.syt0r.kanji.core.srs.VocabPracticeType
 import ua.syt0r.kanji.dialog_apply
 import ua.syt0r.kanji.dialog_cancel
@@ -86,7 +86,7 @@ import ua.syt0r.kanji.presentation.common.AppDropdownMenuItem
 import ua.syt0r.kanji.presentation.common.AppListItem
 import ua.syt0r.kanji.presentation.common.AppListItemDefaults
 import ua.syt0r.kanji.presentation.common.MultiplatformDialog
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 import ua.syt0r.kanji.presentation.common.copyCentered
 import ua.syt0r.kanji.presentation.common.theme.Dimens
@@ -98,7 +98,7 @@ import ua.syt0r.kanji.presentation.screen.main.MainDestination
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.GeneralDashboardScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.ui.TutorialDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeConfigurationCard
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.data.LetterPracticeScreenConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.data.VocabPracticeScreenConfiguration
 import ua.syt0r.kanji.srs_status_due
 import ua.syt0r.kanji.srs_status_new
@@ -108,9 +108,9 @@ import kotlin.math.roundToInt
 fun GeneralDashboardScreenUI(
     state: State<ScreenState>,
     navigateToDailyLimitConfiguration: () -> Unit,
-    navigateToCreateLetterDeck: () -> Unit,
+    navigateToCreateMojiDeck: () -> Unit,
     navigateToCreateVocabDeck: () -> Unit,
-    navigateToLetterPractice: (MainDestination.LetterPractice) -> Unit,
+    navigateToMojiPractice: (MainDestination.MojiPractice) -> Unit,
     navigateToVocabPractice: (MainDestination.VocabPractice) -> Unit
 ) {
 
@@ -139,9 +139,9 @@ fun GeneralDashboardScreenUI(
             state = screenState,
             showEditDialog = { showStudyTargetsEditDialog = true },
             navigateToDailyLimitConfiguration = navigateToDailyLimitConfiguration,
-            navigateToCreateLetterDeck = navigateToCreateLetterDeck,
+            navigateToCreateMojiDeck = navigateToCreateMojiDeck,
             navigateToCreateVocabDeck = navigateToCreateVocabDeck,
-            navigateToLetterPractice = navigateToLetterPractice,
+            navigateToMojiPractice = navigateToMojiPractice,
             navigateToVocabPractice = navigateToVocabPractice,
             notifyNothingLeftToStudy = coroutineScope.launchOnInvoke {
                 val message = getString(Res.string.general_dashboard_study_target_nothing_left)
@@ -236,9 +236,9 @@ private fun StudyTargets(
     state: ScreenState.Loaded,
     showEditDialog: () -> Unit,
     navigateToDailyLimitConfiguration: () -> Unit,
-    navigateToCreateLetterDeck: () -> Unit,
+    navigateToCreateMojiDeck: () -> Unit,
     navigateToCreateVocabDeck: () -> Unit,
-    navigateToLetterPractice: (MainDestination.LetterPractice) -> Unit,
+    navigateToMojiPractice: (MainDestination.MojiPractice) -> Unit,
     navigateToVocabPractice: (MainDestination.VocabPractice) -> Unit,
     notifyNothingLeftToStudy: () -> Unit
 ) {
@@ -321,7 +321,7 @@ private fun StudyTargets(
                     studyTargetState = it,
                     createDeck = {
                         when (it.studyTarget.practiceType) {
-                            is LetterPracticeType -> navigateToCreateLetterDeck()
+                            is MojiPracticeType -> navigateToCreateMojiDeck()
                             is VocabPracticeType -> navigateToCreateVocabDeck()
                         }
                     },
@@ -331,13 +331,13 @@ private fun StudyTargets(
                             return@StudyTargetItem
                         }
                         when (val practiceType = it.studyTarget.practiceType) {
-                            is LetterPracticeType -> {
-                                val configuration = LetterPracticeScreenConfiguration(
-                                    cards = cards as List<LetterPracticeScreenConfiguration.Card>,
-                                    practiceType = ScreenLetterPracticeType.from(practiceType)
+                            is MojiPracticeType -> {
+                                val configuration = MojiPracticeScreenConfiguration(
+                                    cards = cards as List<MojiPracticeScreenConfiguration.Card>,
+                                    practiceType = ScreenMojiPracticeType.from(practiceType)
                                 )
-                                val destination = MainDestination.LetterPractice(configuration)
-                                navigateToLetterPractice(destination)
+                                val destination = MainDestination.MojiPractice(configuration)
+                                navigateToMojiPractice(destination)
                             }
 
                             is VocabPracticeType -> {

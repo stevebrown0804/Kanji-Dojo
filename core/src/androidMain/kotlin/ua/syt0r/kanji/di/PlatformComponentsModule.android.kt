@@ -108,7 +108,7 @@ actual val platformComponentsModule: Module = module {
     factory<ReminderNotificationContract.HandleScheduledActionUseCase> {
         ReminderNotificationHandleScheduledActionUseCase(
             activityManager = get(),
-            letterSrsManager = get(),
+            mojiSrsManager = get(),
             vocabSrsManager = get(),
             notificationManager = get(),
             appPreferences = get(),

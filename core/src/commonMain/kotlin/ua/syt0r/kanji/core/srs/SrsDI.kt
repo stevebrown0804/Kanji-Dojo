@@ -18,8 +18,8 @@ fun Module.applySrsDefinitions() {
         )
     }
 
-    single<LetterSrsManager> {
-        DefaultLetterSrsManager(
+    single<MojiSrsManager> {
+        DefaultMojiSrsManager(
             dailyLimitManager = get(),
             practiceRepository = get(),
             srsCardRepository = get(),

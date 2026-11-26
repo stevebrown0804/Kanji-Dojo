@@ -60,7 +60,7 @@ import ua.syt0r.kanji.core.app_data.Sentence
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
 import ua.syt0r.kanji.info_no_data_copy
 import ua.syt0r.kanji.info_no_data_jisho
-import ua.syt0r.kanji.info_no_data_letter
+import ua.syt0r.kanji.info_no_data_moji
 import ua.syt0r.kanji.info_no_data_vocab
 import ua.syt0r.kanji.presentation.common.AppListItem
 import ua.syt0r.kanji.presentation.common.ExpandButton
@@ -75,7 +75,7 @@ import ua.syt0r.kanji.presentation.common.theme.neutralButtonColors
 import ua.syt0r.kanji.presentation.common.trackOverlay
 import ua.syt0r.kanji.presentation.common.ui.ClickableFuriganaText
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenContract.ScreenState
-import ua.syt0r.kanji.presentation.screen.main.screen.info.ui.LetterInfoUI
+import ua.syt0r.kanji.presentation.screen.main.screen.info.ui.MojiInfoUI
 import ua.syt0r.kanji.presentation.screen.main.screen.info.ui.VocabInfoUI
 
 
@@ -84,7 +84,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.info.ui.VocabInfoUI
 fun InfoScreenUI(
     state: State<ScreenState>,
     onUpButtonClick: () -> Unit,
-    onLetterClick: (String) -> Unit,
+    onMojiClick: (String) -> Unit,
     onWordClick: (JapaneseWord) -> Unit
 ) {
 
@@ -100,12 +100,12 @@ fun InfoScreenUI(
                 }
             )
         },
-        letter = { data, listState, listSpacerState ->
-            LetterInfoUI(
-                letterData = data,
+        moji = { data, listState, listSpacerState ->
+            MojiInfoUI(
+                mojiData = data,
                 listState = listState,
                 listSpacerState = listSpacerState,
-                onFuriganaClick = onLetterClick,
+                onFuriganaClick = onMojiClick,
                 onWordClick = onWordClick
             )
         },
@@ -114,7 +114,7 @@ fun InfoScreenUI(
                 vocabData = data,
                 listState = listState,
                 listSpacerState = listSpacerState,
-                onLetterClick = onLetterClick
+                onMojiClick = onMojiClick
             )
         },
         noData = {
@@ -123,9 +123,9 @@ fun InfoScreenUI(
             val message: String
 
             when (it) {
-                is InfoScreenData.Letter -> {
-                    searchTerm = it.letter
-                    message = stringResource(Res.string.info_no_data_letter, it.letter)
+                is InfoScreenData.Moji -> {
+                    searchTerm = it.moji
+                    message = stringResource(Res.string.info_no_data_moji, it.moji)
                 }
 
                 is InfoScreenData.Vocab -> {
@@ -178,7 +178,7 @@ fun InfoScreenUI(
 private fun ScreenLayout(
     state: State<ScreenState>,
     toolbar: @Composable () -> Unit,
-    letter: @Composable (LetterInfoData, LazyListState, ExtraListSpacerState) -> Unit,
+    moji: @Composable (MojiInfoData, LazyListState, ExtraListSpacerState) -> Unit,
     vocab: @Composable (VocabInfoData, LazyListState, ExtraListSpacerState) -> Unit,
     noData: @Composable (InfoScreenData) -> Unit
 ) {
@@ -231,8 +231,8 @@ private fun ScreenLayout(
                     noData(screenState.data)
                 }
 
-                is ScreenState.Loaded.Letter -> {
-                    letter(screenState.data, listState, extraListSpacerState)
+                is ScreenState.Loaded.Moji -> {
+                    moji(screenState.data, listState, extraListSpacerState)
                 }
 
                 is ScreenState.Loaded.Vocab -> {

@@ -11,8 +11,8 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditItemActi
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenConfiguration
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.DeckEditScreenUI
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.LetterDeckEditListItem
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.MutableLetterDeckEditingState
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.MojiDeckEditListItem
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.MutableMojiDeckEditingState
 
 
 @Composable
@@ -42,8 +42,8 @@ private fun BasePreview(
 @Composable
 private fun CreatePreview() {
     BasePreview(
-        configuration = DeckEditScreenConfiguration.LetterDeck.CreateNew,
-        state = randomLetterEditState()
+        configuration = DeckEditScreenConfiguration.MojiDeck.CreateNew,
+        state = randomMojiEditState()
     )
 }
 
@@ -51,20 +51,20 @@ private fun CreatePreview() {
 @Composable
 private fun EditPreview() {
     BasePreview(
-        configuration = DeckEditScreenConfiguration.LetterDeck.Edit("", 1),
-        state = randomLetterEditState()
+        configuration = DeckEditScreenConfiguration.MojiDeck.Edit("", 1),
+        state = randomMojiEditState()
     )
 }
 
 @Composable
-private fun randomLetterEditState() = remember {
-    MutableLetterDeckEditingState(
+private fun randomMojiEditState() = remember {
+    MutableMojiDeckEditingState(
         title = mutableStateOf(""),
         confirmExit = mutableStateOf(false),
         adding = mutableStateOf(false),
         listState = mutableStateOf(
             value = (1..80).map {
-                LetterDeckEditListItem(
+                MojiDeckEditListItem(
                     PreviewKanji.randomKanji(),
                     DeckEditItemAction.Nothing,
                     mutableStateOf(DeckEditItemAction.Nothing)

@@ -2,6 +2,7 @@ package ua.syt0r.kanji.core.srs
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -31,9 +32,12 @@ val DefaultPracticeLimit = PracticeLimit(
 
 @Serializable
 data class DailyLimitConfiguration(
-    val isLetterLimitCombined: Boolean = true,
-    val letterCombinedLimit: PracticeLimit = DefaultPracticeLimit,
-    val letterSeparatedLimit: Map<LetterPracticeType, PracticeLimit> = LetterPracticeType.values()
+    @SerialName("isLetterLimitCombined")
+    val isMojiLimitCombined: Boolean = true,
+    @SerialName("letterCombinedLimit")
+    val mojiCombinedLimit: PracticeLimit = DefaultPracticeLimit,
+    @SerialName("letterSeparatedLimit")
+    val mojiSeparatedLimit: Map<MojiPracticeType, PracticeLimit> = MojiPracticeType.values()
         .associateWith { DefaultPracticeLimit },
     val isVocabLimitCombined: Boolean = true,
     val vocabCombinedLimit: PracticeLimit = DefaultPracticeLimit,

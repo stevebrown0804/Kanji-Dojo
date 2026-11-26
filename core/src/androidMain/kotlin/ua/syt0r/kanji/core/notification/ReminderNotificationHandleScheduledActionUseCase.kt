@@ -3,13 +3,13 @@ package ua.syt0r.kanji.core.notification
 import android.app.ActivityManager
 import ua.syt0r.kanji.core.analytics.AnalyticsManager
 import ua.syt0r.kanji.core.logger.Logger
-import ua.syt0r.kanji.core.srs.LetterSrsManager
+import ua.syt0r.kanji.core.srs.MojiSrsManager
 import ua.syt0r.kanji.core.srs.VocabSrsManager
 import ua.syt0r.kanji.core.user_data.preferences.PreferencesContract
 
 class ReminderNotificationHandleScheduledActionUseCase(
     private val activityManager: ActivityManager,
-    private val letterSrsManager: LetterSrsManager,
+    private val mojiSrsManager: MojiSrsManager,
     private val vocabSrsManager: VocabSrsManager,
     private val notificationManager: ReminderNotificationContract.Manager,
     private val appPreferences: PreferencesContract.AppPreferences,
@@ -32,9 +32,9 @@ class ReminderNotificationHandleScheduledActionUseCase(
             return
         }
 
-        val letterSrsData = letterSrsManager.getDecks()
+        val mojiSrsData = mojiSrsManager.getDecks()
         val vocabSrsData = vocabSrsManager.getDecks()
-        val leftoversList = listOf(letterSrsData.dailyProgress, vocabSrsData.dailyProgress)
+        val leftoversList = listOf(mojiSrsData.dailyProgress, vocabSrsData.dailyProgress)
             .map { it.totalLeftover }
         val newLeft = leftoversList.sumOf { it.new }
         val dueLeft = leftoversList.sumOf { it.due }

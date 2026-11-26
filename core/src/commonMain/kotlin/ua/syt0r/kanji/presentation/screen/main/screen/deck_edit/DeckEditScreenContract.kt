@@ -3,7 +3,7 @@ package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.StateFlow
-import ua.syt0r.kanji.presentation.dialog.LetterDeckConflictPrompt
+import ua.syt0r.kanji.presentation.dialog.MojiDeckConflictPrompt
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.AddCharactersResult
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.VocabCardEditResult
 
@@ -11,7 +11,7 @@ interface DeckEditScreenContract {
 
     interface ViewModel {
         val state: StateFlow<ScreenState>
-        val letterDeckConflictPrompt: LetterDeckConflictPrompt
+        val mojiDeckConflictPrompt: MojiDeckConflictPrompt
         fun initialize(configuration: DeckEditScreenConfiguration)
         fun notifyVocabCardResult(editResult: VocabCardEditResult)
         fun addCharacters(input: String)
@@ -31,11 +31,11 @@ interface DeckEditScreenContract {
             fun getCurrentList(): List<DeckEditListItem>
         }
 
-        interface LetterDeckEditing : Loaded {
+        interface MojiDeckEditing : Loaded {
             val adding: State<Boolean>
-            val listState: State<List<LetterDeckEditListItem>>
+            val listState: State<List<MojiDeckEditListItem>>
             val lastAddResult: State<AddCharactersResult?>
-            override fun getCurrentList(): List<LetterDeckEditListItem> {
+            override fun getCurrentList(): List<MojiDeckEditListItem> {
                 return listState.value
             }
         }

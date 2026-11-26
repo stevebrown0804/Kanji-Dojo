@@ -3,21 +3,21 @@ package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit
 import org.koin.dsl.module
 import ua.syt0r.kanji.presentation.multiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultDeleteDeckUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultLoadDeckEditLetterDataUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultLoadDeckEditMojiDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultLoadDeckEditVocabDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultSaveDeckUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DefaultValidateDeckCharactersUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.DeleteDeckUseCase
-import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditLetterDataUseCase
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditMojiDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.LoadDeckEditVocabDataUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.SaveDeckUseCase
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_edit.use_case.ValidateDeckCharactersUseCase
 
 val deckEditScreenModule = module {
 
-    factory<LoadDeckEditLetterDataUseCase> {
-        DefaultLoadDeckEditLetterDataUseCase(
-            letterPracticeRepository = get(),
+    factory<LoadDeckEditMojiDataUseCase> {
+        DefaultLoadDeckEditMojiDataUseCase(
+            mojiPracticeRepository = get(),
             appDataRepository = get()
         )
     }
@@ -38,14 +38,14 @@ val deckEditScreenModule = module {
 
     factory<SaveDeckUseCase> {
         DefaultSaveDeckUseCase(
-            letterPracticeRepository = get(),
+            mojiPracticeRepository = get(),
             vocabPracticeRepository = get()
         )
     }
 
     factory<DeleteDeckUseCase> {
         DefaultDeleteDeckUseCase(
-            letterPracticeRepository = get(),
+            mojiPracticeRepository = get(),
             vocabPracticeRepository = get()
         )
     }
@@ -53,10 +53,10 @@ val deckEditScreenModule = module {
     multiplatformViewModel<DeckEditScreenContract.ViewModel> {
         DeckEditViewModel(
             viewModelScope = it.component1(),
-            loadDeckEditLetterDataUseCase = get(),
+            loadDeckEditMojiDataUseCase = get(),
             loadDeckEditVocabDataUseCase = get(),
             validateDeckCharactersUseCase = get(),
-            letterPracticeRepository = get(),
+            mojiPracticeRepository = get(),
             saveDeckUseCase = get(),
             deleteDeckUseCase = get(),
             analyticsManager = get()

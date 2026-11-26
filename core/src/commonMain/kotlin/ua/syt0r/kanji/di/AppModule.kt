@@ -11,13 +11,13 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_picker.deckPickerScre
 import ua.syt0r.kanji.presentation.screen.main.screen.home.homeScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.dashboard_common.commonDashboardComponentModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.generalDashboardScreenModule
-import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.letters_dashboard.lettersDashboardScreenModule
+import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.moji_dashboard.mojiDashboardScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.search.searchScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.settings.settingsScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.stats.statsScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.vocab_dashboard.vocabDashboardScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.info.infoScreenModule
-import ua.syt0r.kanji.presentation.screen.main.screen.practice_letter.letterPracticeScreenModule
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.mojiPracticeScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_vocab.vocabPracticeScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.vocab_card.vocabCardScreenModule
 
@@ -26,7 +26,7 @@ private val screenModules = listOf(
     homeScreenModule,
     commonDashboardComponentModule,
     generalDashboardScreenModule,
-    lettersDashboardScreenModule,
+    mojiDashboardScreenModule,
     vocabDashboardScreenModule,
     statsScreenModule,
     searchScreenModule,
@@ -35,7 +35,7 @@ private val screenModules = listOf(
     deckPickerScreenModule,
     deckEditScreenModule,
     deckDetailsScreenModule,
-    letterPracticeScreenModule,
+    mojiPracticeScreenModule,
     vocabPracticeScreenModule,
     infoScreenModule,
     dailyLimitScreenModule,

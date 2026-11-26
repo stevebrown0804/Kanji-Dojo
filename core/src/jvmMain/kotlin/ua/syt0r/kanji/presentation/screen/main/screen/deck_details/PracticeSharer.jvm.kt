@@ -13,7 +13,7 @@ import ua.syt0r.kanji.presentation.common.resources.string.resolveString
 actual fun rememberPracticeSharer(snackbarHostState: SnackbarHostState): PracticeSharer {
     val scope = rememberCoroutineScope()
     val clipboardManager = LocalClipboardManager.current
-    val copyMessage = resolveString { deckDetails.shareLetterDeckClipboardMessage }
+    val copyMessage = resolveString { deckDetails.shareMojiDeckClipboardMessage }
     return remember {
         object : PracticeSharer {
             override fun share(data: String) {

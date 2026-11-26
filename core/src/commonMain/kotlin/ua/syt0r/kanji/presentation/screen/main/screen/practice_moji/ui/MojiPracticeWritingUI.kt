@@ -1,0 +1,368 @@
+package ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.ui
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import ua.syt0r.kanji.core.app_data.data.JapaneseWord
+import ua.syt0r.kanji.core.app_data.data.formattedVocabDefinition
+import ua.syt0r.kanji.core.app_data.data.withEncodedText
+import ua.syt0r.kanji.core.japanese.KanaReading
+import ua.syt0r.kanji.presentation.common.AppListItemDefaults
+import ua.syt0r.kanji.presentation.common.FuriganaWordHeadline
+import ua.syt0r.kanji.presentation.common.MultiplatformBackHandler
+import ua.syt0r.kanji.presentation.common.clickable
+import ua.syt0r.kanji.presentation.common.copyCentered
+import ua.syt0r.kanji.presentation.common.resources.string.resolveString
+import ua.syt0r.kanji.presentation.common.theme.Dimens
+import ua.syt0r.kanji.presentation.common.trackItemPosition
+import ua.syt0r.kanji.presentation.common.ui.FuriganaText
+import ua.syt0r.kanji.presentation.common.ui.LocalOrientation
+import ua.syt0r.kanji.presentation.common.ui.Material3BottomSheetScaffold
+import ua.syt0r.kanji.presentation.common.ui.Orientation
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.CharacterWritingProgress
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeAnswer
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeAnswerButtonsContainer
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeAnswerButtonsRow
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.PracticeAnswers
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeExampleWord
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeLayoutConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeReviewState
+
+@Composable
+fun MojiPracticeWritingUI(
+    layoutConfiguration: MojiPracticeLayoutConfiguration.WritingLayoutConfiguration,
+    reviewState: MojiPracticeReviewState.Writing,
+    onNextClick: (PracticeAnswer) -> Unit,
+    speakKana: (KanaReading) -> Unit,
+    onWordClick: (JapaneseWord) -> Unit
+) {
+
+    val reviewState = rememberUpdatedState(reviewState)
+
+    val infoSectionState = reviewState.asInfoSectionState(layoutConfiguration)
+    val wordsBottomSheetState = reviewState.asWordsBottomSheetState()
+
+    val scaffoldState = rememberBottomSheetScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+
+    if (scaffoldState.bottomSheetState.isExpanded) {
+        MultiplatformBackHandler {
+            coroutineScope.launch { scaffoldState.bottomSheetState.collapse() }
+        }
+    }
+
+    val expressionSectionCoordinates = remember { MutableSharedFlow<LayoutCoordinates?>(1) }
+    val bottomSheetScaffoldCoordinates = remember { MutableSharedFlow<LayoutCoordinates?>(1) }
+
+    val onExpressionSectionCoordinatesUpdate: (LayoutCoordinates?) -> Unit = {
+        coroutineScope.launch { expressionSectionCoordinates.emit(it) }
+    }
+    val onBottomSheetScaffoldCoordinatesUpdate: (LayoutCoordinates) -> Unit = {
+        coroutineScope.launch { bottomSheetScaffoldCoordinates.emit(it) }
+    }
+
+    val bottomSheetHeight = mojiPracticeWritingWordsBottomSheetHeight(
+        scaffoldCoordinates = bottomSheetScaffoldCoordinates,
+        expressionSectionCoordinates = expressionSectionCoordinates
+    )
+
+    val openBottomSheet: () -> Unit = {
+        coroutineScope.launch { scaffoldState.bottomSheetState.expand() }
+    }
+
+    val hideBottomSheet: () -> Unit = {
+        coroutineScope.launch { scaffoldState.bottomSheetState.collapse() }
+    }
+
+    val answersSection: @Composable BoxScope.() -> Unit = {
+        AnswerButtons(
+            mojiWritingButtonsState = reviewState.toAnswerButtonsState(),
+            studyCompleted = { reviewState.value.isStudyMode.value = false },
+            answerSelected = onNextClick,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+
+    if (LocalOrientation.current == Orientation.Portrait) {
+
+        Material3BottomSheetScaffold(
+            scaffoldState = scaffoldState,
+            sheetContent = {
+                MojiPracticeWritingWordsBottomSheet(
+                    state = wordsBottomSheetState,
+                    sheetContentHeight = bottomSheetHeight,
+                    hideSheet = hideBottomSheet,
+                    onWordClick = onWordClick
+                )
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned(onBottomSheetScaffoldCoordinatesUpdate)
+        ) {
+
+            val infoSectionBottomPadding = remember { mutableStateOf(0.dp) }
+
+            MojiPracticeWritingInfoSection(
+                state = infoSectionState,
+                onExpressionsClick = openBottomSheet,
+                onExpressionSectionCoordinatesUpdate = onExpressionSectionCoordinatesUpdate,
+                speakKana = speakKana,
+                extraBottomPaddingState = infoSectionBottomPadding,
+                modifier = Modifier.fillMaxSize(),
+            )
+
+            MojiPracticeWritingInputSection(
+                state = reviewState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .trackItemPosition {
+                        infoSectionBottomPadding.value = it.heightFromScreenBottom
+                    }
+                    .sizeIn(maxWidth = 400.dp)
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 20.dp)
+                    .aspectRatio(1f, matchHeightConstraintsFirst = true)
+            )
+
+            answersSection()
+
+        }
+
+    } else {
+
+        val infoSection: @Composable RowScope.() -> Unit = {
+            Material3BottomSheetScaffold(
+                scaffoldState = scaffoldState,
+                sheetContent = {
+                    MojiPracticeWritingWordsBottomSheet(
+                        state = wordsBottomSheetState,
+                        sheetContentHeight = bottomSheetHeight,
+                        hideSheet = hideBottomSheet,
+                        onWordClick = onWordClick
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .onGloballyPositioned(onBottomSheetScaffoldCoordinatesUpdate)
+            ) {
+                MojiPracticeWritingInfoSection(
+                    state = infoSectionState,
+                    onExpressionsClick = openBottomSheet,
+                    onExpressionSectionCoordinatesUpdate = onExpressionSectionCoordinatesUpdate,
+                    speakKana = speakKana,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+
+        val inputSection: @Composable RowScope.() -> Unit = {
+            MojiPracticeWritingInputSection(
+                state = reviewState,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .wrapContentSize()
+                    .sizeIn(maxWidth = 400.dp)
+                    .aspectRatio(1f)
+                    .padding(20.dp)
+            )
+        }
+
+        val (firstSection, secondSection) = when (layoutConfiguration.leftHandedMode) {
+            true -> inputSection to infoSection
+            false -> infoSection to inputSection
+        }
+
+        Box {
+
+            Row(
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                firstSection()
+
+                secondSection()
+
+            }
+
+            answersSection()
+
+        }
+
+    }
+
+}
+
+
+private sealed interface MojiWritingButtonsState {
+    object Hidden : MojiWritingButtonsState
+    object StudyButtons : MojiWritingButtonsState
+    data class DefaultButtons(
+        val answers: PracticeAnswers,
+        val mistakes: Int
+    ) : MojiWritingButtonsState
+}
+
+@Composable
+private fun State<MojiPracticeReviewState.Writing>.toAnswerButtonsState(): State<MojiWritingButtonsState> =
+    remember {
+        derivedStateOf {
+            val currentState = value
+            val writerState = currentState.writerState.value
+            val progress = writerState.progress.value
+
+            when {
+                progress is CharacterWritingProgress.Completed.Idle -> {
+                    if (currentState.isStudyMode.value) MojiWritingButtonsState.StudyButtons
+                    else MojiWritingButtonsState.DefaultButtons(
+                        answers = currentState.answers,
+                        mistakes = progress.mistakes
+                    )
+                }
+
+                else -> MojiWritingButtonsState.Hidden
+            }
+        }
+    }
+
+
+@Composable
+private fun AnswerButtons(
+    mojiWritingButtonsState: State<MojiWritingButtonsState>,
+    studyCompleted: () -> Unit,
+    answerSelected: (PracticeAnswer) -> Unit,
+    modifier: Modifier
+) {
+
+    val buttonsTransition = updateTransition(mojiWritingButtonsState.value)
+    buttonsTransition.AnimatedContent(
+        transitionSpec = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() togetherWith
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeOut()
+        },
+        contentKey = { it !is MojiWritingButtonsState.Hidden },
+        modifier = modifier
+    ) { writingButtonsState ->
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+
+            when (writingButtonsState) {
+                MojiWritingButtonsState.Hidden -> {
+
+                }
+
+                MojiWritingButtonsState.StudyButtons -> {
+                    PracticeAnswerButtonsContainer {
+                        Row(
+                            modifier = Modifier
+                                .padding(AppListItemDefaults.ListItemDefaultPaddings)
+                                .clip(MaterialTheme.shapes.medium)
+                                .clickable(studyCompleted)
+                                .width(400.dp)
+                                .padding(Dimens.SpacingBig),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMid)
+                        ) {
+                            Spacer(Modifier.weight(1f))
+                            Text(
+                                text = resolveString { mojiPractice.studyFinishedButton },
+                                modifier = Modifier,
+                                style = MaterialTheme.typography.bodyLarge.copyCentered(),
+                                textAlign = TextAlign.Center
+                            )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.NavigateNext,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .defaultMinSize(24.dp, 24.dp)
+                                    .wrapContentSize(Alignment.CenterStart)
+                            )
+                        }
+                    }
+                }
+
+                is MojiWritingButtonsState.DefaultButtons -> {
+                    PracticeAnswerButtonsRow(
+                        answers = writingButtonsState.answers,
+                        onClick = {
+                            val updatedAnswer = it.copy(mistakes = writingButtonsState.mistakes)
+                            answerSelected(updatedAnswer)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun WritingPracticeVocabHeadline(
+    word: MojiPracticeExampleWord,
+    reveal: Boolean,
+    moji: String
+) {
+    when {
+        word.romaji != null -> {
+            Text(formattedVocabDefinition(word.romaji, word.word.combinedGlossary()))
+        }
+
+        reveal -> {
+            FuriganaWordHeadline(
+                reading = word.word.reading,
+                glossary = word.word.combinedGlossary()
+            )
+        }
+
+        else -> {
+            val text = formattedVocabDefinition(word.word.reading, word.word.combinedGlossary())
+                .withEncodedText(moji)
+            FuriganaText(text)
+        }
+    }
+}

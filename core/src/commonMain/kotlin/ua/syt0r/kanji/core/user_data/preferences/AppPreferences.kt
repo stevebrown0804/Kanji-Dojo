@@ -32,10 +32,10 @@ class AppPreferences(
         initialValue = { null }
     )
 
-    override val practiceType: SuspendedProperty<PreferencesLetterPracticeType> = createProperty(
-        type = enumSuspendedPropertyType<PreferencesLetterPracticeType>(),
+    override val practiceType: SuspendedProperty<PreferencesMojiPracticeType> = createProperty(
+        type = enumSuspendedPropertyType<PreferencesMojiPracticeType>(),
         key = "practice_type",
-        initialValue = { PreferencesLetterPracticeType.Writing }
+        initialValue = { PreferencesMojiPracticeType.Writing }
     )
 
     override val filterNew: SuspendedProperty<Boolean> = createProperty(
@@ -56,10 +56,10 @@ class AppPreferences(
         initialValue = { true }
     )
 
-    override val sortOption: SuspendedProperty<PreferencesLetterSortOption> = createProperty(
-        type = enumSuspendedPropertyType<PreferencesLetterSortOption>(),
+    override val sortOption: SuspendedProperty<PreferencesMojiSortOption> = createProperty(
+        type = enumSuspendedPropertyType<PreferencesMojiSortOption>(),
         key = "sort_option",
-        initialValue = { PreferencesLetterSortOption.AddOrder }
+        initialValue = { PreferencesMojiSortOption.AddOrder }
     )
 
     override val isSortDescending: SuspendedProperty<Boolean> = createProperty(
@@ -68,11 +68,11 @@ class AppPreferences(
         initialValue = { false }
     )
 
-    override val practicePreviewLayout: SuspendedProperty<PreferencesDeckDetailsLetterLayout> =
+    override val practicePreviewLayout: SuspendedProperty<PreferencesDeckDetailsMojiLayout> =
         createProperty(
-            type = enumSuspendedPropertyType<PreferencesDeckDetailsLetterLayout>(),
+            type = enumSuspendedPropertyType<PreferencesDeckDetailsMojiLayout>(),
             key = "practice_preview_layout2",
-            initialValue = { PreferencesDeckDetailsLetterLayout.Groups }
+            initialValue = { PreferencesDeckDetailsMojiLayout.Groups }
         )
 
     override val kanaGroupsEnabled: SuspendedProperty<Boolean> = createProperty(
@@ -116,7 +116,7 @@ class AppPreferences(
     )
 
     override val defaultHomeTab: SuspendedProperty<PreferencesDefaultHomeTab> = createProperty(
-        type = enumSuspendedPropertyType(),
+        type = enumSuspendedPropertyType { it.storageName },
         key = "default_home_tab",
         affectSync = true,
         initialValue = { PreferencesDefaultHomeTab.GeneralDashboard }
@@ -142,14 +142,14 @@ class AppPreferences(
             affectSync = true
         )
 
-    override val letterDashboardPracticeType: SuspendedProperty<PreferencesLetterPracticeType> =
+    override val mojiDashboardPracticeType: SuspendedProperty<PreferencesMojiPracticeType> =
         createProperty(
-            type = enumSuspendedPropertyType<PreferencesLetterPracticeType>(),
+            type = enumSuspendedPropertyType<PreferencesMojiPracticeType>(),
             key = "letter_dashboard_practice_type",
-            initialValue = { PreferencesLetterPracticeType.Writing }
+            initialValue = { PreferencesMojiPracticeType.Writing }
         )
 
-    override val letterDashboardSortByTime: SuspendedProperty<Boolean> = createProperty(
+    override val mojiDashboardSortByTime: SuspendedProperty<Boolean> = createProperty(
         type = BooleanSuspendedPropertyType,
         key = "letter_dashboard_sort_by_time",
         initialValue = { false }

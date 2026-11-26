@@ -1,7 +1,7 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case
 
 import ua.syt0r.kanji.core.srs.SrsItemStatus
-import ua.syt0r.kanji.presentation.common.ScreenLetterPracticeType
+import ua.syt0r.kanji.presentation.common.ScreenMojiPracticeType
 import ua.syt0r.kanji.presentation.common.ScreenVocabPracticeType
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsItemData
 import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.FilterConfiguration
@@ -9,10 +9,10 @@ import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.FilterCo
 interface DeckDetailsApplyFilterUseCase {
 
     operator fun invoke(
-        items: List<DeckDetailsItemData.LetterData>,
-        practiceType: ScreenLetterPracticeType,
+        items: List<DeckDetailsItemData.MojiData>,
+        practiceType: ScreenMojiPracticeType,
         filterConfiguration: FilterConfiguration,
-    ): List<DeckDetailsItemData.LetterData>
+    ): List<DeckDetailsItemData.MojiData>
 
     operator fun invoke(
         items: List<DeckDetailsItemData.VocabData>,
@@ -25,10 +25,10 @@ interface DeckDetailsApplyFilterUseCase {
 class DefaultDeckDetailsApplyFilterUseCase : DeckDetailsApplyFilterUseCase {
 
     override fun invoke(
-        items: List<DeckDetailsItemData.LetterData>,
-        practiceType: ScreenLetterPracticeType,
+        items: List<DeckDetailsItemData.MojiData>,
+        practiceType: ScreenMojiPracticeType,
         filterConfiguration: FilterConfiguration,
-    ): List<DeckDetailsItemData.LetterData> {
+    ): List<DeckDetailsItemData.MojiData> {
         return items.filter {
             val srsStatus = it.summaryMap.getValue(practiceType).srsItemStatus
             when (srsStatus) {

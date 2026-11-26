@@ -27,7 +27,7 @@ private fun Preview() {
                         studyTargets = mutableStateOf(
                             listOf(
                                 StudyTargetState(
-                                    studyTarget = StudyTarget.LetterWriting,
+                                    studyTarget = StudyTarget.MojiWriting,
                                     enabled = true,
                                     progress = StudyTargetProgress.NoDecks
                                 )
@@ -41,9 +41,9 @@ private fun Preview() {
                     )
                 ),
                 navigateToDailyLimitConfiguration = {},
-                navigateToCreateLetterDeck = {},
+                navigateToCreateMojiDeck = {},
                 navigateToCreateVocabDeck = {},
-                navigateToLetterPractice = {},
+                navigateToMojiPractice = {},
                 navigateToVocabPractice = {},
             )
         }

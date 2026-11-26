@@ -21,7 +21,7 @@ fun SearchScreen(
         onRadicalsSectionExpanded = { viewModel.loadRadicalsData() },
         onRadicalsSelected = { viewModel.radicalsSearch(it) },
         onCharacterClick = {
-            val screenData = InfoScreenData.Letter(it)
+            val screenData = InfoScreenData.Moji(it)
             mainNavigationState.navigate(MainDestination.Info(screenData))
         },
         onWordClick = {

@@ -9,7 +9,7 @@ val generalDashboardScreenModule = module {
 
     factory<SubscribeOnGeneralDashboardScreenDataUseCase> {
         DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
-            letterSrsManager = get(),
+            mojiSrsManager = get(),
             vocabSrsManager = get(),
             preferencesRepository = get(),
             reviewHistoryRepository = get(),

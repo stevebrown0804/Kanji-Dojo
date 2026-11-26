@@ -1,0 +1,127 @@
+package ua.syt0r.kanji.presentation.screen.main.screen.deck_details.use_case
+
+import androidx.compose.runtime.mutableStateOf
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsConfiguration
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsItemData
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsLayout
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsListItem
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsListItemKey
+import ua.syt0r.kanji.presentation.screen.main.screen.deck_details.data.DeckDetailsVisibleData
+
+interface GetDeckDetailsVisibleDataUseCase {
+
+    operator fun invoke(
+        items: List<DeckDetailsItemData.MojiData>,
+        configuration: DeckDetailsConfiguration.MojiDeckConfiguration,
+        currentVisibleData: DeckDetailsVisibleData?
+    ): DeckDetailsVisibleData
+
+    operator fun invoke(
+        items: List<DeckDetailsItemData.VocabData>,
+        configuration: DeckDetailsConfiguration.VocabDeckConfiguration,
+        currentVisibleData: DeckDetailsVisibleData?
+    ): DeckDetailsVisibleData.Vocab
+
+}
+
+class DefaultGetDeckDetailsVisibleDataUseCase(
+    private val applyFilterUseCase: DeckDetailsApplyFilterUseCase,
+    private val applySortUseCase: DeckDetailsApplySortUseCase,
+    private val createGroupsUseCase: DeckDetailsCreateMojiGroupsUseCase,
+) : GetDeckDetailsVisibleDataUseCase {
+
+    override operator fun invoke(
+        items: List<DeckDetailsItemData.MojiData>,
+        configuration: DeckDetailsConfiguration.MojiDeckConfiguration,
+        currentVisibleData: DeckDetailsVisibleData?
+    ): DeckDetailsVisibleData {
+
+        val selectionStates = currentVisibleData?.items
+            ?.associate { it.key to it.selected.value }
+
+        val visibleItems = applyFilterUseCase(
+            items = items,
+            practiceType = configuration.practiceType,
+            filterConfiguration = configuration.filterConfiguration
+        )
+            .let {
+                applySortUseCase(
+                    items = it,
+                    practiceType = configuration.practiceType,
+                    sortOption = configuration.sortOption,
+                    isDescending = configuration.isDescending
+                )
+            }
+
+        return when (configuration.layout) {
+            DeckDetailsLayout.SingleCharacter -> {
+
+                DeckDetailsVisibleData.Items(
+                    items = visibleItems.map { mojiData ->
+                        val key = DeckDetailsListItemKey(mojiData.character)
+                        DeckDetailsListItem.Moji(
+                            key = key,
+                            data = mojiData,
+                            initialSelectionState = selectionStates?.get(key) ?: false
+                        )
+                    },
+                )
+            }
+
+            DeckDetailsLayout.Groups -> {
+                val groupsCreationResult = createGroupsUseCase(
+                    items = items,
+                    visibleItems = visibleItems,
+                    type = configuration.practiceType,
+                    probeKanaGroups = configuration.kanaGroups,
+                    previousSelectionStates = selectionStates
+                )
+
+                val currentSelectedGroup = currentVisibleData
+                    ?.let { it as? DeckDetailsVisibleData.Groups }
+                    ?.selectedItem
+                    ?.value
+
+                val updatedSelectedGroup = currentSelectedGroup?.index?.let { groupIndex ->
+                    groupsCreationResult.groups.find { it.index == groupIndex }
+                }
+
+                DeckDetailsVisibleData.Groups(
+                    kanaGroupsMode = groupsCreationResult.kanaGroups,
+                    items = groupsCreationResult.groups,
+                    selectedItem = mutableStateOf(updatedSelectedGroup)
+                )
+            }
+        }
+    }
+
+    override fun invoke(
+        items: List<DeckDetailsItemData.VocabData>,
+        configuration: DeckDetailsConfiguration.VocabDeckConfiguration,
+        currentVisibleData: DeckDetailsVisibleData?
+    ): DeckDetailsVisibleData.Vocab {
+
+        val selectionStates = currentVisibleData
+            ?.let { it as? DeckDetailsVisibleData.Vocab }
+            ?.items
+            ?.associate { it.key to it.selected.value }
+
+        val filteredItems = applyFilterUseCase(
+            items = items,
+            practiceType = configuration.practiceType,
+            filterConfiguration = configuration.filterConfiguration
+        )
+
+        return DeckDetailsVisibleData.Vocab(
+            items = filteredItems.map { vocabData ->
+                val key = DeckDetailsListItemKey(vocabData.card.cardId.toString())
+                DeckDetailsListItem.Vocab(
+                    key = key,
+                    data = vocabData,
+                    initialSelectionState = selectionStates?.get(key) ?: false
+                )
+            }
+        )
+    }
+
+}

@@ -232,8 +232,8 @@ private fun LoadedState(screenState: ScreenState.Loaded) {
 
         item {
             InfoCard(
-                title = statsData.totalStats.uniqueLettersStudied.toString(),
-                subtitle = strings.uniqueLettersReviewed
+                title = statsData.totalStats.uniqueMojiStudied.toString(),
+                subtitle = strings.uniqueMojiReviewed
             )
         }
 

@@ -29,15 +29,15 @@ fun DeckPickerScreen(
         onUpButtonClick = { mainNavigationState.navigateBack() },
         createEmpty = {
             val deckEditConfiguration = when (configuration) {
-                DeckPickerScreenConfiguration.Letters -> DeckEditScreenConfiguration.LetterDeck.CreateNew
+                DeckPickerScreenConfiguration.Moji -> DeckEditScreenConfiguration.MojiDeck.CreateNew
                 DeckPickerScreenConfiguration.Vocab -> DeckEditScreenConfiguration.VocabDeck.CreateNew
             }
             val destination = MainDestination.DeckEdit(deckEditConfiguration)
             mainNavigationState.navigate(destination)
         },
-        onLetterDeckClick = { classification, title ->
+        onMojiDeckClick = { classification, title ->
             val destination = MainDestination.DeckEdit(
-                DeckEditScreenConfiguration.LetterDeck.CreateDerived(
+                DeckEditScreenConfiguration.MojiDeck.CreateDerived(
                     title = title,
                     classification = classification
                 )

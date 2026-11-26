@@ -117,8 +117,8 @@ fun DailyLimitScreenUI(
             )
 
             CategoryContainer(
-                title = strings.lettersSectionTitle,
-                combinedLimit = screenState.isLetterLimitCombined,
+                title = strings.mojiSectionTitle,
+                combinedLimit = screenState.isMojiLimitCombined,
                 containerColor = containerColor
             ) { selectedCombinedLimit ->
 
@@ -126,14 +126,14 @@ fun DailyLimitScreenUI(
                     selectedCombinedLimit -> {
 
                         InputColumn(
-                            limitItem = screenState.letterCombined
+                            limitItem = screenState.mojiCombined
                         )
 
                     }
 
                     else -> {
 
-                        screenState.letterSeparate.forEach { (practiceType, limitItem) ->
+                        screenState.mojiSeparate.forEach { (practiceType, limitItem) ->
 
                             InputColumn(
                                 title = resolveString(practiceType.titleResolver),
@@ -313,9 +313,9 @@ private fun FabContainer(
             val loadedState = state.value as? ScreenState.Loaded
                 ?: return@derivedStateOf null
 
-            val isLetterInputValid = when {
-                loadedState.isLetterLimitCombined.value -> loadedState.letterCombined.isValid()
-                else -> loadedState.letterSeparate.all { (_, item) -> item.isValid() }
+            val isMojiInputValid = when {
+                loadedState.isMojiLimitCombined.value -> loadedState.mojiCombined.isValid()
+                else -> loadedState.mojiSeparate.all { (_, item) -> item.isValid() }
             }
 
             val isVocabInputValid = when {
@@ -323,7 +323,7 @@ private fun FabContainer(
                 else -> loadedState.vocabSeparate.all { (_, item) -> item.isValid() }
             }
 
-            val isInputValid = isLetterInputValid && isVocabInputValid
+            val isInputValid = isMojiInputValid && isVocabInputValid
 
             loadedState to isInputValid
         }
