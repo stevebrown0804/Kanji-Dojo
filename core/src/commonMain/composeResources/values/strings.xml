@@ -89,6 +89,12 @@
     <string name="info_kanji_decks_label">Present in the following deck(s):</string>
     <string name="info_kanji_decks_none">None</string>
     <string name="info_kanji_decks_delete">Remove kanji from %1$s</string>
+    <string name="info_kanji_decks_remove_deck_message">This will remove the kanji from deck:\n%1$s</string>
+    <string name="info_kanji_decks_remove_last_deck_message">This will remove the kanji from the only deck in which it's present.  Confirm?</string>
+    <string name="info_kanji_decks_remove_proceed">Proceed</string>
+    <string name="info_kanji_decks_remove_abandon">Abandon</string>
+    <string name="info_kanji_decks_remove_confirm">Confirm</string>
+    <string name="info_kanji_decks_remove_failed">Could not remove the kanji from the deck.</string>
     <string name="info_no_data_vocab">No data found for vocabulary entry %1$s</string>
     <string name="info_no_data_copy">Copy</string>
     <string name="info_no_data_jisho">Search on Jisho</string>

@@ -25,7 +25,11 @@ fun InfoScreen(
             val nextScreenData = it.toInfoScreenData()
             if (screenData != nextScreenData)
                 mainNavigationState.navigate(MainDestination.Info(nextScreenData))
-        }
+        },
+        deckRemovalPrompt = viewModel.deckRemovalPrompt.value,
+        onRequestDeckRemoval = viewModel::requestDeckRemoval,
+        onConfirmDeckRemoval = viewModel::confirmDeckRemoval,
+        onCancelDeckRemoval = viewModel::cancelDeckRemoval
     )
 
 }

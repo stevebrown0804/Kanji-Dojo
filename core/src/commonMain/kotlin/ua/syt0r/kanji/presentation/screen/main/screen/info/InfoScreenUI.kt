@@ -58,6 +58,7 @@ import org.jetbrains.compose.resources.stringResource
 import ua.syt0r.kanji.Res
 import ua.syt0r.kanji.core.app_data.Sentence
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
+import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.info_no_data_copy
 import ua.syt0r.kanji.info_no_data_jisho
 import ua.syt0r.kanji.info_no_data_moji
@@ -85,7 +86,11 @@ fun InfoScreenUI(
     state: State<ScreenState>,
     onUpButtonClick: () -> Unit,
     onMojiClick: (String) -> Unit,
-    onWordClick: (JapaneseWord) -> Unit
+    onWordClick: (JapaneseWord) -> Unit,
+    deckRemovalPrompt: KanjiDeckRemovalPrompt? = null,
+    onRequestDeckRemoval: (MojiDeck) -> Unit = {},
+    onConfirmDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {},
+    onCancelDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {}
 ) {
 
     ScreenLayout(
@@ -106,7 +111,11 @@ fun InfoScreenUI(
                 listState = listState,
                 listSpacerState = listSpacerState,
                 onFuriganaClick = onMojiClick,
-                onWordClick = onWordClick
+                onWordClick = onWordClick,
+                deckRemovalPrompt = deckRemovalPrompt,
+                onRequestDeckRemoval = onRequestDeckRemoval,
+                onConfirmDeckRemoval = onConfirmDeckRemoval,
+                onCancelDeckRemoval = onCancelDeckRemoval
             )
         },
         vocab = { data, listState, listSpacerState ->

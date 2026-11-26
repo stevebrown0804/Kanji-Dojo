@@ -1,9 +1,15 @@
+import kotlinx.datetime.Instant
+import ua.syt0r.kanji.core.srs.SrsPracticeType
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.core.user_data.database.MojiDeckConflictResolution
+import ua.syt0r.kanji.core.user_data.database.ReviewHistoryItem
 import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightMojiPracticeRepository
+import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightReviewHistoryRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
 class MojiContainingDecksRepositoryTest {
 
@@ -78,6 +84,56 @@ class MojiContainingDecksRepositoryTest {
 
         val repository = SqlDelightMojiPracticeRepository(manager)
         assertEquals(listOf(MojiDeck(41, "Imported deck", 7)), repository.getDecksContainingMoji("日"))
+    }
+
+    @Test
+    fun removesOnlyTheSelectedMembershipAndKeepsReviewHistory() = withDatabase { manager, _ ->
+        val repository = SqlDelightMojiPracticeRepository(manager)
+        val history = SqlDelightReviewHistoryRepository(manager)
+        repository.createDeck("First", listOf("日", "本"))
+        repository.createDeck("Second", listOf("日", "月"))
+        val first = repository.deckId("First")
+        val second = repository.deckId("Second")
+        val originalDecks = repository.getDecks()
+        val review = ReviewHistoryItem(
+            key = "日",
+            practiceType = SrsPracticeType.MojiWriting.value,
+            timestamp = Instant.fromEpochMilliseconds(1000),
+            duration = 1.seconds,
+            grade = 3,
+            mistakes = 0,
+            deckId = first
+        )
+        history.addReview(review)
+
+        assertTrue(repository.tryRemoveMojiFromDeck("日", first, allowLastDeckRemoval = false))
+
+        assertEquals(originalDecks, repository.getDecks())
+        assertEquals(listOf("本"), repository.getDeckCharacters(first))
+        assertEquals(setOf("日", "月"), repository.getDeckCharacters(second).toSet())
+        assertEquals(listOf(second), repository.getDecksContainingMoji("日").map { it.id })
+        assertEquals(listOf(review), history.getReviews(Instant.DISTANT_PAST, Instant.DISTANT_FUTURE))
+    }
+
+    @Test
+    fun checksCurrentLastMembershipAndHandlesRepeatedRemovals() = withDatabase { manager, _ ->
+        val repository = SqlDelightMojiPracticeRepository(manager)
+        repository.createDeck("Selected", listOf("日"))
+        repository.createDeck("Other", listOf("日"))
+        val selected = repository.deckId("Selected")
+        val other = repository.deckId("Other")
+
+        assertEquals(2, repository.getDecksContainingMoji("日").size)
+        assertTrue(repository.tryRemoveMojiFromDeck("日", other, allowLastDeckRemoval = false))
+
+        assertFalse(repository.tryRemoveMojiFromDeck("日", selected, allowLastDeckRemoval = false))
+        assertTrue(repository.tryRemoveMojiFromDeck("日", other, allowLastDeckRemoval = false))
+        assertEquals(listOf(selected), repository.getDecksContainingMoji("日").map { it.id })
+
+        assertTrue(repository.tryRemoveMojiFromDeck("日", selected, allowLastDeckRemoval = true))
+        assertTrue(repository.tryRemoveMojiFromDeck("日", selected, allowLastDeckRemoval = false))
+        assertTrue(repository.getDecksContainingMoji("日").isEmpty())
+        assertEquals("Selected", repository.getDeck(selected).name)
     }
 
     private suspend fun SqlDelightMojiPracticeRepository.deckId(name: String): Long =

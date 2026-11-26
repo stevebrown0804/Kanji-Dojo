@@ -5,6 +5,7 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.appendPathSegments
 import io.ktor.http.buildUrl
 import kotlinx.coroutines.CoroutineScope
+import ua.syt0r.kanji.core.user_data.database.MojiDeck
 
 interface InfoScreenContract {
 
@@ -26,6 +27,10 @@ interface InfoScreenContract {
 
     interface ViewModel {
         val state: State<ScreenState>
+        val deckRemovalPrompt: State<KanjiDeckRemovalPrompt?>
+        fun requestDeckRemoval(deck: MojiDeck)
+        fun confirmDeckRemoval(prompt: KanjiDeckRemovalPrompt)
+        fun cancelDeckRemoval(prompt: KanjiDeckRemovalPrompt)
     }
 
     sealed interface ScreenState {

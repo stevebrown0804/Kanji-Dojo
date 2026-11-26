@@ -34,6 +34,7 @@ import ua.syt0r.kanji.info_kanji_decks_none
 @Composable
 internal fun KanjiInfoDeckMembership(
     decks: List<MojiDeck>,
+    onRequestDeckRemoval: (MojiDeck) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val bottomPadding = if (decks.isEmpty()) 8.dp else 2.dp
@@ -78,7 +79,7 @@ internal fun KanjiInfoDeckMembership(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             IconButton(
-                                onClick = {},
+                                onClick = { onRequestDeckRemoval(deck) },
                                 modifier = Modifier.size(32.dp)
                             ) {
                                 Icon(

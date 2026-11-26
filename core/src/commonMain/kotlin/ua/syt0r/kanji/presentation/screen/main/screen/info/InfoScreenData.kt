@@ -88,3 +88,10 @@ data class VocabInfoData(
     )
 
 }
+
+data class KanjiDeckRemovalPrompt(
+    val deck: MojiDeck,
+    val isLastDeckConfirmation: Boolean = false,
+    val isSubmitting: Boolean = false,
+    val failed: Boolean = false
+)

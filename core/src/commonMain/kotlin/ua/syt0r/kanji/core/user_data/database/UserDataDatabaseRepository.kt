@@ -34,6 +34,16 @@ interface MojiPracticeRepository : ObservableRepository {
         conflictResolutions: Map<String, MojiDeckConflictResolution> = emptyMap(),
     ): List<MojiDeckConflict>
 
+    /**
+     * Returns true when the moji is absent from the selected deck after the operation.
+     * Returns false when removing its last membership requires confirmation.
+     */
+    suspend fun tryRemoveMojiFromDeck(
+        character: String,
+        deckId: Long,
+        allowLastDeckRemoval: Boolean,
+    ): Boolean
+
     suspend fun getDecks(): List<MojiDeck>
     suspend fun getDecksContainingMoji(character: String): List<MojiDeck>
     suspend fun getDeck(id: Long): MojiDeck

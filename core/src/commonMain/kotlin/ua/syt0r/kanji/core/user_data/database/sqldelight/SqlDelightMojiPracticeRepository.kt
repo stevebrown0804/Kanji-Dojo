@@ -94,6 +94,26 @@ class SqlDelightMojiPracticeRepository(
         charactersToRemove.forEach { deleteMojiDeckEntry(id, it) }
     }
 
+    override suspend fun tryRemoveMojiFromDeck(
+        character: String,
+        deckId: Long,
+        allowLastDeckRemoval: Boolean,
+    ): Boolean = try {
+        writeTransaction {
+            val containingDecks = getMojiDecksForCharacters(listOf(character)).executeAsList()
+            if (containingDecks.none { it.id == deckId }) {
+                throw MojiDeckRemovalSkipped(alreadyAbsent = true)
+            }
+            if (containingDecks.size == 1 && !allowLastDeckRemoval) {
+                throw MojiDeckRemovalSkipped(alreadyAbsent = false)
+            }
+            deleteMojiDeckEntry(deckId, character)
+        }
+        true
+    } catch (exception: MojiDeckRemovalSkipped) {
+        exception.alreadyAbsent
+    }
+
     override suspend fun getDecks(): List<MojiDeck> = readTransaction {
         getAllMojiDecks().executeAsList().map {
             MojiDeck(it.id, it.name, it.position.toInt())
@@ -203,6 +223,8 @@ class SqlDelightMojiPracticeRepository(
     }
 
     private class UnresolvedDeckConflicts(val conflicts: List<MojiDeckConflict>) : RuntimeException()
+
+    private class MojiDeckRemovalSkipped(val alreadyAbsent: Boolean) : RuntimeException()
 
     private companion object {
         // Stay below the SQLite bind parameter limit on older Android versions.

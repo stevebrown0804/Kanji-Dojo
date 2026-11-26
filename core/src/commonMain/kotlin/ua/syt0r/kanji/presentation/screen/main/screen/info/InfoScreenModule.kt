@@ -28,7 +28,8 @@ val infoScreenModule = module {
             screenData = it.component2(),
             loadMojiStateUseCase = get(),
             loadVocabStateUseCase = get(),
-            analyticsManager = get()
+            analyticsManager = get(),
+            mojiPracticeRepository = get()
         )
     }
 
