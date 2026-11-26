@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
@@ -118,7 +119,10 @@ private fun KanjiInfoHeading(data: MojiInfoData.Kanji) {
 
                 }
 
-                KanjiInfoDeckMembership(decks = containingDecks)
+                KanjiInfoDeckMembership(
+                    decks = containingDecks,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
 
                 if (data.meanings.isNotEmpty()) {
                     Text(
