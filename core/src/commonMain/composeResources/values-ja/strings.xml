@@ -2,6 +2,7 @@
 
     <string name="info_kanji_decks_label">この漢字が含まれるデッキ：</string>
     <string name="info_kanji_decks_none">なし</string>
+    <string name="info_kanji_decks_delete">「%1$s」から漢字を削除</string>
 
     <string name="study_category_moji">文字</string>
     <string name="study_category_vocab">単語</string>
