@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +30,7 @@ import ua.syt0r.kanji.Res
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.info_kanji_decks_delete
 import ua.syt0r.kanji.info_kanji_decks_label
+import ua.syt0r.kanji.info_kanji_decks_move
 import ua.syt0r.kanji.info_kanji_decks_none
 
 @Composable
@@ -78,6 +80,15 @@ internal fun KanjiInfoDeckMembership(
                                 modifier = Modifier.weight(1f),
                                 style = MaterialTheme.typography.bodyLarge
                             )
+                            IconButton(
+                                onClick = {},
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Outlined.DriveFileMove,
+                                    contentDescription = stringResource(Res.string.info_kanji_decks_move, deck.name)
+                                )
+                            }
                             IconButton(
                                 onClick = { onRequestDeckRemoval(deck) },
                                 modifier = Modifier.size(32.dp)
