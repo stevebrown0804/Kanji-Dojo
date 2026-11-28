@@ -72,6 +72,7 @@
     <string name="vocab_card_invalid_meaning">意味が空です</string>
 
     <string name="practice_undo_review">直前の復習を取り消す</string>
+    <string name="practice_start_over">最初から書き直す</string>
     <string name="practice_save_review_failed">復習結果を保存できませんでした。</string>
     <string name="practice_undo_review_failed">復習結果を取り消せませんでした。</string>
     <string name="practice_summary_header_time">時間</string>

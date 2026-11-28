@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.CharacterWriter
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.CharacterWriterDecorations
+import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeItemData
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_moji.data.MojiPracticeReviewState
 
 @Composable
@@ -25,7 +26,8 @@ fun MojiPracticeWritingInputSection(
 
     CharacterWriterDecorations(
         modifier = modifier,
-        state = writerState
+        state = writerState,
+        showStartOver = state.value.itemData is MojiPracticeItemData.KanjiWritingData
     ) {
 
         val transition = updateTransition(

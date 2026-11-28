@@ -6,12 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
+import ua.syt0r.kanji.Res
+import ua.syt0r.kanji.practice_start_over
 import ua.syt0r.kanji.presentation.common.resources.icon.ExtraIcons
 import ua.syt0r.kanji.presentation.common.resources.icon.Help
 import ua.syt0r.kanji.presentation.common.theme.snapToBiggerContainerCrossfadeTransitionSpec
@@ -35,6 +40,7 @@ import ua.syt0r.kanji.presentation.common.ui.kanji.KanjiBackground
 fun CharacterWriterDecorations(
     modifier: Modifier,
     state: State<CharacterWriterState?>,
+    showStartOver: Boolean = false,
     content: @Composable BoxScope.() -> Unit
 ) {
 
@@ -51,7 +57,7 @@ fun CharacterWriterDecorations(
 
         KanjiBackground(Modifier.fillMaxSize())
         content()
-        SingleStrokeInputButtons(state)
+        SingleStrokeInputButtons(state, showStartOver)
         MultiStrokeInputButtons(state)
         SummaryButtons(state)
 
@@ -60,7 +66,10 @@ fun CharacterWriterDecorations(
 }
 
 @Composable
-private fun BoxScope.SingleStrokeInputButtons(state: State<CharacterWriterState?>) {
+private fun BoxScope.SingleStrokeInputButtons(
+    state: State<CharacterWriterState?>,
+    showStartOver: Boolean
+) {
     val transitionState = remember {
         derivedStateOf {
             val writerState = state.value
@@ -77,19 +86,36 @@ private fun BoxScope.SingleStrokeInputButtons(state: State<CharacterWriterState?
     val transition = updateTransition(transitionState.value)
 
     transition.AnimatedContent(
+        contentKey = { it?.isStudyMode },
         transitionSpec = snapToBiggerContainerCrossfadeTransitionSpec(),
         modifier = Modifier.align(Alignment.TopEnd)
-    ) {
-        if (it == null) return@AnimatedContent
+    ) { inputState ->
+        if (inputState == null) return@AnimatedContent
 
-        IconButton(
-            onClick = { coroutineScope.launch { it.notifyHintClick() } }
-        ) {
-            Icon(ExtraIcons.Help, null)
+        Row {
+            if (showStartOver) {
+                IconButton(
+                    onClick = {
+                        state.value?.takeIf { it.content.value === inputState }?.restartDrawing()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Replay,
+                        contentDescription = stringResource(Res.string.practice_start_over)
+                    )
+                }
+            }
+
+            IconButton(
+                onClick = { coroutineScope.launch { inputState.notifyHintClick() } }
+            ) {
+                Icon(ExtraIcons.Help, null)
+            }
         }
     }
 
     transition.AnimatedContent(
+        contentKey = { it?.isStudyMode },
         transitionSpec = snapToBiggerContainerCrossfadeTransitionSpec(),
         modifier = Modifier.align(Alignment.BottomEnd)
     ) {

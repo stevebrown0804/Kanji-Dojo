@@ -25,6 +25,7 @@ interface CharacterWriterState {
     val progress: State<CharacterWritingProgress>
 
     fun submit(inputData: CharacterInputData)
+    fun restartDrawing()
     fun toggleAnimationState()
 
 }
@@ -164,15 +165,29 @@ class DefaultCharacterWriterState(
         content.value.toWritingProgress()
     }
 
-    override fun submit(inputData: CharacterInputData) = coroutineScope.launchUnit {
-        when (inputData) {
-            is CharacterInputData.SingleStroke -> {
-                handleSingleStrokeInput(inputData)
-            }
+    override fun submit(inputData: CharacterInputData) {
+        val submittedContent = content.value
+        coroutineScope.launchUnit {
+            when (inputData) {
+                is CharacterInputData.SingleStroke -> {
+                    val inputState = submittedContent as? MutableSingleStrokeInputWriterContent
+                        ?: return@launchUnit
+                    if (content.value === inputState) {
+                        handleSingleStrokeInput(inputData, inputState)
+                    }
+                }
 
-            is CharacterInputData.MultipleStrokes -> {
-                handleMultipleStrokeInput(inputData)
+                is CharacterInputData.MultipleStrokes -> {
+                    handleMultipleStrokeInput(inputData)
+                }
             }
+        }
+    }
+
+    override fun restartDrawing() {
+        val inputState = content.value as? CharacterWriterContent.SingleStrokeInput ?: return
+        if (inputState.drawnStrokesCount.value < strokes.size) {
+            _content.value = createInputState()
         }
     }
 
@@ -208,20 +223,21 @@ class DefaultCharacterWriterState(
 
     private suspend fun handleSingleStrokeInput(
         inputData: CharacterInputData.SingleStroke,
+        inputState: MutableSingleStrokeInputWriterContent,
     ) {
-        val mutableState = content.value as MutableSingleStrokeInputWriterContent
-
         val isDrawnCorrectly = withContext(Dispatchers.IO) {
             strokeEvaluator.areStrokesSimilar(inputData.kanjiPath, inputData.userPath)
         }
+        if (content.value !== inputState) return
+
         val result = if (isDrawnCorrectly) {
-            mutableState.drawnStrokesCount.value += 1
+            inputState.drawnStrokesCount.value += 1
             StrokeProcessingResult.Correct(
                 userPath = inputData.userPath,
                 kanjiPath = inputData.kanjiPath
             )
         } else {
-            val currentStrokeMistakes = mutableState.run {
+            val currentStrokeMistakes = inputState.run {
                 currentStrokeMistakes.value += 1
                 totalMistakes.value += 1
                 currentStrokeMistakes.value
@@ -232,7 +248,7 @@ class DefaultCharacterWriterState(
             }
             StrokeProcessingResult.Mistake(path)
         }
-        mutableState.inputProcessingResults.emit(result)
+        inputState.inputProcessingResults.emit(result)
     }
 
     private suspend fun handleMultipleStrokeInput(

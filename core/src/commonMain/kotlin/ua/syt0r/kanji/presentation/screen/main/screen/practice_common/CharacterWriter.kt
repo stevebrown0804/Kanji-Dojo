@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.neverEqualPolicy
 import androidx.compose.runtime.remember
@@ -50,11 +51,15 @@ fun CharacterWriter(
 
             is CharacterWriterContent.SingleStrokeInput -> {
 
-                SingleStrokeInputContent(
-                    strokes = state.strokes,
-                    inputState = writerContent,
-                    onStrokeDrawn = { state.submit(it) }
-                )
+                key(writerContent) {
+                    SingleStrokeInputContent(
+                        strokes = state.strokes,
+                        inputState = writerContent,
+                        onStrokeDrawn = {
+                            if (state.content.value === writerContent) state.submit(it)
+                        }
+                    )
+                }
 
             }
 
@@ -215,10 +220,12 @@ private fun SingleStrokeInputContent(
     if (shouldShowStrokeInput) {
         StrokeInput(
             onUserPathDrawn = { drawnPath ->
+                val kanjiPath = strokes.getOrNull(inputState.drawnStrokesCount.value)
+                    ?: return@StrokeInput
                 onStrokeDrawn(
                     CharacterInputData.SingleStroke(
                         userPath = drawnPath,
-                        kanjiPath = strokes[inputState.drawnStrokesCount.value]
+                        kanjiPath = kanjiPath
                     )
                 )
 

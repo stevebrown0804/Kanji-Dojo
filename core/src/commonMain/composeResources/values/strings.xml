@@ -45,6 +45,7 @@
     <string name="practice_new_cards_config_mixed">Mixed</string>
 
     <string name="practice_undo_review">Undo last review</string>
+    <string name="practice_start_over">Start over</string>
     <string name="practice_save_review_failed">Could not save the review.</string>
     <string name="practice_undo_review_failed">Could not undo the review.</string>
     <string name="practice_summary_header_time">Time Spent</string>
