@@ -87,7 +87,8 @@ fun DeckEditScreenUI(
     saveChanges: () -> Unit,
     deleteDeck: () -> Unit,
     addNewVocabCardClick: () -> Unit,
-    onCompleted: (ScreenState.Completed) -> Unit
+    onCompleted: (ScreenState.Completed) -> Unit,
+    mojiMembershipChecked: Boolean = true
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -142,8 +143,13 @@ fun DeckEditScreenUI(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
 
+        val currentScreenState = state.value
         val transition = updateTransition(
-            targetState = state.value,
+            targetState = if (!mojiMembershipChecked && currentScreenState is ScreenState.MojiDeckEditing) {
+                ScreenState.Loading
+            } else {
+                currentScreenState
+            },
             label = "State Update Transition"
         )
         transition.AnimatedContent(

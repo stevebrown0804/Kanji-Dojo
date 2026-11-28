@@ -5,6 +5,7 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.appendPathSegments
 import io.ktor.http.buildUrl
 import kotlinx.coroutines.CoroutineScope
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferMode
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 
 interface InfoScreenContract {
@@ -31,6 +32,11 @@ interface InfoScreenContract {
         fun requestDeckRemoval(deck: MojiDeck)
         fun confirmDeckRemoval(prompt: KanjiDeckRemovalPrompt)
         fun cancelDeckRemoval(prompt: KanjiDeckRemovalPrompt)
+        val deckTransfer: State<KanjiDeckTransferDialog?>
+        fun requestDeckTransfer(deck: MojiDeck)
+        fun selectDeckTransferMode(mode: KanjiDeckTransferMode)
+        fun confirmDeckTransfer(destinationDeckId: Long)
+        fun dismissDeckTransfer()
     }
 
     sealed interface ScreenState {

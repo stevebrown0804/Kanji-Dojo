@@ -4,9 +4,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.withTimeout
 import ua.syt0r.kanji.core.analytics.PrintAnalyticsManager
+import ua.syt0r.kanji.core.srs.MojiSrsDeck
+import ua.syt0r.kanji.core.srs.MojiSrsDecksData
+import ua.syt0r.kanji.core.srs.MojiSrsManager
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightMojiPracticeRepository
 import ua.syt0r.kanji.presentation.common.Paginateable
@@ -15,6 +19,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenContract
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenData
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenViewModel
+import ua.syt0r.kanji.presentation.screen.main.screen.info.KanjiDeckMembership
 import ua.syt0r.kanji.presentation.screen.main.screen.info.MojiInfoData
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -108,7 +113,12 @@ class KanjiDeckRemovalViewModelTest {
                         error("This test only opens Kanji Info")
                 },
                 analyticsManager = PrintAnalyticsManager(),
-                mojiPracticeRepository = repository
+                mojiPracticeRepository = repository,
+                mojiSrsManager = object : MojiSrsManager {
+                    override val dataChangeFlow = MutableSharedFlow<Unit>()
+                    override suspend fun getDecks(): MojiSrsDecksData = error("Deck transfer was not opened")
+                    override suspend fun getDeck(deckId: Long): MojiSrsDeck = error("Deck transfer was not opened")
+                }
             )
             job.awaitPendingWork()
             block(viewModel, repository, job)
@@ -128,7 +138,7 @@ class KanjiDeckRemovalViewModelTest {
         frequency = null,
         radicalsSectionData = KanjiRadicalsSectionData(emptyList(), emptyList()),
         displayRadicals = emptyList(),
-        containingDecks = MutableStateFlow(decks),
+        deckMembership = MutableStateFlow(KanjiDeckMembership(decks, decks.size)),
         vocab = EmptyRemovalPagination(),
         sentences = EmptyRemovalPagination()
     )

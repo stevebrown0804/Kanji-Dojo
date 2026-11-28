@@ -3,6 +3,10 @@
     <string name="info_kanji_decks_label">この漢字が含まれるデッキ：</string>
     <string name="info_kanji_decks_none">なし</string>
     <string name="info_kanji_decks_move">「%1$s」から漢字を移動</string>
+    <string name="info_kanji_decks_transfer_title">漢字の移動・コピー先</string>
+    <string name="info_kanji_decks_transfer_move">移動</string>
+    <string name="info_kanji_decks_transfer_copy">コピー</string>
+    <string name="info_kanji_decks_transfer_failed">漢字を移動またはコピーできませんでした。</string>
     <string name="info_kanji_decks_delete">「%1$s」から漢字を削除</string>
     <string name="info_kanji_decks_remove_deck_message">次のデッキからこの漢字を削除します：\n%1$s</string>
     <string name="info_kanji_decks_remove_last_deck_message">この漢字が含まれる唯一のデッキから削除します。よろしいですか？</string>

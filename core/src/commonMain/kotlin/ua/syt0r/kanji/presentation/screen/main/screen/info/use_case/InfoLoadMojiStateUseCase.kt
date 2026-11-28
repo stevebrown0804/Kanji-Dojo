@@ -25,6 +25,7 @@ import ua.syt0r.kanji.presentation.common.ui.kanji.parseKanjiStrokes
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenContract
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.info.InfoScreenData
+import ua.syt0r.kanji.presentation.screen.main.screen.info.KanjiDeckMembership
 import ua.syt0r.kanji.presentation.screen.main.screen.info.MojiInfoData
 
 class InfoLoadMojiStateUseCase(
@@ -115,9 +116,14 @@ class InfoLoadMojiStateUseCase(
                 }
             ),
             displayRadicals = radicals.map { it.radical }.distinct(),
-            containingDecks = mojiPracticeRepository.changesFlow
+            deckMembership = mojiPracticeRepository.changesFlow
                 .onSubscription { emit(Unit) }
-                .map { mojiPracticeRepository.getDecksContainingMoji(character) }
+                .map {
+                    KanjiDeckMembership(
+                        containingDecks = mojiPracticeRepository.getDecksContainingMoji(character),
+                        deckCount = mojiPracticeRepository.getDecks().size
+                    )
+                }
                 .flowOn(Dispatchers.IO)
                 .stateIn(coroutineScope),
             vocab = getPaginateableVocab(character, coroutineScope),

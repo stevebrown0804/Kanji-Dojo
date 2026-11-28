@@ -1,11 +1,15 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit
 
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.launch
 import ua.syt0r.kanji.core.analytics.AnalyticsManager
+import ua.syt0r.kanji.core.logger.Logger
 import ua.syt0r.kanji.core.user_data.database.MojiDeckConflictResolution
 import ua.syt0r.kanji.core.user_data.database.MojiPracticeRepository
 import ua.syt0r.kanji.presentation.dialog.MojiDeckConflictPrompt
@@ -98,6 +102,59 @@ class DeckEditViewModel(
         }
     }
 
+    override suspend fun observeMojiDeckMembership(onUpdated: () -> Unit) {
+        val deck = configuration as? DeckEditScreenConfiguration.MojiDeck.Edit ?: return
+        val editor = state.first { it != ScreenState.Loading } as? MutableMojiDeckEditingState
+            ?: return
+
+        mojiPracticeRepository.changesFlow
+            .onSubscription { emit(Unit) }
+            .collect {
+                try {
+                    updateMojiDeckMembership(deck.mojiDeckId, editor)
+                } catch (exception: CancellationException) {
+                    throw exception
+                } catch (exception: Exception) {
+                    Logger.e(exception.stackTraceToString())
+                }
+                onUpdated()
+            }
+    }
+
+    private suspend fun updateMojiDeckMembership(
+        deckId: Long,
+        editor: MutableMojiDeckEditingState
+    ) {
+        if (_state.value !== editor) return
+        val savedCharacters = mojiPracticeRepository.getDeckCharacters(deckId).toSet()
+        val listedCharacters = editor.listState.value.mapTo(mutableSetOf()) { it.character }
+        val newCharacters = savedCharacters - listedCharacters
+        val newItems = if (newCharacters.isEmpty()) {
+            emptyList()
+        } else {
+            validateDeckCharactersUseCase(newCharacters.toList()).toMojiListItems(DeckEditItemAction.Nothing)
+        }
+        if (_state.value !== editor) return
+
+        val reconciled = editor.listState.value.mapNotNull { item ->
+            val isSaved = item.character in savedCharacters
+            when {
+                isSaved && item.initialAction == DeckEditItemAction.Add -> {
+                    approvedMoves.remove(item.character)
+                    item.copy(
+                        initialAction = DeckEditItemAction.Nothing,
+                        action = mutableStateOf(DeckEditItemAction.Nothing)
+                    )
+                }
+
+                isSaved || item.initialAction == DeckEditItemAction.Add -> item
+                else -> null
+            }
+        }
+        val retainedCharacters = reconciled.mapTo(mutableSetOf()) { it.character }
+        editor.listState.value = reconciled + newItems.filter { it.character !in retainedCharacters }
+    }
+
     override fun notifyVocabCardResult(
         editResult: VocabCardEditResult
     ) {
@@ -149,6 +206,7 @@ class DeckEditViewModel(
                     }
                 }
 
+                newCharacters.removeAll(editingState.getCurrentList().map { it.character }.toSet())
                 if (newCharacters.isNotEmpty()) {
                     addMojiToEditList(addResult, DeckEditItemAction.Add, newCharacters)
                     wasDeckEdited.value = true
@@ -169,16 +227,22 @@ class DeckEditViewModel(
         defaultAction: DeckEditItemAction,
         charactersToAdd: Iterable<String> = addResult.detectedCharacter
     ) {
-        val newListItems = charactersToAdd.map { character ->
+        val newListItems = addResult.toMojiListItems(defaultAction, charactersToAdd)
+        mojiEditingState.listState.value = mojiEditingState.listState.value.plus(newListItems)
+    }
+
+    private fun AddCharactersResult.toMojiListItems(
+        defaultAction: DeckEditItemAction,
+        charactersToAdd: Iterable<String> = detectedCharacter
+    ): List<MojiDeckEditListItem> =
+        charactersToAdd.map { character ->
             MojiDeckEditListItem(
                 character = character,
                 initialAction = defaultAction,
                 action = mutableStateOf(defaultAction),
-                readings = addResult.readingsByCharacter[character].orEmpty()
+                readings = readingsByCharacter[character].orEmpty()
             )
         }
-        mojiEditingState.listState.value = mojiEditingState.listState.value.plus(newListItems)
-    }
 
     override fun toggleRemoval(item: DeckEditListItem) {
         item.action.value = when (item.action.value) {

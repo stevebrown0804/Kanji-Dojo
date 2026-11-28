@@ -89,6 +89,10 @@
     <string name="info_kanji_decks_label">Present in the following deck(s):</string>
     <string name="info_kanji_decks_none">None</string>
     <string name="info_kanji_decks_move">Move kanji from %1$s</string>
+    <string name="info_kanji_decks_transfer_title">Move/copy kanji to...</string>
+    <string name="info_kanji_decks_transfer_move">Move</string>
+    <string name="info_kanji_decks_transfer_copy">Copy</string>
+    <string name="info_kanji_decks_transfer_failed">Could not move or copy the kanji.</string>
     <string name="info_kanji_decks_delete">Remove kanji from %1$s</string>
     <string name="info_kanji_decks_remove_deck_message">This will remove the kanji from deck:\n%1$s</string>
     <string name="info_kanji_decks_remove_last_deck_message">This will remove the kanji from the only deck in which it's present.  Confirm?</string>

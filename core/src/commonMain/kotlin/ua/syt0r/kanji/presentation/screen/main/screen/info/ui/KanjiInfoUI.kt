@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import ua.syt0r.kanji.Res
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferMode
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.dialog_cancel
 import ua.syt0r.kanji.info_kanji_decks_remove_abandon
@@ -35,6 +36,7 @@ import ua.syt0r.kanji.presentation.common.AppListItem
 import ua.syt0r.kanji.presentation.common.ExtraListSpacerState
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
 import ua.syt0r.kanji.presentation.screen.main.screen.info.KanjiDeckRemovalPrompt
+import ua.syt0r.kanji.presentation.screen.main.screen.info.KanjiDeckTransferDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.info.MojiInfoData
 import ua.syt0r.kanji.presentation.screen.main.screen.info.infoScreenExpandableSentenceSection
 import ua.syt0r.kanji.presentation.screen.main.screen.info.infoScreenExpandableVocabSection
@@ -52,7 +54,12 @@ fun KanjiInfoUI(
     deckRemovalPrompt: KanjiDeckRemovalPrompt? = null,
     onRequestDeckRemoval: (MojiDeck) -> Unit = {},
     onConfirmDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {},
-    onCancelDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {}
+    onCancelDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {},
+    deckTransfer: KanjiDeckTransferDialog? = null,
+    onRequestDeckTransfer: (MojiDeck) -> Unit = {},
+    onSelectDeckTransferMode: (KanjiDeckTransferMode) -> Unit = {},
+    onConfirmDeckTransfer: (Long) -> Unit = {},
+    onDismissDeckTransfer: () -> Unit = {}
 ) {
     val radicalsExpanded = rememberSaveable { mutableStateOf(true) }
 
@@ -61,7 +68,13 @@ fun KanjiInfoUI(
         listState = listState,
         listSpacerState = listSpacerState,
         headingContent = {
-            item { KanjiInfoHeading(data, onRequestDeckRemoval) }
+            item {
+                KanjiInfoHeading(
+                    data = data,
+                    onRequestDeckRemoval = onRequestDeckRemoval,
+                    onRequestDeckTransfer = onRequestDeckTransfer
+                )
+            }
             val radicalsData = data.radicalsSectionData
             infoScreenExpandableSection(
                 headerText = "Radicals",
@@ -101,15 +114,25 @@ fun KanjiInfoUI(
             onCancel = { onCancelDeckRemoval(prompt) }
         )
     }
+
+    deckTransfer?.let { dialog ->
+        KanjiDeckTransferUI(
+            dialog = dialog,
+            onSelectMode = onSelectDeckTransferMode,
+            onConfirm = onConfirmDeckTransfer,
+            onDismiss = onDismissDeckTransfer
+        )
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun KanjiInfoHeading(
     data: MojiInfoData.Kanji,
-    onRequestDeckRemoval: (MojiDeck) -> Unit
+    onRequestDeckRemoval: (MojiDeck) -> Unit,
+    onRequestDeckTransfer: (MojiDeck) -> Unit
 ) {
-    val containingDecks by data.containingDecks.collectAsState()
+    val deckMembership by data.deckMembership.collectAsState()
 
     AppListItem(
         headlineContent = {
@@ -148,7 +171,9 @@ private fun KanjiInfoHeading(
                 }
 
                 KanjiInfoDeckMembership(
-                    decks = containingDecks,
+                    decks = deckMembership.containingDecks,
+                    canTransferDeck = deckMembership.deckCount > 1,
+                    onRequestDeckTransfer = onRequestDeckTransfer,
                     onRequestDeckRemoval = onRequestDeckRemoval,
                     modifier = Modifier.padding(bottom = 6.dp)
                 )

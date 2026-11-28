@@ -10,6 +10,7 @@ import ua.syt0r.kanji.core.app_data.data.DetailedVocabReading
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
 import ua.syt0r.kanji.core.japanese.CharacterClassification
 import ua.syt0r.kanji.core.japanese.KanaReading
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferMode
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.presentation.common.Paginateable
 import ua.syt0r.kanji.presentation.common.ui.kanji.KanjiRadicalsSectionData
@@ -67,7 +68,7 @@ sealed interface MojiInfoData {
         val frequency: Int?,
         val radicalsSectionData: KanjiRadicalsSectionData,
         val displayRadicals: List<String>,
-        val containingDecks: StateFlow<List<MojiDeck>>,
+        val deckMembership: StateFlow<KanjiDeckMembership>,
         override val vocab: Paginateable<JapaneseWord>,
         override val sentences: Paginateable<Sentence>
     ) : MojiInfoData
@@ -92,6 +93,20 @@ data class VocabInfoData(
 data class KanjiDeckRemovalPrompt(
     val deck: MojiDeck,
     val isLastDeckConfirmation: Boolean = false,
+    val isSubmitting: Boolean = false,
+    val failed: Boolean = false
+)
+
+data class KanjiDeckMembership(
+    val containingDecks: List<MojiDeck>,
+    val deckCount: Int
+)
+
+data class KanjiDeckTransferDialog(
+    val sourceDeck: MojiDeck,
+    val destinations: List<MojiDeck>,
+    val mode: KanjiDeckTransferMode,
+    val canCopy: Boolean,
     val isSubmitting: Boolean = false,
     val failed: Boolean = false
 )

@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS kanji_deck_transfer_settings (
+    id INTEGER PRIMARY KEY NOT NULL CHECK (id = 1),
+    prefer_copy INTEGER NOT NULL DEFAULT 0 CHECK (prefer_copy IN (0, 1))
+);
+
+PRAGMA user_version = 15;

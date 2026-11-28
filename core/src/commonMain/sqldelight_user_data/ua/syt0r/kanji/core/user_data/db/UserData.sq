@@ -1,4 +1,4 @@
-PRAGMA user_version = 14;
+PRAGMA user_version = 15;
 
 getLastInsertRowId:
 SELECT last_insert_rowid();
@@ -283,3 +283,17 @@ WHERE id = 1;
 setOnlyAllowSingleDeckPerKanji:
 INSERT OR REPLACE INTO letter_deck_settings (id, only_allow_single_deck_per_kanji)
 VALUES (1, :enabled);
+
+CREATE TABLE IF NOT EXISTS kanji_deck_transfer_settings (
+    id INTEGER PRIMARY KEY NOT NULL CHECK (id = 1),
+    prefer_copy INTEGER NOT NULL DEFAULT 0 CHECK (prefer_copy IN (0, 1))
+);
+
+getPreferKanjiDeckCopy:
+SELECT prefer_copy
+FROM kanji_deck_transfer_settings
+WHERE id = 1;
+
+setPreferKanjiDeckCopy:
+INSERT OR REPLACE INTO kanji_deck_transfer_settings (id, prefer_copy)
+VALUES (1, :preferCopy);

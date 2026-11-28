@@ -1,11 +1,14 @@
 import kotlinx.datetime.Instant
 import ua.syt0r.kanji.core.srs.SrsPracticeType
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferMode
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferOptions
 import ua.syt0r.kanji.core.user_data.database.MojiDeckConflictResolution
 import ua.syt0r.kanji.core.user_data.database.ReviewHistoryItem
 import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightMojiPracticeRepository
 import ua.syt0r.kanji.core.user_data.database.sqldelight.SqlDelightReviewHistoryRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
@@ -88,6 +91,83 @@ class SingleDeckPerKanjiRepositoryTest {
         assertEquals(setOf("Outside", "Merged"), repository.getDecks().map { it.name }.toSet())
         assertEquals(setOf("人", "日", "月"), repository.getDeckCharacters(repository.deckId("Merged")).toSet())
         assertEquals(setOf("休", "国"), repository.getDeckCharacters(outside).toSet())
+    }
+
+    @Test
+    fun kanjiDeckTransferModePersistsAndSingleDeckModeTemporarilyOverridesIt() = withDatabase { manager, _ ->
+        val repository = SqlDelightMojiPracticeRepository(manager)
+        val move = KanjiDeckTransferMode.Move
+        val copy = KanjiDeckTransferMode.Copy
+        assertEquals(KanjiDeckTransferOptions(move, canCopy = true), repository.getKanjiDeckTransferOptions())
+
+        repository.setKanjiDeckTransferMode(copy)
+        val reopened = SqlDelightMojiPracticeRepository(manager)
+        assertEquals(KanjiDeckTransferOptions(copy, canCopy = true), reopened.getKanjiDeckTransferOptions())
+
+        manager.writeTransaction { setOnlyAllowSingleDeckPerKanji(1L) }
+        assertEquals(KanjiDeckTransferOptions(move, canCopy = false), reopened.getKanjiDeckTransferOptions())
+        reopened.setKanjiDeckTransferMode(move)
+
+        manager.writeTransaction { setOnlyAllowSingleDeckPerKanji(0L) }
+        assertEquals(KanjiDeckTransferOptions(copy, canCopy = true), reopened.getKanjiDeckTransferOptions())
+        reopened.setKanjiDeckTransferMode(move)
+        assertEquals(KanjiDeckTransferOptions(move, canCopy = true), repository.getKanjiDeckTransferOptions())
+    }
+
+    @Test
+    fun transfersPreserveOtherMembershipsAndStudyData() = withDatabase { manager, driver ->
+        val repository = SqlDelightMojiPracticeRepository(manager)
+        val history = SqlDelightReviewHistoryRepository(manager)
+        repository.createDeck("Source", listOf("日", "休"))
+        repository.createDeck("Destination", emptyList())
+        repository.createDeck("Other", listOf("日"))
+        val source = repository.deckId("Source")
+        val destination = repository.deckId("Destination")
+        val other = repository.deckId("Other")
+        val review = ReviewHistoryItem("日", SrsPracticeType.MojiWriting.value, Instant.fromEpochMilliseconds(1000), 1.seconds, 3, 0, source)
+        history.addReview(review)
+        driver.execute(null, "INSERT INTO fsrs_card VALUES ('日', 0, 1, 2.5, 3.5, 1, 4, 100, 5)", 0)
+        val cardSchedule = manager.readTransaction { getFsrsCards().executeAsOne() }
+
+        repeat(2) {
+            assertTrue(repository.transferKanjiBetweenDecks("日", source, destination, KanjiDeckTransferMode.Copy))
+        }
+        assertEquals(setOf(source, destination, other), repository.getDecksContainingMoji("日").map { it.id }.toSet())
+        assertEquals(listOf("日"), repository.getDeckCharacters(destination))
+
+        manager.writeTransaction { setOnlyAllowSingleDeckPerKanji(1L) }
+        assertTrue(repository.transferKanjiBetweenDecks("日", source, destination, KanjiDeckTransferMode.Move))
+        assertEquals(setOf(destination, other), repository.getDecksContainingMoji("日").map { it.id }.toSet())
+        assertEquals(listOf("休"), repository.getDeckCharacters(source))
+        assertEquals(cardSchedule, manager.readTransaction { getFsrsCards().executeAsOne() })
+        assertEquals(listOf(review), history.getReviews(Instant.DISTANT_PAST, Instant.DISTANT_FUTURE))
+    }
+
+    @Test
+    fun transfersValidateCurrentSettingAndSelectedDecks() = withDatabase { manager, _ ->
+        val repository = SqlDelightMojiPracticeRepository(manager)
+        repository.createDeck("Source", listOf("日"))
+        repository.createDeck("Destination", emptyList())
+        repository.createDeck("Other", listOf("日"))
+        repository.createDeck("Deleted", emptyList())
+        val source = repository.deckId("Source")
+        val destination = repository.deckId("Destination")
+        val other = repository.deckId("Other")
+        val deleted = repository.deckId("Deleted")
+        repository.deleteDeck(deleted)
+
+        manager.writeTransaction { setOnlyAllowSingleDeckPerKanji(1L) }
+        assertFalse(repository.transferKanjiBetweenDecks("日", source, destination, KanjiDeckTransferMode.Copy))
+        assertFalse(repository.transferKanjiBetweenDecks("日", source, other, KanjiDeckTransferMode.Copy))
+        assertFalse(repository.transferKanjiBetweenDecks("日", source, deleted, KanjiDeckTransferMode.Move))
+        assertFalse(repository.transferKanjiBetweenDecks("日", deleted, destination, KanjiDeckTransferMode.Move))
+        assertFalse(repository.transferKanjiBetweenDecks("日", source, source, KanjiDeckTransferMode.Move))
+        assertTrue(repository.getDeckCharacters(destination).isEmpty())
+        assertEquals(setOf(source, other), repository.getDecksContainingMoji("日").map { it.id }.toSet())
+
+        assertTrue(repository.transferKanjiBetweenDecks("日", source, destination, KanjiDeckTransferMode.Move))
+        assertFalse(repository.transferKanjiBetweenDecks("日", source, destination, KanjiDeckTransferMode.Move))
+        assertEquals(setOf(destination, other), repository.getDecksContainingMoji("日").map { it.id }.toSet())
     }
 
     private suspend fun SqlDelightMojiPracticeRepository.deckId(name: String): Long =

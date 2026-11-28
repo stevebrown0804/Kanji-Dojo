@@ -36,6 +36,8 @@ import ua.syt0r.kanji.info_kanji_decks_none
 @Composable
 internal fun KanjiInfoDeckMembership(
     decks: List<MojiDeck>,
+    canTransferDeck: Boolean,
+    onRequestDeckTransfer: (MojiDeck) -> Unit,
     onRequestDeckRemoval: (MojiDeck) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -81,7 +83,8 @@ internal fun KanjiInfoDeckMembership(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             IconButton(
-                                onClick = {},
+                                onClick = { onRequestDeckTransfer(deck) },
+                                enabled = canTransferDeck,
                                 modifier = Modifier.size(32.dp)
                             ) {
                                 Icon(

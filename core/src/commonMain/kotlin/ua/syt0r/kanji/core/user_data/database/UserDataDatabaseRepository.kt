@@ -44,6 +44,17 @@ interface MojiPracticeRepository : ObservableRepository {
         allowLastDeckRemoval: Boolean,
     ): Boolean
 
+    suspend fun getKanjiDeckTransferOptions(): KanjiDeckTransferOptions
+    suspend fun setKanjiDeckTransferMode(mode: KanjiDeckTransferMode)
+
+    /** Returns false if the selected decks or mode cannot be used anymore. */
+    suspend fun transferKanjiBetweenDecks(
+        character: String,
+        sourceDeckId: Long,
+        destinationDeckId: Long,
+        mode: KanjiDeckTransferMode,
+    ): Boolean
+
     suspend fun getDecks(): List<MojiDeck>
     suspend fun getDecksContainingMoji(character: String): List<MojiDeck>
     suspend fun getDeck(id: Long): MojiDeck
@@ -53,6 +64,10 @@ interface MojiPracticeRepository : ObservableRepository {
         targetDeckId: Long?,
     ): List<MojiDeckConflict>
 }
+
+enum class KanjiDeckTransferMode { Move, Copy }
+
+data class KanjiDeckTransferOptions(val mode: KanjiDeckTransferMode, val canCopy: Boolean)
 
 interface VocabPracticeRepository : ObservableRepository {
     suspend fun createDeck(title: String, words: List<VocabCardData>)

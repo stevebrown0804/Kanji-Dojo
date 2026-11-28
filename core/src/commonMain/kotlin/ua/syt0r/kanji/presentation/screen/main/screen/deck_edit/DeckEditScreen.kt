@@ -3,6 +3,10 @@ package ua.syt0r.kanji.presentation.screen.main.screen.deck_edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import ua.syt0r.kanji.presentation.dialog.MojiDeckConflictDialog
 import ua.syt0r.kanji.presentation.getMultiplatformViewModel
 import ua.syt0r.kanji.presentation.screen.main.MainDestination
@@ -19,16 +23,24 @@ fun DeckEditScreen(
     viewModel: DeckEditScreenContract.ViewModel = getMultiplatformViewModel()
 ) {
 
-    LaunchedEffect(Unit) {
+    val checkMembership = configuration is DeckEditScreenConfiguration.MojiDeck.Edit
+    var membershipChecked by remember(viewModel) { mutableStateOf(!checkMembership) }
+
+    LaunchedEffect(viewModel) {
         viewModel.initialize(configuration)
 
         val result = VocabCardScreenContract.VocabCardResultStorage.consumeResult()
         if (result != null) viewModel.notifyVocabCardResult(result)
+
+        if (checkMembership) {
+            viewModel.observeMojiDeckMembership { membershipChecked = true }
+        }
     }
 
     DeckEditScreenUI(
         configuration = configuration,
         state = viewModel.state.collectAsState(),
+        mojiMembershipChecked = membershipChecked,
         navigateBack = { mainNavigationState.navigateBack() },
         submitAdd = { viewModel.addCharacters(it) },
         dismissAddResult = { viewModel.dismissAddResult() },

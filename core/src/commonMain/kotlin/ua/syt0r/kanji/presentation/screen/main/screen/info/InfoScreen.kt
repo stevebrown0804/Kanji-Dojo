@@ -29,7 +29,12 @@ fun InfoScreen(
         deckRemovalPrompt = viewModel.deckRemovalPrompt.value,
         onRequestDeckRemoval = viewModel::requestDeckRemoval,
         onConfirmDeckRemoval = viewModel::confirmDeckRemoval,
-        onCancelDeckRemoval = viewModel::cancelDeckRemoval
+        onCancelDeckRemoval = viewModel::cancelDeckRemoval,
+        deckTransfer = viewModel.deckTransfer.value,
+        onRequestDeckTransfer = viewModel::requestDeckTransfer,
+        onSelectDeckTransferMode = viewModel::selectDeckTransferMode,
+        onConfirmDeckTransfer = viewModel::confirmDeckTransfer,
+        onDismissDeckTransfer = viewModel::dismissDeckTransfer
     )
 
 }

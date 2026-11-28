@@ -58,6 +58,7 @@ import org.jetbrains.compose.resources.stringResource
 import ua.syt0r.kanji.Res
 import ua.syt0r.kanji.core.app_data.Sentence
 import ua.syt0r.kanji.core.app_data.data.JapaneseWord
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferMode
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.info_no_data_copy
 import ua.syt0r.kanji.info_no_data_jisho
@@ -90,7 +91,12 @@ fun InfoScreenUI(
     deckRemovalPrompt: KanjiDeckRemovalPrompt? = null,
     onRequestDeckRemoval: (MojiDeck) -> Unit = {},
     onConfirmDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {},
-    onCancelDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {}
+    onCancelDeckRemoval: (KanjiDeckRemovalPrompt) -> Unit = {},
+    deckTransfer: KanjiDeckTransferDialog? = null,
+    onRequestDeckTransfer: (MojiDeck) -> Unit = {},
+    onSelectDeckTransferMode: (KanjiDeckTransferMode) -> Unit = {},
+    onConfirmDeckTransfer: (Long) -> Unit = {},
+    onDismissDeckTransfer: () -> Unit = {}
 ) {
 
     ScreenLayout(
@@ -115,7 +121,12 @@ fun InfoScreenUI(
                 deckRemovalPrompt = deckRemovalPrompt,
                 onRequestDeckRemoval = onRequestDeckRemoval,
                 onConfirmDeckRemoval = onConfirmDeckRemoval,
-                onCancelDeckRemoval = onCancelDeckRemoval
+                onCancelDeckRemoval = onCancelDeckRemoval,
+                deckTransfer = deckTransfer,
+                onRequestDeckTransfer = onRequestDeckTransfer,
+                onSelectDeckTransferMode = onSelectDeckTransferMode,
+                onConfirmDeckTransfer = onConfirmDeckTransfer,
+                onDismissDeckTransfer = onDismissDeckTransfer
             )
         },
         vocab = { data, listState, listSpacerState ->

@@ -1,6 +1,8 @@
 package ua.syt0r.kanji.core.user_data.database.sqldelight
 
 import ua.syt0r.kanji.core.srs.MojiPracticeType
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferMode
+import ua.syt0r.kanji.core.user_data.database.KanjiDeckTransferOptions
 import ua.syt0r.kanji.core.user_data.database.MojiDeck
 import ua.syt0r.kanji.core.user_data.database.MojiDeckConflict
 import ua.syt0r.kanji.core.user_data.database.MojiDeckConflictResolution
@@ -10,7 +12,7 @@ import ua.syt0r.kanji.core.user_data.database.UserDataDatabaseContract
 import ua.syt0r.kanji.core.userdata.db.UserDataQueries
 
 class SqlDelightMojiPracticeRepository(
-    databaseManager: UserDataDatabaseContract.Manager,
+    private val databaseManager: UserDataDatabaseContract.Manager,
 ) : ObservableUserDataRepository(databaseManager), MojiPracticeRepository {
 
     override suspend fun createDeck(
@@ -112,6 +114,52 @@ class SqlDelightMojiPracticeRepository(
         true
     } catch (exception: MojiDeckRemovalSkipped) {
         exception.alreadyAbsent
+    }
+
+    override suspend fun getKanjiDeckTransferOptions(): KanjiDeckTransferOptions = readTransaction {
+        val canCopy = !onlyAllowSingleDeckPerKanji()
+        val mode = if (canCopy && getPreferKanjiDeckCopy().executeAsOneOrNull() == 1L) {
+            KanjiDeckTransferMode.Copy
+        } else {
+            KanjiDeckTransferMode.Move
+        }
+        KanjiDeckTransferOptions(mode, canCopy)
+    }
+
+    override suspend fun setKanjiDeckTransferMode(mode: KanjiDeckTransferMode) {
+        databaseManager.writeTransaction {
+            if (!onlyAllowSingleDeckPerKanji()) {
+                setPreferKanjiDeckCopy(if (mode == KanjiDeckTransferMode.Copy) 1L else 0L)
+            }
+        }
+    }
+
+    override suspend fun transferKanjiBetweenDecks(
+        character: String,
+        sourceDeckId: Long,
+        destinationDeckId: Long,
+        mode: KanjiDeckTransferMode,
+    ): Boolean {
+        if (sourceDeckId == destinationDeckId) return false
+        return try {
+            writeTransaction {
+                val containingDecks = getMojiDecksForCharacters(listOf(character)).executeAsList()
+                if (containingDecks.none { it.id == sourceDeckId } ||
+                    getMojiDeck(destinationDeckId).executeAsOneOrNull() == null ||
+                    (mode == KanjiDeckTransferMode.Copy && onlyAllowSingleDeckPerKanji())
+                ) {
+                    throw KanjiDeckTransferSkipped()
+                }
+
+                insertOrIgnoreMojiDeckEntry(character, destinationDeckId)
+                if (mode == KanjiDeckTransferMode.Move) {
+                    deleteMojiDeckEntry(sourceDeckId, character)
+                }
+            }
+            true
+        } catch (_: KanjiDeckTransferSkipped) {
+            false
+        }
     }
 
     override suspend fun getDecks(): List<MojiDeck> = readTransaction {
@@ -225,6 +273,8 @@ class SqlDelightMojiPracticeRepository(
     private class UnresolvedDeckConflicts(val conflicts: List<MojiDeckConflict>) : RuntimeException()
 
     private class MojiDeckRemovalSkipped(val alreadyAbsent: Boolean) : RuntimeException()
+
+    private class KanjiDeckTransferSkipped : RuntimeException()
 
     private companion object {
         // Stay below the SQLite bind parameter limit on older Android versions.

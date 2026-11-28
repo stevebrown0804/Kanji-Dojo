@@ -13,6 +13,7 @@ interface DeckEditScreenContract {
         val state: StateFlow<ScreenState>
         val mojiDeckConflictPrompt: MojiDeckConflictPrompt
         fun initialize(configuration: DeckEditScreenConfiguration)
+        suspend fun observeMojiDeckMembership(onUpdated: () -> Unit)
         fun notifyVocabCardResult(editResult: VocabCardEditResult)
         fun addCharacters(input: String)
         fun dismissAddResult()

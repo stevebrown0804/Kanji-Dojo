@@ -29,7 +29,8 @@ val infoScreenModule = module {
             loadMojiStateUseCase = get(),
             loadVocabStateUseCase = get(),
             analyticsManager = get(),
-            mojiPracticeRepository = get()
+            mojiPracticeRepository = get(),
+            mojiSrsManager = get()
         )
     }
 
